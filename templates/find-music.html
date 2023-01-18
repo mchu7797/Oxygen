@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block title %}Find Music{% endblock %}
+{% block content %}
+<div class="container-lg text-white">
+    <h1 class="text-center mb-3">FIND MUSIC</h1>
+    <div class="input-group mb-3 w-100">
+        <input type="text" id="search-field" class="form-control"
+            aria-label="Keyword input for searching oxygen charts">
+        <button type="button" class="btn btn-outline-secondary" onclick="search(searchOption.DEFAULT)">Search</button>
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="javascript:search(searchOption.TITLE)">Search by Title</a></li>
+            <li><a class="dropdown-item" href="javascript:search(searchOption.ARTIST)">Search by Artist</a></li>
+            <li><a class="dropdown-item" href="javascript:search(searchOption.NOTE_CHARTER)">Search by NoteCharter</a>
+            </li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" data-bs-toggle="collapse" href="#level-range-collapse" role="button"
+                    aria-expanded="false" aria-controls="level-range-collapse">Another Options</a></li>
+        </ul>
+    </div>
+    <div class="collapse" id="level-range-collapse">
+        <div class="input-group mb-3">
+            <span class="input-group-text">Minimum Level</span>
+            <input type="text" name="minimum-level" id="min-level" class="form-control">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Maximum Level</span>
+            <input type="text" name="maximum-level" id="max-level" class="form-control">
+        </div>
+    </div>
+    <hr style="border: 1px solid darkgrey" class="md-3">
+    {% if song_list | length > 0 %}
+    <div class="table-responsive-lg">
+        <table class="table table-dark table-borderless">
+            <thead>
+                <th scope="col">Title</th>
+                <th scope="col">Artist</th>
+                <th scope="col">NoteCharter</th>
+                <th scope="col">Level</th>
+                <th scope="col">BPM</th>
+            <tbody>
+                {% for song in song_list %}
+                <tr>
+                    <td>
+                        <a href="/music-scoreboard/{{ song['music_code'] }}">
+                            {{ song['title'] }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ song['artist'] }}
+                    </td>
+                    <td>
+                        {{ song['note_charter'] }}
+                    </td>
+                    <td>
+                        {{ song['hard_level'] }}
+                    </td>
+                    <td>
+                        {{ song['bpm'] }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% elif init == True %}
+    <div class="text-white info-header">
+        <div class="d-flex justify-content-center">
+            <h3>WELCOME TO FIND MUSICS</h3>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-white info-header">
+        <div class="d-flex justify-content-center">
+            <h3>THAT KEYWORD CAN'T FIND SONG</h3>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script>
+    const searchOption = {
+        DEFAULT: 0,
+        TITLE: 1,
+        ARTIST: 2,
+        NOTE_CHARTER: 3
+    }
+
+    let search = (option) => {
+        const search_field = document.getElementById("search-field").value;
+        const level_minimum = document.getElementById("min-level").value;
+        const level_maximum = document.getElementById("max-level").value;
+        var url = "/music?keyword=" + encodeURIComponent(search_field);
+
+        switch (option) {
+            case searchOption.TITLE:
+                url = url.concat(' ', '--title-only')
+                break;
+            case searchOption.ARTIST:
+                url = url.concat(' ', '--artist-only')
+                break;
+            case searchOption.NOTE_CHARTER:
+                url = url.concat(' ', '--mapper-only')
+                break;
+            default:
+                break;
+        }
+
+        if (level_minimum != '' || level_maximum != '') {
+            url = url.concat('--level', ' ', level_minimum, ' ', level_maximum)
+        }
+
+        window.location = url;
+    }
+
+    document.getElementById("search-field").addEventListener("keyup", (event) => {
+        if (event.code == "Enter") { search(searchOption.DEFAULT) }
+    });
+</script>
+{% endblock %}
