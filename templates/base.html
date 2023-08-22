@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Oxygen : {% block title %}{% endblock %}</title>
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    {% block head %}{% endblock %}
+</head>
+
+<body class="bg-dark">
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <div class="container-fluid">
+            <a href="/" class="navbar-brand">Oxygen</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu"
+                aria-controls="menu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="menu">
+                <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+                    <li class="nav-item">
+                        <a href="/ranking" class="nav-link">Ranks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/music" class="nav-link">Musics</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">Tools</a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a href="/troubleshoot/gem-to-cash" class="dropdown-item">Gem to Cash (캐시로 변환)</a></li>
+                            <li><a href="/troubleshoot/cash-to-gem" class="dropdown-item">Cash to Gem (잼으로 변환)</a></li>
+                            <li><a href="/troubleshoot/fix-login" class="dropdown-item">Login issue fix (현접 해결)</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#online-modal">Online</a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a href="https://archive.cnooman.xyz/OLD-RECORDS/index.html" class="nav-link">Archive</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% block content %}{% endblock %}
+    <div class="modal fade" tabindex="-1" id="online-modal" aria-labelledby="online-modal" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title">Online</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="/online" width="100%" height="450px"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

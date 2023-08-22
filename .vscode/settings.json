@@ -1,0 +1,7 @@
+{
+    "python.linting.enabled": true,
+    "python.languageServer": "Jedi",
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": [],
+    "editor.formatOnSave": true
+}

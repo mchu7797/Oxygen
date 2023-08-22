@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Ranking{% endblock %}
+{% block content %}
+<div class="container-lg text-white">
+    <h1 class="text-center">O2JAM RANKING</h1>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="ranking-category" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            Ranking Category
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="ranking-category">
+            <li><a href="/ranking/0" class="dropdown-item">P</a></li>
+            <li><a href="/ranking/1" class="dropdown-item">SS</a></li>
+            <li><a href="/ranking/2" class="dropdown-item">S</a></li>
+            <li><a href="/ranking/3" class="dropdown-item">A</a></li>
+            <li><a href="/ranking/4" class="dropdown-item">B</a></li>
+            <li><a href="/ranking/5" class="dropdown-item">C</a></li>
+            <li><a href="/ranking/6" class="dropdown-item">D</a></li>
+            <li><a href="/ranking/7" class="dropdown-item">Clear</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li><a href="/ranking/8" class="dropdown-item">Playcount</a></li>
+        </ul>
+    </div>
+    <hr style="border: 1px solid darkgrey" class="mb-3 mt-3">
+    {% if status | length > 0 %}
+    <div class="table-responsive-lg">
+        <table class="table table-dark table-borderless">
+            <thead>
+                <th scope="col">#</th>
+                <th scope="col">Nickname</th>
+                <th scope="col">Tier</th>
+                <th scope="col">{{ category_name }}</th>
+            </thead>
+            <tbody>
+                {% for stat in status %}
+                <tr>
+                    <th scope="row">{{ stat['row_number'] }}</th>
+                    <td>
+                        <a href="/player-scoreboard/{{ stat['player_code'] }}">{{ stat['player_nickname'] }}</a>
+                    </td>
+                    <td>{{ stat['tier'] }}</td>
+                    <td>{{ stat['rank'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <h1 class="text-center">SCOREBOARD ERROR!</h1>
+    {% endif %}
+</div>
+{% endblock %}
