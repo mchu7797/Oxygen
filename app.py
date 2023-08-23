@@ -37,7 +37,6 @@ def robots():
     return "User-Agent: *\nDisallow: /"
 
 
-# Ignore favicon
 @app.route("/favicon.ico")
 def fabicon():
     return abort(404)
