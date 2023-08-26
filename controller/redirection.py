@@ -6,7 +6,9 @@ from config import DATABASE_CONFIG
 redirection = Blueprint("redirection", __name__)
 database = DatabaseConnection(DATABASE_CONFIG)
 
-app.add_url_rule("/favicon.ico", redirect_to=url_for("static", filename="favicon.ico"))
+redirection.add_url_rule(
+    "/favicon.ico", redirect_to=url_for("static", filename="favicon.ico")
+)
 
 
 @redirection.route("/p/<nickname>")
