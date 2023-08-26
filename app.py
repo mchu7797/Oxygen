@@ -16,8 +16,6 @@ app.register_blueprint(scoreboard)
 
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-app.add_url_rule("/favicon.ico", redirect_to=url_for("static", filename="favicon.ico"))
-
 
 @app.errorhandler(403)
 def handle_403():
