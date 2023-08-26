@@ -1,5 +1,5 @@
 import json
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, url_for
 from flask_cors import CORS
 
 from controller.api import api
@@ -15,6 +15,8 @@ app.register_blueprint(troubleshoot)
 app.register_blueprint(scoreboard)
 
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+app.add_url_rule("/favicon.ico", redirect_to=url_for("static", filename="favicon.ico"))
 
 
 @app.errorhandler(403)
@@ -35,11 +37,6 @@ def handle_500():
 @app.route("/robots.txt")
 def robots():
     return "User-Agent: *\nDisallow: /"
-
-
-@app.route("/favicon.ico")
-def fabicon():
-    return abort(404)
 
 
 @app.route("/")
