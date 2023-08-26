@@ -1,0 +1,19 @@
+### Success
+
+POST http://localhost:5000/api/login
+Content-Type: application/json
+
+{
+    "username": "mchu7797",
+    "password": "rkdmf0929"
+}
+
+### Failed
+
+POST http://localhost:5000/api/login
+Content-Type: application/json
+
+{
+    "username": "mchu7797",
+    "password": "rkdmf!!10724"
+}
