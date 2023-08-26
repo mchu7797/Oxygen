@@ -276,7 +276,7 @@ class DatabaseTools:
         cursor = self._connection.cursor()
 
         cursor.execute(
-            "SELECT id FROM dbo.member WHERE userid = ? AND password = ?",
+            "SELECT id FROM dbo.member WHERE userid = ? AND passwd = ?",
             (username, password),
         )
 
@@ -286,7 +286,7 @@ class DatabaseTools:
         new_token = make_new_password_token()
 
         cursor.execute(
-            "UPDATE dbo.member SET login_token_enabled = 1, login_token = ? WHERE username = ?",
+            "UPDATE dbo.member SET login_token_enabled = 1, login_token = ? WHERE userid = ?",
             (new_token, username),
         )
 

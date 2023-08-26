@@ -12,7 +12,7 @@ database = DatabaseConnection(DATABASE_CONFIG)
 
 
 # Old Method
-@api.route("/online-players")
+@api.route("/online_players")
 # New Method
 @api.route("/userlist")
 @api.route("/player/online")
