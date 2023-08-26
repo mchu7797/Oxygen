@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, abort
+from flask import Blueprint, redirect, abort, url_for
 
 from database import DatabaseConnection
 from config import DATABASE_CONFIG

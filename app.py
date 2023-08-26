@@ -1,5 +1,5 @@
 import json
-from flask import Flask, render_template, abort, url_for
+from flask import Flask, render_template, abort
 from flask_cors import CORS
 
 from controller.api import api
