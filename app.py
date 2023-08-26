@@ -18,17 +18,17 @@ CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
 @app.errorhandler(403)
-def handle_403():
+def handle_403(error):
     return render_template("error.html"), 403
 
 
 @app.errorhandler(404)
-def handle_404():
+def handle_404(error):
     return render_template("error.html"), 404
 
 
 @app.errorhandler(500)
-def handle_500():
+def handle_500(error):
     return render_template("error.html"), 500
 
 
