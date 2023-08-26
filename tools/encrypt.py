@@ -1,4 +1,4 @@
-import secrets
+from secrets import token_urlsafe
 
 
 def make_new_password_token():
