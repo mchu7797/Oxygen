@@ -273,15 +273,21 @@ class DatabaseTools:
         return raw_result[0]
 
     def generate_login_token(self, username, password):
-        if not check_account_is_valid(username, password):
-            return False
-
-        new_token = make_new_password_token()
         cursor = self._connection.cursor()
 
         cursor.execute(
-            "UPDATE dbo.member SET login_token_enabled = 1, login_token = ? WHERE username = ? AND password=?",
-            (new_token, username, password),
+            "SELECT id FROM dbo.member WHERE userid = ? AND password = ?",
+            (username, password),
+        )
+
+        if cursor.fetchone() is None:
+            return None
+
+        new_token = make_new_password_token()
+
+        cursor.execute(
+            "UPDATE dbo.member SET login_token_enabled = 1, login_token = ? WHERE username = ?",
+            (new_token, username),
         )
 
         cursor.commit()

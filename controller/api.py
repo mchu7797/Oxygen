@@ -11,6 +11,9 @@ api = Blueprint("api", __name__, url_prefix="/api")
 database = DatabaseConnection(DATABASE_CONFIG)
 
 
+# Old Method
+@api.route("/online-players")
+# New Method
 @api.route("/userlist")
 @api.route("/player/online")
 def get_online():
@@ -29,4 +32,9 @@ def check_login():
     if user_id is None or password is None:
         abort(400)
 
-    return db.tools.generate_login_token(user_id, password)
+    login_token = database.tools.generate_login_token(user_id, password)
+
+    if login_token is None:
+        abort(404)
+
+    return login_token
