@@ -272,27 +272,18 @@ class DatabaseTools:
 
         return raw_result[0]
 
-    def check_account_is_valid(self, username, password):
-        cursor = self._connection.cursor()
-
-        cursor.execute(
-            "SELECT id FROM dbo.member WHERE UserID = ? AND Passwd = ?",
-            (username, password),
-        )
-
-        result = cursor.fetchone()
-
-        if result is None:
-            return False
-        return True
-
     def generate_login_token(self, username, password):
-        new_token = make_new_password_token()
-        cursor = self._connection.cursor()
-
         if not check_account_is_valid(username, password):
             return False
 
-        # TODO: 새로운 토큰 데이터를 전용 테이블에 갱신하고 해당 토큰을 반환하기
+        new_token = make_new_password_token()
+        cursor = self._connection.cursor()
+
+        cursor.execute(
+            "UPDATE dbo.member SET login_token_enabled = 1, login_token = ? WHERE username = ? AND password=?",
+            (new_token, username, password),
+        )
+
+        cursor.commit()
 
         return new_token
