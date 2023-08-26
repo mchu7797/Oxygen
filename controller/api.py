@@ -29,4 +29,4 @@ def check_login():
     if user_id is None or password is None:
         abort(400)
 
-    return str(db.tools.check_account_is_valid(user_id, password))
+    return db.tools.generate_login_token(user_id, password)
