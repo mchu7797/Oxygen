@@ -1,6 +1,4 @@
-import json
-
-from flask import Blueprint, request, abort
+from flask import Blueprint, request, abort, json, make_response
 from flask_cors import CORS
 
 from database import DatabaseConnection
@@ -18,7 +16,12 @@ database = DatabaseConnection(DATABASE_CONFIG)
 @api.route("/player/online")
 def get_online():
     online_players = database.tools.get_online_players()
-    return json.dumps(online_players, ensure_ascii=False)
+
+    response = make_response(json.dumps(online_players, ensure_ascii=False))
+
+    response.headers["Content-Type"] = "application/json"
+
+    return response
 
 
 @api.route("/login", methods=["POST"])
@@ -55,13 +58,19 @@ def get_player_scoreboard(player_id):
     if show_f_rank is None:
         show_f_rank = True
 
-    return json.dumps(
-        database.scoreboard.get_player_scoreboard(
-            player_id, gauge_difficulty, show_f_rank
-        ),
-        ensure_ascii=False,
-        default=str,
+    response = make_response(
+        json.dumps(
+            database.scoreboard.get_player_scoreboard(
+                player_id, gauge_difficulty, show_f_rank
+            ),
+            ensure_ascii=False,
+            default=str,
+        )
     )
+
+    response.headers["Content-Type"] = "application/json"
+
+    return response
 
 
 @api.route("/scoreboard/chart/<int:chart_id>", methods=["GET"])
@@ -71,11 +80,17 @@ def get_chart_scoreboard(chart_id):
     if gauge_difficulty is None:
         gauge_difficulty = 2
 
-    return json.dumps(
-        database.scoreboard.get_music_scoreboard(chart_id, gauge_difficulty),
-        ensure_ascii=False,
-        default=str,
+    response = make_response(
+        json.dumps(
+            database.scoreboard.get_music_scoreboard(chart_id, gauge_difficulty),
+            ensure_ascii=False,
+            default=str,
+        )
     )
+
+    response.headers["Content-Type"] = "application/json"
+
+    return response
 
 
 @api.route("/chart/<int:chart_id>", methods=["GET"])
@@ -85,11 +100,17 @@ def get_chart(chart_id):
     if gauge_difficulty is None:
         gauge_difficulty = 2
 
-    return json.dumps(
-        database.info.get_music_info(chart_id, gauge_difficulty),
-        ensure_ascii=False,
-        default=str,
+    response = make_response(
+        json.dumps(
+            database.info.get_music_info(chart_id, gauge_difficulty),
+            ensure_ascii=False,
+            default=str,
+        )
     )
+
+    response.headers["Content-Type"] = "application/json"
+
+    return response
 
 
 @api.route("/player/<int:player_id>", methods=["GET"])
@@ -99,18 +120,30 @@ def get_player(player_id):
     if gauge_difficulty is None:
         gauge_difficulty = 2
 
-    return json.dumps(
-        database.info.get_player_info(player_id, gauge_difficulty),
-        ensure_ascii=False,
-        default=str,
+    response = make_response(
+        json.dumps(
+            database.info.get_player_info(player_id, gauge_difficulty),
+            ensure_ascii=False,
+            default=str,
+        )
     )
+
+    response.headers["Content-Type"] = "application/json"
+
+    return response
 
 
 @api.route("/players")
 def get_all_player():
-    return json.dumps(
-        database.scoreboard.get_player_ranking(7), ensure_ascii=False, default=str
+    response = make_response(
+        json.dumps(
+            database.scoreboard.get_player_ranking(7), ensure_ascii=False, default=str
+        )
     )
+
+    response.headers["Content-Type"] = "application/json"
+
+    return response
 
 
 @api.route("/charts")
@@ -120,8 +153,14 @@ def get_all_charts():
         "options": {"level": [0, 180], "title": True, "artist": True, "mapper": True},
     }
 
-    return json.dumps(
-        database.tools.search_chart(empty_search_request),
-        ensure_ascii=False,
-        default=str,
+    response = make_response(
+        json.dumps(
+            database.tools.search_chart(empty_search_request),
+            ensure_ascii=False,
+            default=str,
+        )
     )
+
+    response.headers["Content-Type"] = "application/json"
+
+    return response
