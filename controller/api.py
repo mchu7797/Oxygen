@@ -46,35 +46,78 @@ def check_login():
 
 @api.route("/scoreboard/player/<int:player_id>", methods=["GET"])
 def get_player_scoreboard(player_id):
-    pass
+    gauge_difficulty = request.args.get("gauge_difficulty", type=int)
+    show_f_rank = request.args.get("show-f-rank", type=bool)
+
+    if gauge_difficulty is None:
+        gauge_difficulty = 2
+
+    if show_f_rank is None:
+        show_f_rank = True
+
+    return json.dumps(
+        database.scoreboard.get_player_scoreboard(
+            player_id, gauge_difficulty, show_f_rank
+        ),
+        ensure_ascii=False,
+        default=str,
+    )
 
 
 @api.route("/scoreboard/chart/<int:chart_id>", methods=["GET"])
 def get_chart_scoreboard(chart_id):
-    gauge_difficulty = request.args.get(
-        "gauge_difficulty",
-    )
+    gauge_difficulty = request.args.get("gauge_difficulty", type=int)
 
-    esponse_data = {}
-    response_data["scores"] = database.scoreboard.get_music_scoreboard(chart_id, 2)
-    response_data["chart_info"] = database.info.get_music_inf
+    if gauge_difficulty is None:
+        gauge_difficulty = 2
+
+    return json.dumps(
+        database.scoreboard.get_music_scoreboard(chart_id, gauge_difficulty),
+        ensure_ascii=False,
+        default=str,
+    )
 
 
 @api.route("/chart/<int:chart_id>", methods=["GET"])
 def get_chart(chart_id):
-    pass
+    gauge_difficulty = request.args.get("gauge_difficulty", type=int)
+
+    if gauge_difficulty is None:
+        gauge_difficulty = 2
+
+    return json.dumps(
+        database.info.get_music_info(chart_id, gauge_difficulty),
+        ensure_ascii=False,
+        default=str,
+    )
 
 
 @api.route("/player/<int:player_id>", methods=["GET"])
 def get_player(player_id):
-    pass
+    gauge_difficulty = request.args.get("gauge_difficulty", type=int)
+
+    if gauge_difficulty is None:
+        gauge_difficulty = 2
+
+    return json.dumps(
+        database.info.get_player_info(player_id, gauge_difficulty),
+        ensure_ascii=False,
+        default=str,
+    )
 
 
-@api.route("/player")
+@api.route("/players")
 def get_all_player():
-    pass
+    return json.dumps(
+        database.scoreboard.get_player_ranking(7), ensure_ascii=False, default=str
+    )
 
 
-@api.route("/chart")
+@api.route("/charts")
 def get_all_charts():
-    pass
+    empty_search_request = {
+        "keywords": "",
+        "options": {"level": [0, 180], "title": True, "artist": True, "mapper": True},
+    }
+
+    return json.dumps(database.tools.search_chart(), ensure_ascii=False, default=str)
