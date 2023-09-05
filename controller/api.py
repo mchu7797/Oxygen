@@ -38,3 +38,43 @@ def check_login():
         abort(404)
 
     return login_token
+
+
+# Below four endpoint has argument as query string
+# gauge_difficulty : If you set this argument, result only shows selected gauge difficulty
+
+
+@api.route("/scoreboard/player/<int:player_id>", methods=["GET"])
+def get_player_scoreboard(player_id):
+    pass
+
+
+@api.route("/scoreboard/chart/<int:chart_id>", methods=["GET"])
+def get_chart_scoreboard(chart_id):
+    gauge_difficulty = request.args.get(
+        "gauge_difficulty",
+    )
+
+    esponse_data = {}
+    response_data["scores"] = database.scoreboard.get_music_scoreboard(chart_id, 2)
+    response_data["chart_info"] = database.info.get_music_inf
+
+
+@api.route("/chart/<int:chart_id>", methods=["GET"])
+def get_chart(chart_id):
+    pass
+
+
+@api.route("/player/<int:player_id>", methods=["GET"])
+def get_player(player_id):
+    pass
+
+
+@api.route("/player")
+def get_all_player():
+    pass
+
+
+@api.route("/chart")
+def get_all_charts():
+    pass
