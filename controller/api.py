@@ -120,4 +120,8 @@ def get_all_charts():
         "options": {"level": [0, 180], "title": True, "artist": True, "mapper": True},
     }
 
-    return json.dumps(database.tools.search_chart(), ensure_ascii=False, default=str)
+    return json.dumps(
+        database.tools.search_chart(empty_search_request),
+        ensure_ascii=False,
+        default=str,
+    )
