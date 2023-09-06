@@ -168,6 +168,32 @@ def get_player(player_id):
     return response
 
 
+@api.route("/player/<nickname>", methods=["GET"])
+def get_player_by_nickname(nickname):
+    gauge_difficulty = request.args.get("gauge_difficulty", type=int)
+
+    if gauge_difficulty is None:
+        gauge_difficulty = 2
+
+    player_id = database.tools.nickname_to_usercode(nickname)
+    player_info = database.info.get_player_info(player_id, gauge_difficulty)
+
+    if player_info is None:
+        abort(404)
+
+    response = make_response(
+        json.dumps(
+            database.info.get_player_info(player_id, gauge_difficulty),
+            ensure_ascii=False,
+            default=str,
+        )
+    )
+
+    response.headers["Content-Type"] = "application/json"
+
+    return response
+
+
 @api.route("/players")
 def get_all_player():
     response = make_response(
