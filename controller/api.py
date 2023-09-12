@@ -78,17 +78,7 @@ def get_player_scoreboard(player_id):
     if player_scoreboard is None:
         abort(404)
 
-    response = make_response(
-        json.dumps(
-            player_scoreboard,
-            ensure_ascii=False,
-            default=str,
-        )
-    )
-
-    response.headers["Content-Type"] = "application/json"
-
-    return response
+    return make_json_response(player_scoreboard)
 
 
 @api.route("/scoreboard/chart/<int:chart_id>", methods=["GET"])
@@ -105,17 +95,7 @@ def get_chart_scoreboard(chart_id):
     if chart_scoreboard is None:
         abort(404)
 
-    response = make_response(
-        json.dumps(
-            chart_scoreboard,
-            ensure_ascii=False,
-            default=str,
-        )
-    )
-
-    response.headers["Content-Type"] = "application/json"
-
-    return response
+    return make_json_response(chart_scoreboard)
 
 
 @api.route("/chart/<int:chart_id>", methods=["GET"])
@@ -130,17 +110,7 @@ def get_chart(chart_id):
     if music_info is None:
         abort(404)
 
-    response = make_response(
-        json.dumps(
-            music_info,
-            ensure_ascii=False,
-            default=str,
-        )
-    )
-
-    response.headers["Content-Type"] = "application/json"
-
-    return response
+    return make_json_response(music_info)
 
 
 @api.route("/player/<int:player_id>", methods=["GET"])
@@ -155,17 +125,9 @@ def get_player(player_id):
     if player_info is None:
         abort(404)
 
-    response = make_response(
-        json.dumps(
-            database.info.get_player_info(player_id, gauge_difficulty),
-            ensure_ascii=False,
-            default=str,
-        )
+    return make_json_response(
+        database.info.get_player_info(player_id, gauge_difficulty)
     )
-
-    response.headers["Content-Type"] = "application/json"
-
-    return response
 
 
 @api.route("/player/<nickname>", methods=["GET"])
@@ -181,30 +143,24 @@ def get_player_by_nickname(nickname):
     if player_info is None:
         abort(404)
 
-    response = make_response(
-        json.dumps(
-            database.info.get_player_info(player_id, gauge_difficulty),
-            ensure_ascii=False,
-            default=str,
-        )
+    return make_json_response(
+        database.info.get_player_info(player_id, gauge_difficulty)
     )
 
-    response.headers["Content-Type"] = "application/json"
 
-    return response
+@api.route("/chart/ranking")
+def get_chart_ranking():
+    top = request.args.get("top", type=int)
+
+    if top is None:
+        top = 200
+
+    return make_json_response(database.scoreboard.get_playcount_ranking(top=top))
 
 
 @api.route("/players")
 def get_all_player():
-    response = make_response(
-        json.dumps(
-            database.scoreboard.get_player_ranking(7), ensure_ascii=False, default=str
-        )
-    )
-
-    response.headers["Content-Type"] = "application/json"
-
-    return response
+    return make_json_response(database.scoreboard.get_player_ranking(7))
 
 
 @api.route("/charts")
@@ -214,14 +170,11 @@ def get_all_charts():
         "options": {"level": [0, 180], "title": True, "artist": True, "mapper": True},
     }
 
-    response = make_response(
-        json.dumps(
-            database.tools.search_chart(empty_search_request),
-            ensure_ascii=False,
-            default=str,
-        )
-    )
+    return make_json_response(database.tools.search_chart(empty_search_request))
 
+
+def make_json_response(data):
+    response = make_response(json.dumps(data, ensure_ascii=False, default=str))
     response.headers["Content-Type"] = "application/json"
 
     return response

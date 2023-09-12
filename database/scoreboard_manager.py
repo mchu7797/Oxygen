@@ -232,3 +232,52 @@ class ScoreboardManager:
                 return "PlayCount"
             case _:
                 return "Unknown"
+
+    def get_playcount_ranking(self, top=200):
+        cursor = self.__connection.cursor()
+
+        cursor.execute(
+            """
+            SELECT
+                *
+            FROM (
+                SELECT
+                    m.MusicCode,
+                    m.PlayCount,
+                    m.NoteLevel,
+                    mm.Title,
+                    ROW_NUMBER() OVER (
+                        ORDER BY m.PlayCount desc, m.NoteLevel desc
+                    ) AS Rank
+                FROM
+                    dbo.o2jam_music_data m
+                LEFT OUTER JOIN
+                    dbo.o2jam_music_metadata mm
+                    ON m.MusicCode = mm.MusicCode
+                WHERE
+                    m.Difficulty = 2
+            ) A
+            WHERE Rank <= ?
+        """,
+            top,
+        )
+
+        query_results = cursor.fetchall()
+
+        if query_results is None:
+            return []
+
+        response = []
+
+        for rank_info in query_results:
+            response.append(
+                {
+                    "chart_id": rank_info[0],
+                    "playcount": rank_info[1],
+                    "level": rank_info[2],
+                    "chart_title": rank_info[3],
+                    "rank_index": rank_info[4],
+                }
+            )
+
+        return response

@@ -69,15 +69,15 @@ def music_scoreboard(music_code, difficulty=2):
     )
 
 
-@scoreboard.route("/ranking")
-@scoreboard.route("/ranking/<ranking_category>")
-def ranking(ranking_category=7):
+@scoreboard.route("/ranking/player")
+@scoreboard.route("/ranking/player/<ranking_category>")
+def player_ranking(ranking_category=7):
     try:
         category = int(ranking_category)
         if 0 <= category <= 8:
             info = database.scoreboard.get_player_ranking(category)
             return render_template(
-                "ranking.html",
+                "player-ranking.html",
                 status=info["player_infos"],
                 category_name=info["current_option_name"],
             )
@@ -85,3 +85,15 @@ def ranking(ranking_category=7):
         return abort(404)
     except ValueError:
         return abort(404)
+
+
+@scoreboard.route("/ranking/chart")
+def chart_ranking():
+    top = request.args.get("top")
+
+    if top is None:
+        top = 200
+
+    ranking_data = database.scoreboard.get_playcount_ranking(top=top)
+
+    return render_template("chart-ranking.html", ranking=ranking_data)
