@@ -238,6 +238,14 @@ class ScoreboardManager:
 
         cursor.execute(
             """
+            DECLARE @top int;
+            SELECT @top = ?;
+
+            IF @top = 0
+            BEGIN
+                SELECT @top = (SELECT COUNT(*) FROM dbo.o2jam_music_metadata)
+            END
+
             SELECT
                 *
             FROM (
@@ -257,12 +265,14 @@ class ScoreboardManager:
                 WHERE
                     m.Difficulty = 2
             ) A
-            WHERE Rank <= ?
+            WHERE Rank <= @top
         """,
             top,
         )
 
         query_results = cursor.fetchall()
+
+        print(len(query_results))
 
         if query_results is None:
             return []

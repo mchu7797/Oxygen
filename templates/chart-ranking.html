@@ -2,7 +2,17 @@
 {% block title %}Chart Ranking{% endblock %}
 {% block content %}
 <div class="container-lg text-white">
-    <h1 class="text-center">DMJAM CHART RANKING</h1>
+    <h1 class="text-center mb-2">DMJAM CHART RANKING</h1>
+    <div class="d-flex justify-content-between">
+        <span style="color: darkgray;">Collect started when 2023-09-06 00:00 (KST)</span>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Top options">
+            <a href="/ranking/chart?top=200" class="btn btn-outline-secondary">Top 200</a>
+            <a href="/ranking/chart?top=500" class="btn btn-outline-secondary">Top 500</a>
+            <a href="/ranking/chart?top=1000" class="btn btn-outline-secondary">Top 1000</a>
+            <a href="/ranking/chart?top=0" class="btn btn-outline-secondary">No Limit</a>
+        </div>
+    </div>
+    <hr style="border: 1px solid darkgray;" class="mb-3 mt-3">
     {% if ranking | length > 0 %}
     <div class="table-responsive-lg">
         <table class="table table-dark table-borderless">
