@@ -272,8 +272,6 @@ class ScoreboardManager:
 
         query_results = cursor.fetchall()
 
-        print(len(query_results))
-
         if query_results is None:
             return []
 
