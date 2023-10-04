@@ -124,8 +124,8 @@ class ScoreboardManager:
                 LEFT OUTER JOIN dbo.ProgressInfo p ON p.progress_index = h.Progress
                 LEFT OUTER JOIN dbo.O2JamStatus s ON h.PlayerCode = s.PlayerCode
             WHERE 
-                h.MusicCode = 1095
-                AND h.Difficulty = 2
+                h.MusicCode = ?
+                AND h.Difficulty = ?
             ORDER BY
                 h.Score desc,
 				h.Cool desc,
