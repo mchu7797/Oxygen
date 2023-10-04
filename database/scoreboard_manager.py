@@ -117,7 +117,7 @@ class ScoreboardManager:
                 h.isClear,
                 h.PlayedTime,
                 p.progress_name,
-                ROW_NUMBER() OVER (ORDER BY h.Score DESC, h.isClear DESC) status
+                ROW_NUMBER() OVER (ORDER BY h.Score DESC, h.isClear DESC, h.Cool DESC, s.Clear, h.PlayedTime DESC, h.PlayerCode DESC) status
             FROM 
                 dbo.O2JamHighscore h 
                 LEFT OUTER JOIN dbo.T_o2jam_charinfo c on h.PlayerCode = c.USER_INDEX_ID
@@ -126,12 +126,6 @@ class ScoreboardManager:
             WHERE 
                 h.MusicCode = ?
                 AND h.Difficulty = ?
-            ORDER BY
-                h.Score desc,
-				h.Cool desc,
-				s.Clear asc,
-				h.PlayedTime desc,
-				h.PlayerCode desc
         """,
             (music_id, gauge_difficulty),
         )
