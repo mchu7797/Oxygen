@@ -1,4 +1,5 @@
 from enum import Enum
+
 from tools.encrypt import make_new_password_token
 
 
@@ -53,7 +54,7 @@ class DatabaseTools:
                         ON data.MusicCode = meta.MusicCode
             WHERE
                 {level_query}
-                AND ({" OR ".join(search_query).format(string = keyword)})
+                AND ({" OR ".join(search_query).format(string=keyword)})
             ORDER BY
                 data.NoteLevel DESC
         """

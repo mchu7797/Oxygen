@@ -1,55 +1,55 @@
 {% extends 'base.html' %}
 {% block title %}Tools{% endblock %}
 {% block content %}
-<div class="container-lg text-white">
-    <div class="text-center">
-        <h1 class="display-3">Exchange Cash to Gem</h1>
-        <h3>잼으로 전환</h3>
-    </div>
-    {% if gtc_result == 0 %}
-    <div class="alert alert-primary">
-        Succeeded!
-    </div>
-    {% elif gtc_result == 1 %}
-    <div class="alert alert-danger">
-        Error! Player id is not vaild!
-    </div>
-    {% elif gtc_result == 2 %}
-    <div class="alert alert-danger">
-        Error! The exchange value should be divided into units of 100
-    </div>
-    {% elif gtc_result == 3 %}
-    <div class="alert alert-danger">
-        Error! Your Cash amount is not enough!
-    </div>
-    {% endif %}
-    {% if wallet != None and gtc_result != 1 %}
-    <div class="alert alert-info">
-        Your Gem : {{ wallet['gem'] }}
-    </div>
-    <div class="alert alert-info">
-        Your MCash : {{ wallet['mcash'] }}
-    </div>
-    {% endif %}
-    <form action="/troubleshoot/cash-to-gem" method="post">
-        <div class="mb-3">
-            <label for="o2jam-id">ID</label>
-            <input type="text" name="o2jam-id" id="o2jam-id" class="form-control">
+    <div class="container-lg text-white">
+        <div class="text-center">
+            <h1 class="display-3">Exchange Cash to Gem</h1>
+            <h3>잼으로 전환</h3>
         </div>
-        <div class="mb-3">
-            <label for="o2jam-pw">Password</label>
-            <input type="password" name="o2jam-pw" id="o2jam-pw" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label for="gem-amount">Gem Amount</label>
-            <input type="number" name="gem-amount" id="gem-amount" class="form-control" min="100">
-            <div class="form-text">
-                Exchange rate is 0.1 (1 Cash = 100 Gem)
-                <br>
-                1캐시를 100잼으로 교환할 수 있습니다.
+        {% if gtc_result == 0 %}
+            <div class="alert alert-primary">
+                Succeeded!
             </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
+        {% elif gtc_result == 1 %}
+            <div class="alert alert-danger">
+                Error! Player id is not vaild!
+            </div>
+        {% elif gtc_result == 2 %}
+            <div class="alert alert-danger">
+                Error! The exchange value should be divided into units of 100
+            </div>
+        {% elif gtc_result == 3 %}
+            <div class="alert alert-danger">
+                Error! Your Cash amount is not enough!
+            </div>
+        {% endif %}
+        {% if wallet != None and gtc_result != 1 %}
+            <div class="alert alert-info">
+                Your Gem : {{ wallet['gem'] }}
+            </div>
+            <div class="alert alert-info">
+                Your MCash : {{ wallet['mcash'] }}
+            </div>
+        {% endif %}
+        <form action="/troubleshoot/cash-to-gem" method="post">
+            <div class="mb-3">
+                <label for="o2jam-id">ID</label>
+                <input type="text" name="o2jam-id" id="o2jam-id" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="o2jam-pw">Password</label>
+                <input type="password" name="o2jam-pw" id="o2jam-pw" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="gem-amount">Gem Amount</label>
+                <input type="number" name="gem-amount" id="gem-amount" class="form-control" min="100">
+                <div class="form-text">
+                    Exchange rate is 0.1 (1 Cash = 100 Gem)
+                    <br>
+                    1캐시를 100잼으로 교환할 수 있습니다.
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 {% endblock %}

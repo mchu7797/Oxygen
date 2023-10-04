@@ -1,26 +1,26 @@
 {% extends 'base.html' %}
 {% block title %}Fix Connection{% endblock %}
 {% block content %}
-<div class="container-lg text-white">
-    <div class="text-center">
-        <h1 class="display-3">Fix connection error</h1>
-        <h3>접속 오류 해제</h3>
-    </div>
-    {% if fix_success == True %}
-    <div class="alert alert-primary">
-        Succeeded!
-    </div>
-    {% endif %}
-    <form action="/troubleshoot/fix-login" method="post">
-        <div class="mb-3">
-            <label for="o2jam-id">ID</label>
-            <input type="text" name="o2jam-id" id="o2jam-id" class="form-control">
+    <div class="container-lg text-white">
+        <div class="text-center">
+            <h1 class="display-3">Fix connection error</h1>
+            <h3>접속 오류 해제</h3>
         </div>
-        <div class="mb-3">
-            <label for="o2jam-pw">Password</label>
-            <input type="password" name="o2jam-pw" id="o2jam-pw" class="form-control">
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
+        {% if fix_success == True %}
+            <div class="alert alert-primary">
+                Succeeded!
+            </div>
+        {% endif %}
+        <form action="/troubleshoot/fix-login" method="post">
+            <div class="mb-3">
+                <label for="o2jam-id">ID</label>
+                <input type="text" name="o2jam-id" id="o2jam-id" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="o2jam-pw">Password</label>
+                <input type="password" name="o2jam-pw" id="o2jam-pw" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 {% endblock %}

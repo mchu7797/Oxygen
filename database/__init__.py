@@ -1,4 +1,5 @@
 import pyodbc
+
 from database.info_manager import InfoManager
 from database.scoreboard_manager import ScoreboardManager
 from database.tools import DatabaseTools
@@ -13,3 +14,13 @@ class DatabaseConnection:
         self.scoreboard = ScoreboardManager(self._connection)
         self.info = InfoManager(self._connection)
         self.tools = DatabaseTools(self._connection, self._connection_trade)
+
+    def close(self):
+        try:
+            self._connection.close()
+            self._connection_trade.close()
+        except pyodbc.ProgrammingError:
+            return
+
+    def __del__(self):
+        self.close()

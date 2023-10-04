@@ -1,17 +1,31 @@
-from flask import Blueprint, request, render_template, abort, redirect
+from flask import Blueprint, request, render_template, abort, redirect, g
 
-from database import DatabaseConnection
 from config import DATABASE_CONFIG
+from database import DatabaseConnection
 from tools.search_parser import parse_search
 
 scoreboard = Blueprint("scoreboard", __name__)
-database = DatabaseConnection(DATABASE_CONFIG)
+
+
+def get_db():
+    if 'db' not in g:
+        g.db = DatabaseConnection(DATABASE_CONFIG)
+
+    return g.db
+
+
+@scoreboard.teardown_request
+def teardown_db(_):
+    db = g.pop('db', None)
+
+    if db is not None:
+        db.close()
 
 
 @scoreboard.route("/online")
 @scoreboard.route("/online-for-launcher")
 def online():
-    online_players = database.tools.get_online_players()
+    online_players = get_db().tools.get_online_players()
     return render_template("online.html", online=online_players)
 
 
@@ -22,18 +36,20 @@ def music_find():
     if keyword is None:
         return render_template("find-music.html", song_list=[], init=True)
 
-    result_data = database.tools.search_chart(parse_search(keyword))
+    result_data = get_db().tools.search_chart(parse_search(keyword))
     return render_template("find-music.html", song_list=result_data, init=False)
 
 
 @scoreboard.route("/player-scoreboard/<player_code>")
-def append_difficlty(player_code):
+def append_difficulty(player_code):
     return redirect(f"/player-scoreboard/{player_code}/2", code=301)
 
 
 @scoreboard.route("/player-scoreboard/<player_code>/<difficulty>")
 @scoreboard.route("/player-scoreboard/<player_code>/<difficulty>/<show_f_rank>")
 def player_scoreboard(player_code, difficulty, show_f_rank="N"):
+    database = get_db()
+
     show_f_rank = True if show_f_rank == "Y" else False
     player_scores = database.scoreboard.get_player_scoreboard(
         player_code, difficulty, show_f_rank
@@ -55,6 +71,8 @@ def player_scoreboard(player_code, difficulty, show_f_rank="N"):
 @scoreboard.route("/music-scoreboard/<music_code>")
 @scoreboard.route("/music-scoreboard/<music_code>/<difficulty>")
 def music_scoreboard(music_code, difficulty=2):
+    database = get_db()
+
     if music_code is None:
         return abort(404)
 
@@ -75,7 +93,7 @@ def player_ranking(ranking_category=7):
     try:
         category = int(ranking_category)
         if 0 <= category <= 8:
-            info = database.scoreboard.get_player_ranking(category)
+            info = get_db().scoreboard.get_player_ranking(category)
             return render_template(
                 "player-ranking.html",
                 status=info["player_infos"],
@@ -94,6 +112,6 @@ def chart_ranking():
     if top is None:
         top = 200
 
-    ranking_data = database.scoreboard.get_playcount_ranking(top=top)
+    ranking_data = get_db().scoreboard.get_playcount_ranking(top=top)
 
     return render_template("chart-ranking.html", ranking=ranking_data)
