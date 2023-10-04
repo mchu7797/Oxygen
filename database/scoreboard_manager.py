@@ -86,7 +86,7 @@ class ScoreboardManager:
                     "music_title": record[2],
                     "music_difficulty": record[3],
                     "music_level": record[4],
-                    "score": round(int(record[5]) / 10000, 2),
+                    "score": record[5],
                     "progress": record[6],
                     "is_cleared_record": record[7],
                     "cleared_time": record[8],
@@ -122,11 +122,16 @@ class ScoreboardManager:
                 dbo.O2JamHighscore h 
                 LEFT OUTER JOIN dbo.T_o2jam_charinfo c on h.PlayerCode = c.USER_INDEX_ID
                 LEFT OUTER JOIN dbo.ProgressInfo p ON p.progress_index = h.Progress
+                LEFT OUTER JOIN dbo.O2JamStatus s ON h.PlayerCode = s.PlayerCode
             WHERE 
-                h.MusicCode = ?
-                AND h.Difficulty = ?
+                h.MusicCode = 1095
+                AND h.Difficulty = 2
             ORDER BY
-                h.Score desc
+                h.Score desc,
+				h.Cool desc,
+				s.Clear asc,
+				h.PlayedTime desc,
+				h.PlayerCode desc
         """,
             (music_id, gauge_difficulty),
         )
@@ -144,7 +149,7 @@ class ScoreboardManager:
                     "score_bad": record[4],
                     "score_miss": record[5],
                     "score_max_combo": record[6],
-                    "score": round(int(record[7]) / 10000, 2),
+                    "score": record[7],
                     "is_cleared_record": record[8],
                     "cleared_time": record[9],
                     "progress": record[10],
