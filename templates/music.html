@@ -6,26 +6,27 @@
     <h4>{{ metadata['artist'] }}</h4>
     <h4>{{ metadata['note_charter'] }}</h4>
     <div class="d-flex flex-row-reverse">
-        <div class="btn-group btn-group-sm" role="group" aria-label="Guage options">
-            {% if metadata['difficulty'] == 0 %}
-            <a class="btn btn-success">Lv. {{ metadata['level'] }}</a>
-            {% elif metadata['difficulty'] == 1 %}
-            <a class="btn btn-warning">Lv. {{ metadata['level'] }}</a>
-            {% else %}
-            <a class="btn btn-danger">Lv. {{ metadata['level'] }}</a>
-            {% endif %}
+        <div class="btn-group" role="group" aria-label="Guage options">
+            <a href="https://ojn.kenzync.dev/?id={{ metadata['music_code'] }}&server=dmjam" class="btn btn-primary">Watch Chart</a>
             <a href="/music-scoreboard/{{ metadata['music_code'] }}/0"
-                class="btn {% if metadata['difficulty'] == 0 %}btn-success{% else %}btn-outline-light{% endif %}">Easy</a>
+                class="btn {% if metadata['difficulty'] == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
             <a href="/music-scoreboard/{{ metadata['music_code'] }}/1"
-                class="btn {% if metadata['difficulty'] == 1 %}btn-warning{% else %}btn-outline-light{% endif %}">Normal</a>
+                class="btn {% if metadata['difficulty'] == 1 %}btn-warning{% else %}btn-secondary{% endif %}">Normal</a>
             <a href="/music-scoreboard/{{ metadata['music_code'] }}/2"
-                class="btn {% if metadata['difficulty'] == 2 %}btn-danger{% else %}btn-outline-light{% endif %}">Hard</a>
+                class="btn {% if metadata['difficulty'] == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
         </div>
     </div>
     <hr style="border: 1px solid darkgrey" class="mb-3 mt-3">
     <div class="mb-3 mt-3">
-        <span class="badge text-bg-secondary">BPM : {{ metadata['bpm'] }}</span>
-        <span class="badge text-bg-secondary">CHART PLAYCOUNT : {{ metadata['play_count'] }}</span>
+        {% if metadata['difficulty'] == 0 %}
+        <span class="badge bg-success">LEVEL {{ metadata['level'] }}</span>
+        {% elif metadata['difficulty'] == 1 %}
+        <span class="badge bg-warning">LEVEL {{ metadata['level'] }}</span>
+        {% else %}
+        <span class="badge bg-danger">LEVEL {{ metadata['level'] }}</span>
+        {% endif %}
+        <span class="badge bg-secondary">BPM : {{ metadata['bpm'] }}</span>
+        <span class="badge bg-secondary">CHART PLAYCOUNT : {{ metadata['play_count'] }}</span>
     </div>
     {% if scoreboard != None %}
     <div class="table-responsive-lg">

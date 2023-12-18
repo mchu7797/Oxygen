@@ -1,11 +1,10 @@
-import json
-from flask import Flask, render_template, abort, url_for
+from flask import Flask, render_template
 from flask_cors import CORS
 
 from controller.api import api
 from controller.redirection import redirection
-from controller.troubleshoot import troubleshoot
 from controller.scoreboard import scoreboard
+from controller.troubleshoot import troubleshoot
 
 app = Flask(__name__)
 
