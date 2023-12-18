@@ -1,17 +1,6 @@
 [tool.poetry]
-name = "oxygen"
+name = "Oxygen"
 version = "0.1.0"
-<<<<<<< HEAD
-description = "DMJam internet ranking web app"
-authors = ["Minseok Chu <mchu7797@gmail.com>"]
-readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.11"
-pyodbc = "^5.0.1"
-Flask = "^3.0.0"
-Flask-Cors = "^4.0.0"
-=======
 description = "O2Jam internet ranking server project"
 authors = ["Chu Minseok <mchu7797@gmail.com>"]
 readme = "README.md"
@@ -22,7 +11,6 @@ Flask = "^3.0.0"
 Flask-Cors = "^4.0.0"
 pyodbc = "^5.0.1"
 waitress = "^2.1.2"
->>>>>>> database-test
 
 
 [build-system]
