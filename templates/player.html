@@ -118,13 +118,13 @@
                 <label for="show-f-rank" class="form-check-label">Show F Rank</label>
             </div>
             <div>
-                <div class="btn-group btn-group-sm" role="group" aria-label="Gauge options">
+                <div class="btn-group" role="group" aria-label="Gauge options">
                     <a href="/player-scoreboard/{{ metadata['player_code'] }}/0"
-                       class="btn {% if metadata['current_view_difficulty'] == 0 %}btn-success{% else %}btn-outline-light{% endif %}">Easy</a>
+                       class="btn {% if metadata['current_view_difficulty'] == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
                     <a href="/player-scoreboard/{{ metadata['player_code'] }}/1"
-                       class="btn {% if metadata['current_view_difficulty'] == 1 %}btn-warning{% else %}btn-outline-light{% endif %}">Normal</a>
+                       class="btn {% if metadata['current_view_difficulty'] == 1 %}btn-warning{% else %}btn-secondary{% endif %}">Normal</a>
                     <a href="/player-scoreboard/{{ metadata['player_code'] }}/2"
-                       class="btn {% if metadata['current_view_difficulty'] == 2 %}btn-danger{% else %}btn-outline-light{% endif %}">Hard</a>
+                       class="btn {% if metadata['current_view_difficulty'] == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
                 </div>
             </div>
         </div>
