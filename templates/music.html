@@ -7,12 +7,6 @@
     <h4>{{ metadata['note_charter'] }}</h4>
     <div class="d-flex flex-row-reverse">
         <div class="btn-group" role="group" aria-label="Guage options">
-            <a href="https://ojn.kenzync.dev/?id={{ metadata['music_code'] }}&server=dmjam" target="_blank" class="btn btn-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
-                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
-                </svg>
-            </a>
             <a href="/music-scoreboard/{{ metadata['music_code'] }}/0"
                 class="btn {% if metadata['difficulty'] == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
             <a href="/music-scoreboard/{{ metadata['music_code'] }}/1"
@@ -20,6 +14,13 @@
             <a href="/music-scoreboard/{{ metadata['music_code'] }}/2"
                 class="btn {% if metadata['difficulty'] == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
         </div>
+        &nbsp;
+        <a href="https://ojn.kenzync.dev/?id={{ metadata['music_code'] }}&server=dmjam" target="_blank" class="btn btn-outline-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
+                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
+            </svg>
+        </a>
     </div>
     <hr style="border: 1px solid darkgrey" class="mb-3 mt-3">
     <div class="mb-3 mt-3">
