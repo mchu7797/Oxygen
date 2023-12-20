@@ -117,7 +117,15 @@ class ScoreboardManager:
                 h.isClear,
                 h.PlayedTime,
                 p.progress_name,
-                ROW_NUMBER() OVER (ORDER BY h.Score DESC, h.isClear DESC, h.Cool DESC, s.Clear, h.PlayedTime DESC, h.PlayerCode DESC) status
+                ROW_NUMBER() OVER (
+                    ORDER BY
+                        h.Score DESC,
+                        h.isClear DESC,
+                        h.Cool DESC,
+                        s.Clear,
+                        h.PlayedTime DESC,
+                        h.PlayerCode DESC
+                ) status
             FROM 
                 dbo.O2JamHighscore h 
                 LEFT OUTER JOIN dbo.T_o2jam_charinfo c on h.PlayerCode = c.USER_INDEX_ID
@@ -180,9 +188,13 @@ class ScoreboardManager:
                 SELECT
                     s.PlayerCode, 
                     c.USER_NICKNAME, 
-                    s.{self.__ranking_option_to_string(sort_option)}, 
+                    s.{ self.__ranking_option_to_string(sort_option) },
                     t.tier_name,
-                    RANK() OVER (ORDER BY s.{self.__ranking_option_to_string(sort_option)} desc, s.Tier ASC) RowNum
+                    RANK() OVER (
+                        ORDER BY
+                            s.{self.__ranking_option_to_string(sort_option)} desc,
+                            s.Tier ASC
+                    ) RowNum
                 FROM 
                     dbo.O2JamStatus s
                     LEFT OUTER JOIN dbo.T_o2jam_charinfo c on s.PlayerCode = c.USER_INDEX_ID 
@@ -284,6 +296,112 @@ class ScoreboardManager:
                     "level": rank_info[2],
                     "chart_title": rank_info[3],
                     "rank_index": rank_info[4],
+                }
+            )
+
+        return response
+
+    def get_record_histories(self, player_id, chart_id, difficulty):
+        cursor = self.__connection.cursor()
+
+        cursor.execute(
+            """
+                SELECT TOP 50
+                    PlayedTime,
+                    Score,
+                    Progress,
+                    isClear,
+                    Cool,
+                    Good,
+                    Bad,
+                    Miss,
+                    MaxCombo,
+                    ROW_NUMBER() OVER (
+                        ORDER BY
+                            Score DESC
+                    ) RowNum
+                FROM dbo.O2JamPlaylog
+                WHERE
+                    PlayerCode = ?
+                    AND MusicCode = ?
+                    AND Difficulty = ?
+            """,
+            (player_id, chart_id, difficulty),
+        )
+
+        query_results = cursor.fetchall()
+
+        if query_results is None:
+            return []
+
+        response = []
+
+        for rank_info in query_results:
+            response.append(
+                {
+                    "player_code": player_id,
+                    "cleared_time": rank_info[0],
+                    "score": rank_info[1],
+                    "progress": rank_info[2],
+                    "is_cleared_record": rank_info[3],
+                    "score_cool": rank_info[4],
+                    "score_good": rank_info[5],
+                    "score_bad": rank_info[6],
+                    "score_miss": rank_info[7],
+                    "score_max_combo": rank_info[8],
+                    "row_number": rank_info[9],
+                }
+            )
+
+        return response
+
+    def get_recent_records(self, player_id, difficulty):
+        cursor = self.__connection.cursor()
+
+        cursor.execute(
+            """
+                SELECT TOP 50
+                    MusicCode,
+                    PlayedTime,
+                    Score,
+                    Progress,
+                    isClear,
+                    Cool,
+                    Good,
+                    Bad,
+                    Miss,
+                    MaxCombo,
+                    ROW_NUMBER() OVER (ORDER BY PlayedTime DESC) RowNum
+                FROM dbo.O2JamPlaylog
+                WHERE
+                    PlayerCode = ?
+                    AND Difficulty = ?
+            """,
+            (player_id, difficulty),
+        )
+
+        query_results = cursor.fetchall()
+
+        if query_results is None:
+            return []
+
+        response = []
+
+        for rank_info in query_results:
+            response.append(
+                {
+                    "player_code": player_id,
+                    "music_code": rank_info[0],
+                    "cleared_time": rank_info[1],
+                    "score": rank_info[2],
+                    "progress": rank_info[3],
+                    "is_cleared_record": rank_info[4],
+                    "score_cool": rank_info[5],
+                    "score_good": rank_info[6],
+                    "score_bad": rank_info[7],
+                    "score_miss": rank_info[8],
+                    "score_max_combo": rank_info[9],
+                    "row_number": rank_info[10],
                 }
             )
 

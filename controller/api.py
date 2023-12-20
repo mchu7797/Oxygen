@@ -7,7 +7,7 @@ api = Blueprint("api", __name__, url_prefix="/api")
 
 
 def get_db():
-    if 'db' not in g:
+    if "db" not in g:
         g.db = DatabaseConnection(DATABASE_CONFIG)
 
     return g.db
@@ -15,7 +15,7 @@ def get_db():
 
 @api.teardown_request
 def teardown_db(_):
-    db = g.pop('db', None)
+    db = g.pop("db", None)
 
     if db is not None:
         db.close()
@@ -57,9 +57,8 @@ def check_login():
 # Below four endpoint has argument as query string
 # gauge_difficulty : If you set this argument, result only shows selected gauge difficulty
 @api.route("/scoreboard/player/<int:player_id>", methods=["GET"])
-def get_player_scoreboard(player_id):
+def get_scoreboard_by_player(player_id):
     gauge_difficulty = request.args.get("gauge_difficulty", type=int)
-
     show_f_rank = request.args.get("show-f-rank", type=bool)
 
     if gauge_difficulty is None:
@@ -78,8 +77,23 @@ def get_player_scoreboard(player_id):
     return make_json_response(player_scoreboard)
 
 
+@api.route("/scoreboard/player/<int:player_id>/recent", methods=["GET"])
+def get_recent_records_by_player(player_id):
+    gauge_difficulty = request.args.get("gauge_difficulty", type=int)
+
+    if gauge_difficulty is None:
+        gauge_difficulty = 2
+
+    recent_records = get_db().scoreboard.get_recent_records(player_id, gauge_difficulty)
+
+    if recent_records is None:
+        abort(404)
+
+    return make_json_response(recent_records)
+
+
 @api.route("/scoreboard/chart/<int:chart_id>", methods=["GET"])
-def get_chart_scoreboard(chart_id):
+def get_scoreboard_by_chart(chart_id):
     gauge_difficulty = request.args.get("gauge_difficulty", type=int)
 
     if gauge_difficulty is None:
@@ -93,6 +107,25 @@ def get_chart_scoreboard(chart_id):
         abort(404)
 
     return make_json_response(chart_scoreboard)
+
+
+@api.route("/scoreboard/history", methods=["GET"])
+def get_record_histories():
+    player_id = request.args.get("player_id", type=int)
+    chart_id = request.args.get("chart_id", type=int)
+    gauge_difficulty = request.args.get("gauge_difficulty", type=int)
+
+    if player_id is None or chart_id is None:
+        abort(404)
+
+    if gauge_difficulty is None:
+        gauge_difficulty = 2
+
+    histories = get_db().scoreboard.get_record_histories(
+        player_id, chart_id, gauge_difficulty
+    )
+
+    return make_json_response(histories)
 
 
 @api.route("/chart/<int:chart_id>", methods=["GET"])
