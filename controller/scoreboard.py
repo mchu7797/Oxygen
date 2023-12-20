@@ -8,7 +8,7 @@ scoreboard = Blueprint("scoreboard", __name__)
 
 
 def get_db():
-    if 'db' not in g:
+    if "db" not in g:
         g.db = DatabaseConnection(DATABASE_CONFIG)
 
     return g.db
@@ -16,7 +16,7 @@ def get_db():
 
 @scoreboard.teardown_request
 def teardown_db(_):
-    db = g.pop('db', None)
+    db = g.pop("db", None)
 
     if db is not None:
         db.close()
@@ -115,3 +115,32 @@ def chart_ranking():
     ranking_data = get_db().scoreboard.get_playcount_ranking(top=top)
 
     return render_template("chart-ranking.html", ranking=ranking_data)
+
+
+@scoreboard.route("/history", methods=["GET"])
+def history():
+    player_id = request.args.get("player_id", type=int)
+    chart_id = request.args.get("chart_id", type=int)
+    gauge_difficulty = request.args.get("gauge_difficulty", type=int)
+
+    if player_id is None or chart_id is None:
+        abort(404)
+
+    if gauge_difficulty is None:
+        gauge_difficulty = 2
+
+    histories = get_db().scoreboard.get_record_histories(
+        player_id, chart_id, gauge_difficulty
+    )
+
+    chart_data = get_db().info.get_music_info(chart_id, gauge_difficulty)
+    player_data = get_db().info.get_player_info(player_id, gauge_difficulty)
+
+    return render_template(
+        "player-history.html",
+        histories=histories,
+        player_info=player_data,
+        chart_info=chart_data,
+        player_id=player_id,
+        gauge_difficulty=gauge_difficulty,
+    )

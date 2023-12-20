@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}History : {{ chart_info['title'] }}{% endblock %}
+{% block content %}
+<div class="container-lg text-white">
+    <h1>{{ chart_info['title'] }}</h1>
+    <h4>{{ chart_info['artist'] }}</h4>
+    <h4>{{ chart_info['note_charter'] }}</h4>
+    <div class="d-flex flex-row-reverse">
+        <div class="btn-group" role="group" aria-label="Guage options">
+            <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=0"
+                class="btn {% if gauge_difficulty == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
+            <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=1"
+                class="btn {% if gauge_difficulty == 1 %}btn-warning{% else %}btn-secondary{% endif %}">Normal</a>
+            <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=2"
+                class="btn {% if gauge_difficulty == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
+        </div>
+        &nbsp;
+        <a href="/music-scoreboard/{{ chart_info['music_code'] }}/{{ gauge_difficulty }}"
+            class="btn btn-outline-secondary">
+            Go Ranking
+        </a>
+    </div>
+    <hr style="border: 1px solid darkgrey" class="mb-3 mt-3">
+    <div class="mb-3 mt-3">
+        <span class="badge bg-info bg-opacity-75">PLAYER : {{ player_info['nickname'] }}</span>
+        {% if chart_info['difficulty'] == 0 %}
+        <span class="badge bg-success">LEVEL {{ chart_info['level'] }}</span>
+        {% elif chart_info['difficulty'] == 1 %}
+        <span class="badge bg-warning">LEVEL {{ chart_info['level'] }}</span>
+        {% else %}
+        <span class="badge bg-danger">LEVEL {{ chart_info['level'] }}</span>
+        {% endif %}
+        <span class="badge bg-secondary">BPM : {{ chart_info['bpm'] }}</span>
+    </div>
+    {% if histories != [] %}
+    <div class="table-responsive-lg">
+        <table class="table table-dark table-borderless table-sm">
+            <thead>
+                <th scope="col">#</th>
+                <th scope="col">Cool</th>
+                <th scope="col">Good</th>
+                <th scope="col">Bad</th>
+                <th scope="col">Miss</th>
+                <th scope="col">MaxCombo</th>
+                <th scope="col">Score</th>
+                <th scope="col">Grade</th>
+                <th scope="col">Clear</th>
+                <th scope="col">PlayTime</th>
+            </thead>
+            <tbody>
+                {% for score in histories %}
+                <tr>
+                    <th scope="row">{{ score['row_number'] }}</th>
+                    <td>{{ score['score_cool'] }}</td>
+                    <td>{{ score['score_good'] }}</td>
+                    <td>{{ score['score_bad'] }}</td>
+                    <td>{{ score['score_miss'] }}</td>
+                    <td>{{ score['score_max_combo'] }}</td>
+                    <td>{{ score['score'] }}</td>
+                    {% if score['progress'] == 1 %}
+                    <td>
+                        <span class="badge" style="background-color: #FFD700; color: #000000;">P Rank</span>
+                    </td>
+                    {% elif score['progress'] == 2 %}
+                    <td>
+                        <span class="badge" style="background-color: #FE9A76; color: #000000;">SS Rank</span>
+                    </td>
+                    {% elif score['progress'] == 3 %}
+                    <td>
+                        <span class="badge" style="background-color: #32CD32; color: #000000;">S Rank</span>
+                    </td>
+                    {% elif score['progress'] == 4 %}
+                    <td>
+                        <span class="badge" style="background-color: #008080; color: #000000;">A Rank</span>
+                    </td>
+                    {% elif score['progress'] == 5 %}
+                    <td>
+                        <span class="badge" style="background-color: #0E6EB8; color: #000000;">B Rank</span>
+                    </td>
+                    {% elif score['progress'] == 6 %}
+                    <td>
+                        <span class="badge" style="background-color: #EE82EE; color: #000000;">C Rank</span>
+                    </td>
+                    {% elif score['progress'] == 7 %}
+                    <td>
+                        <span class="badge" style="background-color: #B03060; color: #000000;">D Rank</span>
+                    </td>
+                    {% elif score['progress'] == 8 %}
+                    <td>
+                        <span class="badge" style="background-color: #A0A0A0; color: #000000;">F Rank</span>
+                    </td>
+                    {% endif %}
+                    {% if score['is_cleared_record'] == 1 %}
+                    <td>
+                        <span class="badge" style="background-color: #198754; color: #000000;">Cleared</span>
+                    </td>
+                    {% else %}
+                    <td>
+                        <span class="badge" style="background-color: #DC3545; color: #000000;">Failed</span>
+                    </td>
+                    {% endif %}
+                    <td>{{ score['cleared_time'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-white info-header">
+        <div class="d-flex justify-content-center">
+            <h3>YOU HAVEN'T PLAYED THIS CHART!</h3>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

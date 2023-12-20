@@ -112,11 +112,7 @@
             </div>
         </div>
     </div>
-    <div class="d-flex justify-content-between">
-        <div class="form-check form-switch form-check-inline">
-            <input type="checkbox" class="form-check-input" id="show-f-rank" value="rank-view-option-1">
-            <label for="show-f-rank" class="form-check-label">Show F Rank</label>
-        </div>
+    <div class="d-flex flex-row-reverse">
         <div>
             <div class="btn-group" role="group" aria-label="Gauge options">
                 <a href="/player-scoreboard/{{ metadata['player_code'] }}/0"
@@ -126,6 +122,12 @@
                 <a href="/player-scoreboard/{{ metadata['player_code'] }}/2"
                     class="btn {% if metadata['current_view_difficulty'] == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
             </div>
+        </div>
+
+        &nbsp;
+        <div class="form-check form-switch form-check-inline">
+            <input type="checkbox" class="form-check-input" id="show-f-rank" value="rank-view-option-1">
+            <label for="show-f-rank" class="form-check-label">Show F Rank</label>
         </div>
     </div>
     <hr style="border: 1px solid darkgrey;" class="mb-3 mt-3">
@@ -151,8 +153,10 @@
                 <tr>
                     <th scope="row">#{{ score['row_number'] }}</th>
                     <td width="50%">
-                        <a href="/music-scoreboard/{{ score['music_code'] }}/{{ metadata['current_view_difficulty'] }}">{{
-                            score['music_title'] }}</a>
+                        <a
+                            href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
+                            {{ score['music_title'] }}
+                        </a>
                     </td>
                     <td>{{ score['score'] }}</td>
                     {% if score['is_cleared_record'] == 1 %}
