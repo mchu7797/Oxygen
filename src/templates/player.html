@@ -133,12 +133,8 @@
             <span class="badge text-bg-secondary">{{ tier['tier'] }}</span>
         </div>
         <div class="col-auto">
-            {% if show_recent == True %}
-            <a id="show-f-rank" class="btn btn-outline-light btn-sm disabled" data-bs-toggle="button">Show F</a>
-            {% else %}
             <a id="show-f-rank" class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %}" {% if
                 show_f_rank==True %}aria-pressed="true" {% endif %} data-bs-toggle="button">Show F</a>
-            {% endif %}
         </div>
     </div>
     {% if scoreboard != None %}

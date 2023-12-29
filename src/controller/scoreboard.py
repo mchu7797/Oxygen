@@ -52,7 +52,7 @@ def player_scoreboard(player_code, difficulty):
 
     if show_recent:
         player_scores = get_db().player_ranking.get_recent_records(
-            player_code, difficulty
+            player_code, difficulty, show_f_rank
         )
     else:
         player_scores = get_db().player_ranking.get_player_top_records(
