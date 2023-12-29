@@ -1,0 +1,275 @@
+from database import PeriodOption, PlayerRankingOption
+
+
+class PlayerRankingManager:
+    def __init__(self, connection):
+        self._connection = connection
+
+    def get_player_top_records(self, player_id, gauge_difficulty, show_f_rank):
+        cursor = self._connection.cursor()
+
+        if show_f_rank:
+            view_option_query = "h.Score => 50000"
+        else:
+            view_option_query = "h.isClear = 1"
+
+        cursor.execute(
+            f"""
+                    SELECT
+                        h.PlayerCode,
+                        h.MusicCode,
+                        md.Title,
+                        h.Difficulty,
+                        d.NoteLevel,
+                        h.Score,
+                        p.progress_name,
+                        h.isClear,
+                        h.PlayedTime,
+                        sr.SongRank,
+                        ROW_NUMBER() OVER (
+                        ORDER BY
+                            d.NoteLevel DESC,
+                            h.Score DESC
+                        ) RowNumber
+                    FROM
+                        dbo.O2JamHighscore h
+                        LEFT OUTER JOIN
+                            dbo.o2jam_music_metadata md ON md.MusicCode = h.MusicCode
+                        LEFT OUTER JOIN
+                            dbo.o2jam_music_data d
+                                ON d.MusicCode = h.MusicCode AND d.Difficulty = h.Difficulty
+                        LEFT OUTER JOIN
+                            dbo.ProgressInfo p ON p.progress_index = h.Progress
+                        LEFT OUTER JOIN (
+                            SELECT
+                                PlayerCode,
+                                MusicCode,
+                                Difficulty,
+                                RANK() OVER (
+                                PARTITION BY MusicCode,
+                                Difficulty
+                                ORDER BY
+                                    Score DESC
+                                ) SongRank
+                            FROM
+                                dbo.O2JamHighscore
+                            ) sr on sr.PlayerCode = h.PlayerCode
+                        AND sr.MusicCode = h.MusicCode
+                        AND sr.Difficulty = h.Difficulty
+                    WHERE
+                        h.PlayerCode = ?
+                        AND h.Difficulty = ?
+                        AND {view_option_query}
+                """,
+            (player_id, gauge_difficulty)
+        )
+
+        raw_records = cursor.fetchall()
+        response = []
+
+        for record in raw_records:
+            response.append(
+                {
+                    "player_code": record[0],
+                    "music_code": record[1],
+                    "music_title": record[2],
+                    "music_difficulty": record[3],
+                    "music_level": record[4],
+                    "score": record[5],
+                    "progress": record[6],
+                    "is_cleared_record": record[7],
+                    "cleared_time": record[8],
+                    "record_rank": record[9],
+                    "row_number": record[10],
+                }
+            )
+
+        if len(response) == 0:
+            return None
+
+        return response
+
+    def get_player_ranking(self, sort_option: PlayerRankingOption):
+        cursor = self._connection.cursor()
+
+        if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:
+            cursor.execute("""
+                SELECT 
+                    c.USER_INDEX_ID, 
+                    c.USER_NICKNAME, 
+                    c.Battle, 
+                    t.tier_name,
+                    RANK() OVER (ORDER BY battle desc) RowNum
+                FROM 
+                    dbo.T_o2jam_charinfo c 
+                    LEFT OUTER JOIN dbo.O2JamStatus s on s.PlayerCode = c.USER_INDEX_ID 
+                    LEFT OUTER JOIN dbo.TierInfo t on s.Tier = t.tier_index
+            """)
+        else:
+            cursor.execute(f"""
+                SELECT
+                    s.PlayerCode, 
+                    c.USER_NICKNAME, 
+                    s.{self._ranking_option_to_string(sort_option)},
+                    t.tier_name,
+                    RANK() OVER (
+                        ORDER BY
+                            s.{self._ranking_option_to_string(sort_option)} desc,
+                            s.Tier
+                    ) RowNum
+                FROM 
+                    dbo.O2JamStatus s
+                    LEFT OUTER JOIN dbo.T_o2jam_charinfo c on s.PlayerCode = c.USER_INDEX_ID 
+                    LEFT OUTER JOIN dbo.TierInfo t on s.Tier = t.tier_index
+            """)
+
+        raw_records = cursor.fetchall()
+        player_informations = []
+
+        for player_information in raw_records:
+            player_informations.append(
+                {
+                    "player_code": player_information[0],
+                    "player_nickname": player_information[1],
+                    "rank": player_information[2],
+                    "tier": player_information[3],
+                    "row_number": player_information[4],
+                }
+            )
+
+        return {
+            "player_infos": player_informations,
+            "current_option_name": self._ranking_option_to_string(sort_option)
+        }
+
+    @staticmethod
+    def _ranking_option_to_string(ranking_option):
+        match PlayerRankingOption(ranking_option):
+            case PlayerRankingOption.ORDER_P:
+                return "P"
+            case PlayerRankingOption.ORDER_SS:
+                return "SS"
+            case PlayerRankingOption.ORDER_S:
+                return "S"
+            case PlayerRankingOption.ORDER_A:
+                return "A"
+            case PlayerRankingOption.ORDER_B:
+                return "B"
+            case PlayerRankingOption.ORDER_C:
+                return "C"
+            case PlayerRankingOption.ORDER_D:
+                return "D"
+            case PlayerRankingOption.ORDER_CLEAR:
+                return "Clear"
+            case PlayerRankingOption.ORDER_PLAYCOUNT:
+                return "PlayCount"
+            case _:
+                return "Unknown"
+
+    def get_record_histories(self, player_id, chart_id, difficulty):
+        cursor = self._connection.cursor()
+
+        cursor.execute(
+            """
+                SELECT TOP 50
+                    PlayedTime,
+                    Score,
+                    Progress,
+                    isClear,
+                    Cool,
+                    Good,
+                    Bad,
+                    Miss,
+                    MaxCombo,
+                    ROW_NUMBER() OVER (
+                        ORDER BY
+                            Score DESC
+                    ) RowNum
+                FROM dbo.O2JamPlaylog
+                WHERE
+                    PlayerCode = ?
+                    AND MusicCode = ?
+                    AND Difficulty = ?
+            """,
+            (player_id, chart_id, difficulty),
+        )
+
+        query_results = cursor.fetchall()
+
+        if query_results is None:
+            return []
+
+        response = []
+
+        for rank_info in query_results:
+            response.append(
+                {
+                    "player_code": player_id,
+                    "cleared_time": rank_info[0],
+                    "score": rank_info[1],
+                    "progress": rank_info[2],
+                    "is_cleared_record": rank_info[3],
+                    "score_cool": rank_info[4],
+                    "score_good": rank_info[5],
+                    "score_bad": rank_info[6],
+                    "score_miss": rank_info[7],
+                    "score_max_combo": rank_info[8],
+                    "row_number": rank_info[9],
+                }
+            )
+
+        return response
+
+    def get_recent_records(
+            self, player_id, difficulty, period_option: PeriodOption = PeriodOption.DAY_1
+    ):
+        cursor = self._connection.cursor()
+
+        cursor.execute(
+            """
+                SELECT TOP 50
+                    MusicCode,
+                    PlayedTime,
+                    Score,
+                    Progress,
+                    isClear,
+                    Cool,
+                    Good,
+                    Bad,
+                    Miss,
+                    MaxCombo,
+                    ROW_NUMBER() OVER (ORDER BY PlayedTime DESC) RowNum
+                FROM dbo.O2JamPlaylog
+                WHERE
+                    PlayerCode = ?
+                    AND Difficulty = ?
+            """,
+            (player_id, difficulty),
+        )
+
+        query_results = cursor.fetchall()
+
+        if query_results is None:
+            return []
+
+        response = []
+
+        for rank_info in query_results:
+            response.append(
+                {
+                    "player_code": player_id,
+                    "music_code": rank_info[0],
+                    "cleared_time": rank_info[1],
+                    "score": rank_info[2],
+                    "progress": rank_info[3],
+                    "is_cleared_record": rank_info[4],
+                    "score_cool": rank_info[5],
+                    "score_good": rank_info[6],
+                    "score_bad": rank_info[7],
+                    "score_miss": rank_info[8],
+                    "score_max_combo": rank_info[9],
+                    "row_number": rank_info[10],
+                }
+            )
+
+        return response

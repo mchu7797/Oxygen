@@ -1,16 +1,8 @@
-from enum import Enum
-
 from tools.encrypt import make_new_password_token
+from database import GameChannelId
 
 
-class GameChannelId(Enum):
-    SUPER_HARD = 0
-    HARD = 1
-    NORMAL = 2
-    EASY = 3
-
-
-class DatabaseTools:
+class DatabaseUtils:
     def __init__(self, connection, connection_trade):
         self._connection = connection
         self._connection_trade = connection_trade
@@ -18,7 +10,11 @@ class DatabaseTools:
     def search_chart(self, search_data):
         cursor = self._connection.cursor()
 
-        level_query = f"data.NoteLevel BETWEEN {search_data['options']['level'][0]} AND {search_data['options']['level'][1]}"
+        level_query = f"""
+            data.NoteLevel
+            BETWEEN {search_data['options']['level'][0]}
+            AND {search_data['options']['level'][1]}
+        """
         search_query = []
         keyword = (
             search_data["keywords"]
@@ -135,7 +131,7 @@ class DatabaseTools:
             ON 
                 member.userid = login.USER_ID
             COLLATE
-	            Korean_Wansung_CI_AS
+                Korean_Wansung_CI_AS
             WHERE
                 member.userid = ?
                 AND member.passwd = ?
@@ -162,7 +158,7 @@ class DatabaseTools:
             ON
                 member.userid = charinfo.USER_ID
             COLLATE
-	            Korean_Wansung_CI_AS
+                Korean_Wansung_CI_AS
             WHERE
                 member.userid = '{player_id}'
                 AND member.passwd = '{password}'
@@ -213,7 +209,16 @@ class DatabaseTools:
         )
 
         cursor_trade.execute(
-            "UPDATE dbo.UserMcash SET MCASH=? WHERE id = ?",
+            """
+            USE O2JamTrade;
+            GO;
+            
+            UPDATE dbo.UserMcash SET MCASH=? WHERE id = ?;
+            GO;
+            
+            USE O2Jam;
+            GO;
+            """,
             player_wallet["mcash"],
             player_origin_id,
         )
