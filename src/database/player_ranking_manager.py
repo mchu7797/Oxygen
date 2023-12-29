@@ -1,4 +1,24 @@
-from database import PeriodOption, PlayerRankingOption
+from enum import Enum
+
+
+class PlayerRankingOption(Enum):
+    ORDER_P = 0
+    ORDER_SS = 1
+    ORDER_S = 2
+    ORDER_A = 3
+    ORDER_B = 4
+    ORDER_C = 5
+    ORDER_D = 6
+    ORDER_CLEAR = 7
+    ORDER_PLAYCOUNT = 8
+
+
+class PeriodOption(Enum):
+    DAY_1 = 0
+    DAY_7 = 1
+    DAY_30 = 2
+    YEAR_HALF = 3
+    YEAR_1 = 4
 
 
 class PlayerRankingManager:

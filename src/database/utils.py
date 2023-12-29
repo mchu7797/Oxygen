@@ -1,11 +1,18 @@
 from tools.encrypt import make_new_password_token
-from database import GameChannelId
+from enum import Enum
+
+
+class GameChannelId(Enum):
+    SUPER_HARD = 0
+    HARD = 1
+    NORMAL = 2
+    EASY = 3
 
 
 class DatabaseUtils:
-    def __init__(self, connection, connection_trade):
+    def __init__(self, connection, trade_connection):
         self._connection = connection
-        self._connection_trade = connection_trade
+        self._trade_connection = trade_connection
 
     def search_chart(self, search_data):
         cursor = self._connection.cursor()
@@ -143,7 +150,7 @@ class DatabaseUtils:
 
     def exchange_cash(self, player_id, password, exchange_rate, exchange_direction):
         cursor = self._connection.cursor()
-        cursor_trade = self._connection_trade.cursor()
+        trade_cursor = self._trade_connection.cursor()
 
         cursor.execute(
             f"""
@@ -208,22 +215,13 @@ class DatabaseUtils:
             (player_wallet["gem"], player_wallet["mcash"], player_origin_id),
         )
 
-        cursor_trade.execute(
-            """
-            USE O2JamTrade;
-            GO;
-            
-            UPDATE dbo.UserMcash SET MCASH=? WHERE id = ?;
-            GO;
-            
-            USE O2Jam;
-            GO;
-            """,
+        trade_cursor.execute(
+            "UPDATE dbo.UserMcash SET MCASH=? WHERE id = ?",
             player_wallet["mcash"],
             player_origin_id,
         )
 
-        cursor_trade.commit()
+        trade_cursor.commit()
         cursor.commit()
 
         return 0

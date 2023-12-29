@@ -112,30 +112,31 @@
             </div>
         </div>
     </div>
-    <div class="d-flex flex-row-reverse">
-        <div>
-            <div class="btn-group" role="group" aria-label="Gauge options">
-                <a href="/player-scoreboard/{{ metadata['player_code'] }}/0"
-                    class="btn {% if metadata['current_view_difficulty'] == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
-                <a href="/player-scoreboard/{{ metadata['player_code'] }}/1"
-                    class="btn {% if metadata['current_view_difficulty'] == 1 %}btn-warning{% else %}btn-secondary{% endif %}">Normal</a>
-                <a href="/player-scoreboard/{{ metadata['player_code'] }}/2"
-                    class="btn {% if metadata['current_view_difficulty'] == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
-            </div>
+    <div class="row">
+        <div class="col-auto me-auto">
+            <a id="show-recent" class="btn btn-outline-light active" data-bs-toggle="button">Show Recent</a>
         </div>
-
-        &nbsp;
-        <div class="form-check form-switch form-check-inline">
-            <input type="checkbox" class="form-check-input" id="show-f-rank" value="rank-view-option-1">
-            <label for="show-f-rank" class="form-check-label">Show F Rank</label>
+        <div class="col-auto btn-group" role="group" aria-label="Gauge options">
+            <a href="/player-scoreboard/{{ metadata['player_code'] }}/0"
+                class="btn {% if metadata['current_view_difficulty'] == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
+            <a href="/player-scoreboard/{{ metadata['player_code'] }}/1"
+                class="btn {% if metadata['current_view_difficulty'] == 1 %}btn-warning{% else %}btn-secondary{% endif %}">Normal</a>
+            <a href="/player-scoreboard/{{ metadata['player_code'] }}/2"
+                class="btn {% if metadata['current_view_difficulty'] == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
         </div>
     </div>
     <hr style="border: 1px solid darkgrey;" class="mb-3 mt-3">
-    {% if scoreboard != None %}
-    <div class="mb-3 mt-3">
-        <span class="badge text-bg-secondary ">LAST ACCESS : {{ metadata['last_access_time'] }}</span>
-        <span class="badge text-bg-secondary ms-2">{{ tier['tier'] }}</span>
+    <div class="row">
+        <div class="col-auto me-auto">
+            <span class="badge text-bg-secondary">LAST ACCESS : {{ metadata['last_access_time'] }}</span>
+            <span class="badge text-bg-secondary">{{ tier['tier'] }}</span>
+        </div>
+        <div class="col-auto">
+            <a id="show-f-rank" class="btn btn-outline-light btn-sm active" aria-pressed="true"
+                data-bs-toggle="button">Show F</a>
+        </div>
     </div>
+    {% if scoreboard != None %}
     <div class="table-responsive-lg overflow-auto" height="70%">
         <table class="table table-dark table-borderless table-sm">
             <thead>
@@ -218,20 +219,40 @@
     {% endif %}
 </div>
 <script>
-    let option_checkbox = document.getElementById("show-f-rank");
+    const url = new URL(window.location.href);
+    const parameters = url.searchParams;
 
-    if (document.location.pathname.endsWith("/Y")) {
-        option_checkbox.checked = true;
-    } else {
-        option_checkbox.checked = false;
+    let showFRankButton = document.getElementById("show-f-rank");
+    let showRecentButton = document.getElementById("show-recent");
+
+    let showFRank = parameters.get('show-f-rank') == 1 ? 1 : 0;
+    let showRecent = parameters.get('show-recent') == 1 ? 1 : 0;
+
+    function setOption() {
+        let newUrl = new URL("/player-scoreboard/{{ metadata['player_code'] }}/{{ metadata['current_view_difficulty'] }}", url);
+
+        if (showRecent == 1) {
+            newUrl.searchParams.set('show-recent', 1);
+        } else {
+            newUrl.searchParams.set('show-recent', 0);
+        }
+
+        if (showFRank == 1) {
+            newUrl.searchParams.set('show-f-rank', 1);
+        } else {
+            newUrl.searchParams.set('show-f-rank', 0);
+        }
+
+        window.location.replace(newUrl);
     }
 
-    option_checkbox.addEventListener('click', () => {
-        if (!document.location.pathname.endsWith("/Y")) {
-            document.location.pathname = document.location.pathname + "/Y";
-        } else {
-            document.location.pathname = document.location.pathname.replace("/Y", "");
-        }
+    showFRankButton.addEventListener('click', () => {
+        showFRank = !showFRank;
+        setOption()
+    });
+    showRecentButton.addEventListener('click', () => {
+        showRecent = !showRecent;
+        setOption()
     });
 </script>
 {% endblock %}

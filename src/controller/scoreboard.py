@@ -25,7 +25,7 @@ def teardown_db(_):
 @scoreboard.route("/online")
 @scoreboard.route("/online-for-launcher")
 def online():
-    online_players = get_db().tools.get_online_players()
+    online_players = get_db().utils.get_online_players()
     return render_template("online.html", online=online_players)
 
 
@@ -36,7 +36,7 @@ def music_find():
     if keyword is None:
         return render_template("find-music.html", song_list=[], init=True)
 
-    result_data = get_db().tools.search_chart(parse_search(keyword))
+    result_data = get_db().utils.search_chart(parse_search(keyword))
     return render_template("find-music.html", song_list=result_data, init=False)
 
 
@@ -46,16 +46,15 @@ def append_difficulty(player_code):
 
 
 @scoreboard.route("/player-scoreboard/<player_code>/<difficulty>")
-@scoreboard.route("/player-scoreboard/<player_code>/<difficulty>/<show_f_rank>")
-def player_scoreboard(player_code, difficulty, show_f_rank="N"):
-    database = get_db()
+def player_scoreboard(player_code, difficulty):
+    show_f_rank = True if request.args.get("show-f-rank", type=int) == 1 else False
+    show_recent = True if request.args.get("show-recent", type=int) == 1 else False
 
-    show_f_rank = True if show_f_rank == "Y" else False
-    player_scores = database.scoreboard.get_player_scoreboard(
+    player_scores = get_db().player_ranking.get_player_top_records(
         player_code, difficulty, show_f_rank
     )
-    player_metadata = database.info.get_player_info(player_code, difficulty)
-    player_tiers = database.info.get_tier_info(player_code)
+    player_metadata = get_db().info.get_player_info(player_code, difficulty)
+    player_tiers = get_db().info.get_tier_info(player_code)
 
     if player_metadata is None:
         return abort(404)
@@ -71,13 +70,11 @@ def player_scoreboard(player_code, difficulty, show_f_rank="N"):
 @scoreboard.route("/music-scoreboard/<music_code>")
 @scoreboard.route("/music-scoreboard/<music_code>/<difficulty>")
 def music_scoreboard(music_code, difficulty=2):
-    database = get_db()
-
     if music_code is None:
         return abort(404)
 
-    music_scores = database.scoreboard.get_music_scoreboard(music_code, difficulty)
-    music_metadata = database.info.get_music_info(music_code, difficulty)
+    music_scores = get_db().chart_ranking.get_chart_top_records(music_code, difficulty)
+    music_metadata = get_db().info.get_music_info(music_code, difficulty)
 
     if music_metadata is None:
         return abort(404)
@@ -93,7 +90,7 @@ def player_ranking(ranking_category=7):
     try:
         category = int(ranking_category)
         if 0 <= category <= 8:
-            info = get_db().scoreboard.get_player_ranking(category)
+            info = get_db().player_ranking.get_player_ranking(category)
             return render_template(
                 "player-ranking.html",
                 status=info["player_infos"],
@@ -112,7 +109,7 @@ def chart_ranking():
     if top is None:
         top = 200
 
-    ranking_data = get_db().scoreboard.get_playcount_ranking(top=top)
+    ranking_data = get_db().chart_ranking.get_playcount_ranking(top=top)
 
     return render_template("chart-ranking.html", ranking=ranking_data)
 
@@ -129,7 +126,7 @@ def history():
     if gauge_difficulty is None:
         gauge_difficulty = 2
 
-    histories = get_db().scoreboard.get_record_histories(
+    histories = get_db().player_ranking.get_record_histories(
         player_id, chart_id, gauge_difficulty
     )
 

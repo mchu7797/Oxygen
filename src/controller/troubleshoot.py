@@ -28,7 +28,7 @@ def fix_login():
 
     player_id = request.form.get("o2jam-id")
     password = request.form.get("o2jam-pw")
-    get_db().tools.clean_login_data(player_id, password)
+    get_db().utils.clean_login_data(player_id, password)
     return render_template("fix-connection.html", fix_success=True)
 
 
@@ -43,8 +43,8 @@ def cash_to_gem():
     password = request.form.get("o2jam-pw")
     exchange_rate = int(request.form.get("gem-amount"))
 
-    result = database.tools.exchange_cash(player_id, password, exchange_rate, "gem")
-    wallet = database.tools.get_wallet_info(player_id)
+    result = database.utils.exchange_cash(player_id, password, exchange_rate, "gem")
+    wallet = database.utils.get_wallet_info(player_id)
 
     return render_template("cash-to-gem.html", gtc_result=result, wallet=wallet)
 
@@ -60,7 +60,7 @@ def gem_to_cash():
     password = request.form.get("o2jam-pw")
     exchange_rate = int(request.form.get("gem-amount"))
 
-    result = database.tools.exchange_cash(player_id, password, exchange_rate, "mcash")
-    wallet = database.tools.get_wallet_info(player_id)
+    result = database.utils.exchange_cash(player_id, password, exchange_rate, "mcash")
+    wallet = database.utils.get_wallet_info(player_id)
 
     return render_template("gem-to-cash.html", gtc_result=result, wallet=wallet)

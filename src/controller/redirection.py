@@ -23,7 +23,7 @@ def teardown_db(_):
 
 @redirection.route("/p/<nickname>")
 def redirect_to_player_page(nickname: str):
-    player_id = get_db().tools.nickname_to_usercode(nickname)
+    player_id = get_db().utils.nickname_to_usercode(nickname)
 
     if player_id == -1:
         return abort(404)
