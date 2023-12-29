@@ -222,6 +222,7 @@
             <thead>
                 <th scope="col">#</th>
                 <th scope="col">Title</th>
+                <th scope="col">Level</th>
                 <th scope="col">Score</th>
                 <th scope="col">Clear</th>
                 <th scope="col">Grade</th>
@@ -242,6 +243,7 @@
                             {{ score['music_title'] }}
                         </a>
                     </td>
+                    <td>{{ score['music_level'] }}</td>
                     <td>{{ score['score'] }}</td>
                     {% if score['is_cleared_record'] == 1 %}
                     <td>
