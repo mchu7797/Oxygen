@@ -247,10 +247,10 @@ class PlayerRankingManager:
     def get_recent_records(self, player_id, difficulty, show_f_rank):
         cursor = self._connection.cursor()
 
-        if show_f_rank:
-            view_option_query = "Score >= 50000"
-        else:
-            view_option_query = "isClear = 1"
+        view_option_query = ""
+
+        if not show_f_rank:
+            view_option_query = "AND isClear = 1"
 
         cursor.execute(
             f"""
@@ -277,7 +277,7 @@ class PlayerRankingManager:
                     PlayerCode = ?
                     AND p.Difficulty = ?
                     AND PlayedTime > DATEADD(day, -15, GETDATE())
-                    AND {view_option_query}
+                    {view_option_query}
             """,
             (player_id, difficulty),
         )
