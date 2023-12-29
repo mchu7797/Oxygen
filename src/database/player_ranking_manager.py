@@ -29,7 +29,7 @@ class PlayerRankingManager:
         cursor = self._connection.cursor()
 
         if show_f_rank:
-            view_option_query = "h.Score => 50000"
+            view_option_query = "h.Score >= 50000"
         else:
             view_option_query = "h.isClear = 1"
 
@@ -81,7 +81,7 @@ class PlayerRankingManager:
                         AND h.Difficulty = ?
                         AND {view_option_query}
                 """,
-            (player_id, gauge_difficulty)
+            (player_id, gauge_difficulty),
         )
 
         raw_records = cursor.fetchall()
@@ -113,7 +113,8 @@ class PlayerRankingManager:
         cursor = self._connection.cursor()
 
         if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:
-            cursor.execute("""
+            cursor.execute(
+                """
                 SELECT 
                     c.USER_INDEX_ID, 
                     c.USER_NICKNAME, 
@@ -124,9 +125,11 @@ class PlayerRankingManager:
                     dbo.T_o2jam_charinfo c 
                     LEFT OUTER JOIN dbo.O2JamStatus s on s.PlayerCode = c.USER_INDEX_ID 
                     LEFT OUTER JOIN dbo.TierInfo t on s.Tier = t.tier_index
-            """)
+            """
+            )
         else:
-            cursor.execute(f"""
+            cursor.execute(
+                f"""
                 SELECT
                     s.PlayerCode, 
                     c.USER_NICKNAME, 
@@ -141,7 +144,8 @@ class PlayerRankingManager:
                     dbo.O2JamStatus s
                     LEFT OUTER JOIN dbo.T_o2jam_charinfo c on s.PlayerCode = c.USER_INDEX_ID 
                     LEFT OUTER JOIN dbo.TierInfo t on s.Tier = t.tier_index
-            """)
+            """
+            )
 
         raw_records = cursor.fetchall()
         player_informations = []
@@ -159,7 +163,7 @@ class PlayerRankingManager:
 
         return {
             "player_infos": player_informations,
-            "current_option_name": self._ranking_option_to_string(sort_option)
+            "current_option_name": self._ranking_option_to_string(sort_option),
         }
 
     @staticmethod
@@ -241,14 +245,16 @@ class PlayerRankingManager:
         return response
 
     def get_recent_records(
-            self, player_id, difficulty, period_option: PeriodOption = PeriodOption.DAY_1
+        self, player_id, difficulty, period_option: PeriodOption = PeriodOption.DAY_1
     ):
         cursor = self._connection.cursor()
 
         cursor.execute(
             """
-                SELECT TOP 50
-                    MusicCode,
+                SELECT
+                    p.MusicCode,
+                    mt.Title,
+                    m.NoteLevel,
                     PlayedTime,
                     Score,
                     Progress,
@@ -259,10 +265,15 @@ class PlayerRankingManager:
                     Miss,
                     MaxCombo,
                     ROW_NUMBER() OVER (ORDER BY PlayedTime DESC) RowNum
-                FROM dbo.O2JamPlaylog
+                FROM dbo.O2JamPlaylog AS p
+                RIGHT OUTER JOIN
+                    dbo.o2jam_music_metadata AS mt ON p.MusicCode = mt.MusicCode
+                RIGHT OUTER JOIN
+                    dbo.o2jam_music_data AS m ON p.MusicCode = m.MusicCode AND p.Difficulty = m.Difficulty
                 WHERE
                     PlayerCode = ?
-                    AND Difficulty = ?
+                    AND p.Difficulty = ?
+                    AND PlayedTime > DATEADD(day, -15, GETDATE())
             """,
             (player_id, difficulty),
         )
@@ -277,18 +288,19 @@ class PlayerRankingManager:
         for rank_info in query_results:
             response.append(
                 {
-                    "player_code": player_id,
                     "music_code": rank_info[0],
-                    "cleared_time": rank_info[1],
-                    "score": rank_info[2],
-                    "progress": rank_info[3],
-                    "is_cleared_record": rank_info[4],
-                    "score_cool": rank_info[5],
-                    "score_good": rank_info[6],
-                    "score_bad": rank_info[7],
-                    "score_miss": rank_info[8],
-                    "score_max_combo": rank_info[9],
-                    "row_number": rank_info[10],
+                    "music_title": rank_info[1],
+                    "music_level": rank_info[2],
+                    "cleared_time": rank_info[3],
+                    "score": rank_info[4],
+                    "progress": rank_info[5],
+                    "is_cleared_record": rank_info[6],
+                    "score_cool": rank_info[7],
+                    "score_good": rank_info[8],
+                    "score_bad": rank_info[9],
+                    "score_miss": rank_info[10],
+                    "score_max_combo": rank_info[11],
+                    "row_number": rank_info[12],
                 }
             )
 
