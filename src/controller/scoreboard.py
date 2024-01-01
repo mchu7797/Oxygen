@@ -97,12 +97,11 @@ def music_scoreboard(music_code, difficulty=2):
 
 
 @scoreboard.route("/ranking/player")
-@scoreboard.route("/ranking/player/<ranking_category>")
+@scoreboard.route("/ranking/player/<int:ranking_category>")
 def player_ranking(ranking_category=7):
     try:
-        category = int(ranking_category)
-        if 0 <= category <= 8:
-            info = get_db().player_ranking.get_player_ranking(category)
+        if 0 <= ranking_category <= 8:
+            info = get_db().player_ranking.get_player_ranking(ranking_category)
             return render_template(
                 "player-ranking.html",
                 status=info["player_infos"],

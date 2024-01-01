@@ -109,8 +109,10 @@ class PlayerRankingManager:
 
         return response
 
-    def get_player_ranking(self, sort_option: PlayerRankingOption):
+    def get_player_ranking(self, sort_option: int):
         cursor = self._connection.cursor()
+
+        sort_option = PlayerRankingOption(sort_option)
 
         if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:
             cursor.execute(
