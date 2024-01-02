@@ -44,7 +44,7 @@ class PlayerRankingManager:
                         h.Score,
                         p.progress_name,
                         h.isClear,
-                        h.PlayedTime,
+                        FORMAT(h.PlayedTime, 'yyyy-MM-dd hh:mm tt') AS PlayedTime,
                         sr.SongRank,
                         ROW_NUMBER() OVER (
                         ORDER BY
@@ -198,7 +198,7 @@ class PlayerRankingManager:
         cursor.execute(
             """
                 SELECT TOP 50
-                    PlayedTime,
+                    FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt') AS PlayedTime,
                     Score,
                     Progress,
                     isClear,
@@ -260,7 +260,7 @@ class PlayerRankingManager:
                     p.MusicCode,
                     mt.Title,
                     m.NoteLevel,
-                    PlayedTime,
+                    FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt') AS PlayedTime,
                     Score,
                     Progress,
                     isClear,
