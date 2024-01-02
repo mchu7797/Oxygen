@@ -17,7 +17,7 @@ class ChartRankingManager:
                 h.MaxCombo, 
                 h.Score,
                 h.isClear,
-                FORMAT(h.PlayedTime, 'yyyy-MM-dd hh:mm tt') AS PlayedTime,
+                FORMAT(h.PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US'v) AS PlayedTime,
                 p.progress_name,
                 ROW_NUMBER() OVER (
                     ORDER BY

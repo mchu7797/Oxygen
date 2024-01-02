@@ -13,7 +13,7 @@ class InfoManager:
                 Battle,
                 AdminLevel,
                 USER_INDEX_ID,
-                ISNULL(FORMAT(LastAccess, 'yy/MM/dd hh:mm'), 'NONE') as LastAccess
+                ISNULL(FORMAT(LastAccess, 'yy/MM/dd hh:mm tt', 'en-US'), 'NONE') as LastAccess
             FROM
                 dbo.T_o2jam_charinfo
             WHERE
