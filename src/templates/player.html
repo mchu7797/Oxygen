@@ -288,7 +288,8 @@
                     <td>{{ score['score_bad'] }}</td>
                     <td>{{ score['score_miss'] }}</td>
                     <td>{{ score['score_max_combo'] }}</td>
-                    <td>{{ score['cleared_time'] }}</td>
+                    <td data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ score['cleared_time'] }}">{{
+                        score['cleared_time'] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -303,7 +304,11 @@
     </div>
     {% endif %}
 </div>
+<script src="/static/bootstrap.bundle.min.js"></script>
 <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
     const url = new URL(window.location.href);
     const parameters = url.searchParams;
 

@@ -32,68 +32,64 @@
 </head>
 
 <body>
-<highlight>ONLINE PLAYERS : {{ online['all_players_count'] }}</highlight>
-<br><br>
-{% if online['super_hard_channel']|length > 0 %}
+    <highlight>ONLINE PLAYERS : {{ online['all_players_count'] }}</highlight>
+    <br><br>
+    {% if online['super_hard_channel']|length > 0 %}
     <div>
         <div>
             <strong>CH.SUPER_HARD [{{ online['super_hard_channel']|length }} Players]</strong>
         </div>
         <div>
             {% for row in online['super_hard_channel'] %}
-                {{ '[Lv.{0:03d}]'.format(row['player_level']) }}&nbsp;&nbsp;<a href="/p/{{ row['player_nickname'] }}"
-                                                                               target="_blank"
-                                                                               rel="noopener noreferrer">{{ row['player_nickname'] }}</a>
-                <br>
+            {{ '[Lv.{0:03d}]'.format(row['player_level']) }}&nbsp;&nbsp;<a href="/p/{{ row['player_nickname'] }}"
+                target="_blank" rel="noopener noreferrer">{{ row['player_nickname'] }}</a>
+            <br>
             {% endfor %}
         </div>
     </div>
-{% endif %}
-{% if online['hard_channel']|length > 0 %}
+    {% endif %}
+    {% if online['hard_channel']|length > 0 %}
     <div>
         <div>
             <strong>CH.HARD [{{ online['hard_channel']|length }} Players]</strong>
         </div>
         <div>
             {% for row in online['hard_channel'] %}
-                {{ '[Lv.{0:03d}]'.format(row['player_level']) }}&nbsp;&nbsp;<a href="/p/{{ row['player_nickname'] }}"
-                                                                               target="_blank"
-                                                                               rel="noopener noreferrer">{{ row['player_nickname'] }}</a>
-                <br>
+            {{ '[Lv.{0:03d}]'.format(row['player_level']) }}&nbsp;&nbsp;<a href="/p/{{ row['player_nickname'] }}"
+                target="_blank" rel="noopener noreferrer">{{ row['player_nickname'] }}</a>
+            <br>
             {% endfor %}
         </div>
     </div>
-{% endif %}
-{% if online['normal_channel']|length > 0 %}
+    {% endif %}
+    {% if online['normal_channel']|length > 0 %}
     <div>
         <div>
             <strong>CH.NORMAL [{{ online['normal_channel']|length }} Players]</strong>
         </div>
         <div>
             {% for row in online['normal_channel'] %}
-                {{ '[Lv.{0:03d}]'.format(row['player_level']) }}&nbsp;&nbsp;<a href="/p/{{ row['player_nickname'] }}"
-                                                                               target="_blank"
-                                                                               rel="noopener noreferrer">{{ row['player_nickname'] }}</a>
-                <br>
+            {{ '[Lv.{0:03d}]'.format(row['player_level']) }}&nbsp;&nbsp;<a href="/p/{{ row['player_nickname'] }}"
+                target="_blank" rel="noopener noreferrer">{{ row['player_nickname'] }}</a>
+            <br>
             {% endfor %}
         </div>
     </div>
-{% endif %}
-{% if online['easy_channel']|length > 0 %}
+    {% endif %}
+    {% if online['easy_channel']|length > 0 %}
     <div>
         <div>
             <strong>CH.EASY [{{ online['easy_channel']|length }} Players]</strong>
         </div>
         <div>
             {% for row in online['easy_channel'] %}
-                {{ '[Lv.{0:03d}]'.format(row['player_level']) }}&nbsp;&nbsp;<a href="/p/{{ row['player_nickname'] }}"
-                                                                               target="_blank"
-                                                                               rel="noopener noreferrer">{{ row['player_nickname'] }}</a>
-                <br>
+            {{ '[Lv.{0:03d}]'.format(row['player_level']) }}&nbsp;&nbsp;<a href="/p/{{ row['player_nickname'] }}"
+                target="_blank" rel="noopener noreferrer">{{ row['player_nickname'] }}</a>
+            <br>
             {% endfor %}
         </div>
     </div>
-{% endif %}
+    {% endif %}
 </body>
 
 </html>
