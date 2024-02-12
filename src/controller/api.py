@@ -26,7 +26,9 @@ def teardown_db(_):
 @api.route("/userlist")
 @api.route("/player/online")
 def get_online():
-    response = make_response(json.dumps(get_db().utils.get_online_players(), ensure_ascii=False))
+    response = make_response(
+        json.dumps(get_db().utils.get_online_players(), ensure_ascii=False)
+    )
 
     response.headers["Content-Type"] = "application/json"
 
@@ -83,7 +85,9 @@ def get_recent_records_by_player(player_id):
     if gauge_difficulty is None:
         gauge_difficulty = 2
 
-    recent_records = get_db().player_ranking.get_recent_records(player_id, gauge_difficulty)
+    recent_records = get_db().player_ranking.get_recent_records(
+        player_id, gauge_difficulty
+    )
 
     if recent_records is None:
         abort(404)
@@ -189,7 +193,11 @@ def get_chart_ranking():
 
 @api.route("/players")
 def get_all_player():
-    return make_json_response(get_db().player_ranking.get_player_ranking(database.PlayerRankingOption.ORDER_CLEAR))
+    return make_json_response(
+        get_db().player_ranking.get_player_ranking(
+            database.player_ranking_manager.PlayerRankingOption.ORDER_CLEAR
+        )
+    )
 
 
 @api.route("/charts")
