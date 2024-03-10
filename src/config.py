@@ -14,3 +14,5 @@ DATABASE_CONFIG = {
         PWD=DPJAM2022Server!;
         TrustServerCertificate=yes;""",
 }
+
+EMAIL_CONFIG = {"mail": "dmjam.noreply@gmail.com", "password": "yrzb uiym rbpd spaj"}

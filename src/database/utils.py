@@ -1,4 +1,4 @@
-from tools.encrypt import make_new_password_token
+from tools.encrypt import make_new_password_token, make_email_auth_token
 from enum import Enum
 
 
@@ -190,13 +190,11 @@ class DatabaseUtils:
                 return 2
             if player_wallet["mcash"] < exchange_rate / 100:
                 return 3
-
             player_wallet["gem"] += exchange_rate
             player_wallet["mcash"] -= exchange_rate / 100
         elif exchange_direction == "mcash":
             if player_wallet["gem"] < exchange_rate * 100:
                 return 3
-
             player_wallet["mcash"] += exchange_rate
             player_wallet["gem"] -= exchange_rate * 100
         else:
@@ -297,3 +295,60 @@ class DatabaseUtils:
         cursor.commit()
 
         return new_token
+
+    def get_player_email(self, username):
+        cursor = self._connection.cursor()
+
+        cursor.execute("SELECT email FROM dbo.member WHERE userid=?", username)
+        account_email = cursor.fetchval()
+
+        if account_email is None:
+            return None
+
+        return account_email
+
+    def get_password_reset_token(self, username):
+        cursor = self._connection.cursor()
+
+        cursor.execute("SELECT id FROM dbo.member WHERE userid=?", username)
+        account_id = cursor.fetchval()
+
+        if account_id is None:
+            return None
+
+        auth_token = make_email_auth_token()
+
+        cursor.execute(
+            "DELETE FROM dbo.password_reset_token where member_id=?",
+            (account_id),
+        )
+
+        cursor.execute(
+            "INSERT INTO dbo.password_reset_token VALUES (?, ?, DATEADD(MINUTE, 5, GETDATE()))",
+            (account_id, auth_token),
+        )
+
+        cursor.commit()
+
+        return auth_token
+
+    def reset_password(self, token, password):
+        cursor = self._connection.cursor()
+
+        cursor.execute(
+            "SELECT member_id FROM dbo.password_reset_token WHERE password_reset_token = ? AND GETDATE() < token_expiration_period",
+            token,
+        )
+
+        member_id = cursor.fetchval()
+
+        if member_id is None:
+            return False
+
+        cursor.execute(
+            "UPDATE dbo.member SET passwd=? WHERE id=?", (password, member_id)
+        )
+
+        cursor.commit()
+
+        return True

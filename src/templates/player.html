@@ -213,7 +213,7 @@
         </table>
     </div>
     {% else %}
-    <div class="table-responsive-lg overflow-auto" height="70%">
+    <div class="table-responsive-sm">
         <table class="table table-dark table-borderless table-sm">
             <thead>
                 <th scope="col">#</th>
@@ -288,7 +288,9 @@
                     <td>{{ score['score_bad'] }}</td>
                     <td>{{ score['score_miss'] }}</td>
                     <td>{{ score['score_max_combo'] }}</td>
-                    <td data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="{{ score['cleared_time'] }}">{{
+                    <td data-bs-toggle="popover" data-bs-container="body" data-bs-placement="left"
+                        data-bs-content="{{ score['cleared_time'] }}">
+                        {{
                         score['cleared_time'] }}</td>
                 </tr>
                 {% endfor %}
@@ -304,10 +306,11 @@
     </div>
     {% endif %}
 </div>
-<script src="/static/bootstrap.bundle.min.js"></script>
+{% endblock %}
+{% block scripts %}
 <script>
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
     const url = new URL(window.location.href);
     const parameters = url.searchParams;

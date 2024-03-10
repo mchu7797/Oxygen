@@ -8,3 +8,8 @@ a {
     text-decoration-line: none;
     color: white;
 }
+
+th,
+td {
+    white-space: nowrap;
+}
