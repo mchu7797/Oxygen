@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, g, redirect, url_for
 
 from config import DATABASE_CONFIG
 from tools.mail import send_password_reset_mail
+from tools.encrypt import check_turnstile_auth
 from database import DatabaseConnection
 
 troubleshoot = Blueprint("troubleshoot", __name__, url_prefix="/troubleshoot")
@@ -82,6 +83,15 @@ def reset_password():
         return render_template("reset-password.html", status=0)
     else:
         account_id = request.values.get("account-id")
+        cf_turnstile_response = request.values.get("cf_turnstile-response")
+        ip = request.values.get("CF-Connecting-IP")
+
+        if not check_turnstile_auth(cf_turnstile_response, ip):
+            return render_template(
+                "reset-password.html",
+                status=3,
+                error_message="Capcha not passed!",
+            )
 
         if account_id is None:
             return render_template(

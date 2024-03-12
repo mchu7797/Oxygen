@@ -320,7 +320,7 @@ class DatabaseUtils:
 
         cursor.execute(
             "DELETE FROM dbo.password_reset_token where member_id=?",
-            (account_id),
+            account_id,
         )
 
         cursor.execute(
