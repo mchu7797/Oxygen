@@ -1,351 +1,371 @@
 {% extends 'base.html' %}
 {% block title %}{{ metadata['nickname'] }}{% endblock %}
 {% block head %}
-<link rel="stylesheet" href="/static/statistic.min.css">
+    <link rel="stylesheet" href="/static/statistic.min.css">
 {% endblock %}
 {% block content %}
-<div class="container-lg text-white">
-    <h1>Lv.{{ metadata['level'] }} {{ metadata['nickname'] }}</h1>
-    <h3>Rank #{{ metadata['player_ranking'] }}{% if metadata['tie_player_count'] > 1 %}(
-        {{ metadata['tie_player_count'] }}){% endif %}</h3>
-    <div class="d-none d-sm-block">
-        <div class="ui four statistics mt-3 mb-3">
-            <div class="ui grey inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['cleared']) }}
+    <div class="container-lg text-white">
+        <h1>Lv.{{ metadata['level'] }} {{ metadata['nickname'] }}</h1>
+        <h3>Rank #{{ metadata['player_ranking'] }}{% if metadata['tie_player_count'] > 1 %}(
+            {{ metadata['tie_player_count'] }}){% endif %}</h3>
+        <div class="d-none d-sm-block">
+            <div class="ui four statistics mt-3 mb-3">
+                <div class="ui grey inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['cleared']) }}
+                    </div>
+                    <div class="label">Cleared</div>
                 </div>
-                <div class="label">Cleared</div>
-            </div>
-            <div class="ui red inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['d_rank']) }}
+                <div class="ui red inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['d_rank']) }}
+                    </div>
+                    <div class="label">D Rank</div>
                 </div>
-                <div class="label">D Rank</div>
-            </div>
-            <div class="ui purple inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['c_rank']) }}
+                <div class="ui purple inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['c_rank']) }}
+                    </div>
+                    <div class="label">C Rank</div>
                 </div>
-                <div class="label">C Rank</div>
-            </div>
-            <div class="ui violet inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['b_rank']) }}
+                <div class="ui violet inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['b_rank']) }}
+                    </div>
+                    <div class="label">B Rank</div>
                 </div>
-                <div class="label">B Rank</div>
-            </div>
-            <div class="ui olive inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['a_rank']) }}
+                <div class="ui olive inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['a_rank']) }}
+                    </div>
+                    <div class="label">A Rank</div>
                 </div>
-                <div class="label">A Rank</div>
-            </div>
-            <div class="ui green inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['s_rank']) }}
+                <div class="ui green inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['s_rank']) }}
+                    </div>
+                    <div class="label">S Rank</div>
                 </div>
-                <div class="label">S Rank</div>
-            </div>
-            <div class="ui orange inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['ss_rank']) }}
+                <div class="ui orange inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['ss_rank']) }}
+                    </div>
+                    <div class="label">SS Rank</div>
                 </div>
-                <div class="label">SS Rank</div>
-            </div>
-            <div class="ui yellow inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['p_rank']) }}
+                <div class="ui yellow inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['p_rank']) }}
+                    </div>
+                    <div class="label">P Rank</div>
                 </div>
-                <div class="label">P Rank</div>
-            </div>
-        </div>
-    </div>
-    <div class="d-block d-sm-none">
-        <div class="ui four mini statistics mt-3 mb-1">
-            <div class="ui grey inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['cleared']) }}
-                </div>
-                <div class="label">Cleared</div>
-            </div>
-            <div class="ui red inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['d_rank']) }}
-                </div>
-                <div class="label">D Rank</div>
-            </div>
-            <div class="ui purple inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['c_rank']) }}
-                </div>
-                <div class="label">C Rank</div>
-            </div>
-            <div class="ui violet inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['b_rank']) }}
-                </div>
-                <div class="label">B Rank</div>
-            </div>
-            <div class="ui olive inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['a_rank']) }}
-                </div>
-                <div class="label">A Rank</div>
-            </div>
-            <div class="ui green inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['s_rank']) }}
-                </div>
-                <div class="label">S Rank</div>
-            </div>
-            <div class="ui orange inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['ss_rank']) }}
-                </div>
-                <div class="label">SS Rank</div>
-            </div>
-            <div class="ui yellow inverted statistic">
-                <div class="value">
-                    {{ '{0:03d}'.format(tier['p_rank']) }}
-                </div>
-                <div class="label">P Rank</div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-auto me-auto">
-            <a id="show-recent" class="btn btn-outline-light {% if show_recent == True%}active{% endif %}" {% if
+        <div class="d-block d-sm-none">
+            <div class="ui four mini statistics mt-3 mb-1">
+                <div class="ui grey inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['cleared']) }}
+                    </div>
+                    <div class="label">Cleared</div>
+                </div>
+                <div class="ui red inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['d_rank']) }}
+                    </div>
+                    <div class="label">D Rank</div>
+                </div>
+                <div class="ui purple inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['c_rank']) }}
+                    </div>
+                    <div class="label">C Rank</div>
+                </div>
+                <div class="ui violet inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['b_rank']) }}
+                    </div>
+                    <div class="label">B Rank</div>
+                </div>
+                <div class="ui olive inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['a_rank']) }}
+                    </div>
+                    <div class="label">A Rank</div>
+                </div>
+                <div class="ui green inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['s_rank']) }}
+                    </div>
+                    <div class="label">S Rank</div>
+                </div>
+                <div class="ui orange inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['ss_rank']) }}
+                    </div>
+                    <div class="label">SS Rank</div>
+                </div>
+                <div class="ui yellow inverted statistic">
+                    <div class="value">
+                        {{ '{0:03d}'.format(tier['p_rank']) }}
+                    </div>
+                    <div class="label">P Rank</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto me-auto">
+                <a id="show-recent" class="btn btn-outline-light {% if show_recent == True %}active{% endif %}" {% if
                 show_recent==True %}aria-pressed="true" {% endif %} data-bs-toggle="button">Show Recent</a>
+            </div>
+            <div class="col-auto btn-group" role="group" aria-label="Gauge options">
+                <a href="/player-scoreboard/{{ metadata['player_code'] }}/0"
+                   class="btn {% if metadata['current_view_difficulty'] == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
+                <a href="/player-scoreboard/{{ metadata['player_code'] }}/1"
+                   class="btn {% if metadata['current_view_difficulty'] == 1 %}btn-warning{% else %}btn-secondary{% endif %}">Normal</a>
+                <a href="/player-scoreboard/{{ metadata['player_code'] }}/2"
+                   class="btn {% if metadata['current_view_difficulty'] == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
+            </div>
         </div>
-        <div class="col-auto btn-group" role="group" aria-label="Gauge options">
-            <a href="/player-scoreboard/{{ metadata['player_code'] }}/0"
-                class="btn {% if metadata['current_view_difficulty'] == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
-            <a href="/player-scoreboard/{{ metadata['player_code'] }}/1"
-                class="btn {% if metadata['current_view_difficulty'] == 1 %}btn-warning{% else %}btn-secondary{% endif %}">Normal</a>
-            <a href="/player-scoreboard/{{ metadata['player_code'] }}/2"
-                class="btn {% if metadata['current_view_difficulty'] == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
-        </div>
-    </div>
-    <hr style="border: 1px solid darkgrey;" class="mb-3 mt-3">
-    <div class="row">
-        <div class="col-auto me-auto">
-            <span class="badge text-bg-secondary">LAST ACCESS : {{ metadata['last_access_time'] }}</span>
-            <span class="badge text-bg-secondary">{{ tier['tier'] }}</span>
-        </div>
-        <div class="col-auto">
-            <a id="show-f-rank" class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %}" {% if
+        <hr style="border: 1px solid darkgrey;" class="mb-3 mt-3">
+        <div class="row">
+            <div class="col-auto me-auto">
+                <span class="badge text-bg-secondary">LAST ACCESS : {{ metadata['last_access_time'] }}</span>
+                <span class="badge text-bg-secondary">{{ tier['tier'] }}</span>
+            </div>
+            <div class="col-auto">
+                <a id="show-f-rank" class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %}"
+                   {% if
                 show_f_rank==True %}aria-pressed="true" {% endif %} data-bs-toggle="button">Show F</a>
+            </div>
         </div>
+        {% if scoreboard != None %}
+            {% if show_recent != True %}
+                <div class="table-responsive-lg overflow-auto" height="70%">
+                    <table class="table table-dark table-borderless table-sm">
+                        <thead>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Song Title</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Clear</th>
+                        <th scope="col">Grade</th>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Level</th>
+                        <th scope="col">PlayTime</th>
+                        </thead>
+                        <tbody>
+                        {% for score in scoreboard %}
+                            <tr>
+                                <th scope="row">#{{ score['row_number'] }}</th>
+                                <td width="50%">
+                                    <a
+                                            href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
+                                        {{ score['music_title'] }}
+                                    </a>
+                                </td>
+                                <td>{{ score['score'] }}</td>
+                                {% if score['is_cleared_record'] == 1 %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #198754; color: #000000;">Cleared</span>
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #DC3545; color: #000000;">Failed</span>
+                                    </td>
+                                {% endif %}
+                                {% if score['progress'] == 'P' %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #FBBD08; color: #000000;">P Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 'SS' %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #F2711C; color: #000000;">SS Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 'S' %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #21BA45; color: #000000;">S Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 'A' %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #B5CC18; color: #000000;">A Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 'B' %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #6435C9; color: #000000;">B Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 'C' %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #A333C8; color: #000000;">C Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 'D' %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #DB2828; color: #000000;">D Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 'F' %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #767676; color: #000000;">F Rank</span>
+                                    </td>
+                                {% endif %}
+                                <td>{{ score['record_rank'] }}</td>
+                                <td>{{ score['music_level'] }}</td>
+                                <td>{{ score['cleared_time'] }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="table-responsive-sm">
+                    <table class="table table-dark table-borderless table-sm">
+                        <thead>
+                        <th scope="col">#</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Level</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Clear</th>
+                        <th scope="col">Grade</th>
+                        <th scope="col">Cool</th>
+                        <th scope="col">Good</th>
+                        <th scope="col">Bad</th>
+                        <th scope="col">Miss</th>
+                        <th scope="col">Max Combo</th>
+                        <th scope="col">PlayTime</th>
+                        </thead>
+                        <tbody>
+                        {% for score in scoreboard %}
+                            <tr>
+                                <th scope="row">{{ score['row_number'] }}</th>
+                                <td>
+                                    <a
+                                            href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
+                                        {{ score['music_title'] }}
+                                    </a>
+                                </td>
+                                <td>{{ score['music_level'] }}</td>
+                                <td>{{ score['score'] }}</td>
+                                {% if score['is_cleared_record'] == 1 %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #198754; color: #000000;">Cleared</span>
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #DC3545; color: #000000;">Failed</span>
+                                    </td>
+                                {% endif %}
+                                {% if score['progress'] == 1 %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #FBBD08; color: #000000;">P Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 2 %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #F2711C; color: #000000;">SS Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 3 %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #21BA45; color: #000000;">S Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 4 %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #B5CC18; color: #000000;">A Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 5 %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #6435C9; color: #000000;">B Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 6 %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #A333C8; color: #000000;">C Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 7 %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #DB2828; color: #000000;">D Rank</span>
+                                    </td>
+                                {% elif score['progress'] == 8 %}
+                                    <td>
+                                        <span class="badge"
+                                              style="background-color: #767676; color: #000000;">F Rank</span>
+                                    </td>
+                                {% endif %}
+                                <td>{{ score['score_cool'] }}</td>
+                                <td>{{ score['score_good'] }}</td>
+                                <td>{{ score['score_bad'] }}</td>
+                                <td>{{ score['score_miss'] }}</td>
+                                <td>{{ score['score_max_combo'] }}</td>
+                                <td data-bs-toggle="popover" data-bs-container="body" data-bs-placement="left"
+                                    data-bs-content="{{ score['cleared_time'] }}">
+                                    {{ score['cleared_time'] }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="text-white info-header">
+                <div class="d-flex justify-content-center">
+                    <h3>THIS PLAYER HAS NOT RECORD</h3>
+                </div>
+            </div>
+        {% endif %}
     </div>
-    {% if scoreboard != None %}
-    {% if show_recent != True %}
-    <div class="table-responsive-lg overflow-auto" height="70%">
-        <table class="table table-dark table-borderless table-sm">
-            <thead>
-                <th scope="col">Rank</th>
-                <th scope="col">Song Title</th>
-                <th scope="col">Score</th>
-                <th scope="col">Clear</th>
-                <th scope="col">Grade</th>
-                <th scope="col">Rank</th>
-                <th scope="col">Level</th>
-                <th scope="col">PlayTime</th>
-            </thead>
-            <tbody>
-                {% for score in scoreboard %}
-                <tr>
-                    <th scope="row">#{{ score['row_number'] }}</th>
-                    <td width="50%">
-                        <a
-                            href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
-                            {{ score['music_title'] }}
-                        </a>
-                    </td>
-                    <td>{{ score['score'] }}</td>
-                    {% if score['is_cleared_record'] == 1 %}
-                    <td>
-                        <span class="badge" style="background-color: #198754; color: #000000;">Cleared</span>
-                    </td>
-                    {% else %}
-                    <td>
-                        <span class="badge" style="background-color: #DC3545; color: #000000;">Failed</span>
-                    </td>
-                    {% endif %}
-                    {% if score['progress'] == 'P' %}
-                    <td>
-                        <span class="badge" style="background-color: #FBBD08; color: #000000;">P Rank</span>
-                    </td>
-                    {% elif score['progress'] == 'SS' %}
-                    <td>
-                        <span class="badge" style="background-color: #F2711C; color: #000000;">SS Rank</span>
-                    </td>
-                    {% elif score['progress'] == 'S' %}
-                    <td>
-                        <span class="badge" style="background-color: #21BA45; color: #000000;">S Rank</span>
-                    </td>
-                    {% elif score['progress'] == 'A' %}
-                    <td>
-                        <span class="badge" style="background-color: #B5CC18; color: #000000;">A Rank</span>
-                    </td>
-                    {% elif score['progress'] == 'B' %}
-                    <td>
-                        <span class="badge" style="background-color: #6435C9; color: #000000;">B Rank</span>
-                    </td>
-                    {% elif score['progress'] == 'C' %}
-                    <td>
-                        <span class="badge" style="background-color: #A333C8; color: #000000;">C Rank</span>
-                    </td>
-                    {% elif score['progress'] == 'D' %}
-                    <td>
-                        <span class="badge" style="background-color: #DB2828; color: #000000;">D Rank</span>
-                    </td>
-                    {% elif score['progress'] == 'F' %}
-                    <td>
-                        <span class="badge" style="background-color: #767676; color: #000000;">F Rank</span>
-                    </td>
-                    {% endif %}
-                    <td>{{ score['record_rank'] }}</td>
-                    <td>{{ score['music_level'] }}</td>
-                    <td>{{ score['cleared_time'] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="table-responsive-sm">
-        <table class="table table-dark table-borderless table-sm">
-            <thead>
-                <th scope="col">#</th>
-                <th scope="col">Title</th>
-                <th scope="col">Level</th>
-                <th scope="col">Score</th>
-                <th scope="col">Clear</th>
-                <th scope="col">Grade</th>
-                <th scope="col">Cool</th>
-                <th scope="col">Good</th>
-                <th scope="col">Bad</th>
-                <th scope="col">Miss</th>
-                <th scope="col">Max Combo</th>
-                <th scope="col">PlayTime</th>
-            </thead>
-            <tbody>
-                {% for score in scoreboard %}
-                <tr>
-                    <th scope="row">{{ score['row_number'] }}</th>
-                    <td>
-                        <a
-                            href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
-                            {{ score['music_title'] }}
-                        </a>
-                    </td>
-                    <td>{{ score['music_level'] }}</td>
-                    <td>{{ score['score'] }}</td>
-                    {% if score['is_cleared_record'] == 1 %}
-                    <td>
-                        <span class="badge" style="background-color: #198754; color: #000000;">Cleared</span>
-                    </td>
-                    {% else %}
-                    <td>
-                        <span class="badge" style="background-color: #DC3545; color: #000000;">Failed</span>
-                    </td>
-                    {% endif %}
-                    {% if score['progress'] == 1 %}
-                    <td>
-                        <span class="badge" style="background-color: #FBBD08; color: #000000;">P Rank</span>
-                    </td>
-                    {% elif score['progress'] == 2 %}
-                    <td>
-                        <span class="badge" style="background-color: #F2711C; color: #000000;">SS Rank</span>
-                    </td>
-                    {% elif score['progress'] == 3 %}
-                    <td>
-                        <span class="badge" style="background-color: #21BA45; color: #000000;">S Rank</span>
-                    </td>
-                    {% elif score['progress'] == 4 %}
-                    <td>
-                        <span class="badge" style="background-color: #B5CC18; color: #000000;">A Rank</span>
-                    </td>
-                    {% elif score['progress'] == 5 %}
-                    <td>
-                        <span class="badge" style="background-color: #6435C9; color: #000000;">B Rank</span>
-                    </td>
-                    {% elif score['progress'] == 6 %}
-                    <td>
-                        <span class="badge" style="background-color: #A333C8; color: #000000;">C Rank</span>
-                    </td>
-                    {% elif score['progress'] == 7 %}
-                    <td>
-                        <span class="badge" style="background-color: #DB2828; color: #000000;">D Rank</span>
-                    </td>
-                    {% elif score['progress'] == 8 %}
-                    <td>
-                        <span class="badge" style="background-color: #767676; color: #000000;">F Rank</span>
-                    </td>
-                    {% endif %}
-                    <td>{{ score['score_cool'] }}</td>
-                    <td>{{ score['score_good'] }}</td>
-                    <td>{{ score['score_bad'] }}</td>
-                    <td>{{ score['score_miss'] }}</td>
-                    <td>{{ score['score_max_combo'] }}</td>
-                    <td data-bs-toggle="popover" data-bs-container="body" data-bs-placement="left"
-                        data-bs-content="{{ score['cleared_time'] }}">
-                        {{
-                        score['cleared_time'] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
-    {% else %}
-    <div class="text-white info-header">
-        <div class="d-flex justify-content-center">
-            <h3>THIS PLAYER HAS NOT RECORD</h3>
-        </div>
-    </div>
-    {% endif %}
-</div>
 {% endblock %}
 {% block scripts %}
-<script>
-    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+    <script>
+        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
-    const url = new URL(window.location.href);
-    const parameters = url.searchParams;
+        const url = new URL(window.location.href);
+        const parameters = url.searchParams;
 
-    let showFRankButton = document.getElementById("show-f-rank");
-    let showRecentButton = document.getElementById("show-recent");
+        let showFRankButton = document.getElementById("show-f-rank");
+        let showRecentButton = document.getElementById("show-recent");
 
-    let showFRank = parameters.get('show-f-rank') == 1 ? 1 : 0;
-    let showRecent = parameters.get('show-recent') == 1 ? 1 : 0;
+        let showFRank = parameters.get('show-f-rank') == 1 ? 1 : 0;
+        let showRecent = parameters.get('show-recent') == 1 ? 1 : 0;
 
-    function setOption() {
-        let newUrl = new URL("/player-scoreboard/{{ metadata['player_code'] }}/{{ metadata['current_view_difficulty'] }}", url);
+        function setOption() {
+            let newUrl = new URL("/player-scoreboard/{{ metadata['player_code'] }}/{{ metadata['current_view_difficulty'] }}", url);
 
-        if (showRecent == 1) {
-            newUrl.searchParams.set('show-recent', 1);
-        } else {
-            newUrl.searchParams.set('show-recent', 0);
+            if (showRecent == 1) {
+                newUrl.searchParams.set('show-recent', 1);
+            } else {
+                newUrl.searchParams.set('show-recent', 0);
+            }
+
+            if (showFRank == 1) {
+                newUrl.searchParams.set('show-f-rank', 1);
+            } else {
+                newUrl.searchParams.set('show-f-rank', 0);
+            }
+
+            window.location.replace(newUrl);
         }
 
-        if (showFRank == 1) {
-            newUrl.searchParams.set('show-f-rank', 1);
-        } else {
-            newUrl.searchParams.set('show-f-rank', 0);
-        }
-
-        window.location.replace(newUrl);
-    }
-
-    showFRankButton.addEventListener('click', () => {
-        showFRank = !showFRank;
-        setOption()
-    });
-    showRecentButton.addEventListener('click', () => {
-        showRecent = !showRecent;
-        setOption()
-    });
-</script>
+        showFRankButton.addEventListener('click', () => {
+            showFRank = !showFRank;
+            setOption()
+        });
+        showRecentButton.addEventListener('click', () => {
+            showRecent = !showRecent;
+            setOption()
+        });
+    </script>
 {% endblock %}

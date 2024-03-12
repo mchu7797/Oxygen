@@ -1,43 +1,43 @@
 {% extends 'base.html' %}
 {% block title %}Chart Ranking{% endblock %}
 {% block content %}
-<div class="container-lg text-white">
-    <h1 class="text-center mb-2">DMJAM CHART RANKING</h1>
-    <div class="d-flex justify-content-between">
-        <span style="color: darkgray;">Collect started when 2023-09-06 00:00 (KST)</span>
-        <div class="btn-group btn-group-sm" role="group" aria-label="Top options">
-            <a href="/ranking/chart?top=200" class="btn btn-outline-secondary">Top 200</a>
-            <a href="/ranking/chart?top=500" class="btn btn-outline-secondary">Top 500</a>
-            <a href="/ranking/chart?top=1000" class="btn btn-outline-secondary">Top 1000</a>
-            <a href="/ranking/chart?top=0" class="btn btn-outline-secondary">No Limit</a>
+    <div class="container-lg text-white">
+        <h1 class="text-center mb-2">DMJAM CHART RANKING</h1>
+        <div class="d-flex justify-content-between">
+            <span style="color: darkgray;">Collect started when 2023-09-06 00:00 (KST)</span>
+            <div class="btn-group btn-group-sm" role="group" aria-label="Top options">
+                <a href="/ranking/chart?top=200" class="btn btn-outline-secondary">Top 200</a>
+                <a href="/ranking/chart?top=500" class="btn btn-outline-secondary">Top 500</a>
+                <a href="/ranking/chart?top=1000" class="btn btn-outline-secondary">Top 1000</a>
+                <a href="/ranking/chart?top=0" class="btn btn-outline-secondary">No Limit</a>
+            </div>
         </div>
+        <hr style="border: 1px solid darkgray;" class="mb-3 mt-3">
+        {% if ranking | length > 0 %}
+            <div class="table-responsive-lg">
+                <table class="table table-dark table-borderless">
+                    <thead>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Playcount</th>
+                    </thead>
+                    <tbody>
+                    {% for row in ranking %}
+                        <tr>
+                            <th scope="row">{{ row["rank_index"] }}</th>
+                            <td>
+                                <a href="/music-scoreboard/{{ row['chart_id'] }}">{{ row["chart_title"] }}</a>
+                            </td>
+                            <td>{{ row["level"] }}</td>
+                            <td>{{ row["playcount"] }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <h1 class="text-center">SCOREBOARD ERROR!</h1>
+        {% endif %}
     </div>
-    <hr style="border: 1px solid darkgray;" class="mb-3 mt-3">
-    {% if ranking | length > 0 %}
-    <div class="table-responsive-lg">
-        <table class="table table-dark table-borderless">
-            <thead>
-                <th scope="col">#</th>
-                <th scope="col">Title</th>
-                <th scope="col">Level</th>
-                <th scope="col">Playcount</th>
-            </thead>
-            <tbody>
-                {% for row in ranking %}
-                <tr>
-                    <th scope="row">{{ row["rank_index"] }}</th>
-                    <td>
-                        <a href="/music-scoreboard/{{ row['chart_id'] }}">{{ row["chart_title"] }}</a>
-                    </td>
-                    <td>{{ row["level"] }}</td>
-                    <td>{{ row["playcount"] }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <h1 class="text-center">SCOREBOARD ERROR!</h1>
-    {% endif %}
-</div>
 {% endblock %}
