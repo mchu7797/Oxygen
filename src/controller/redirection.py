@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, abort, g
 
-from config import DATABASE_CONFIG
-from database import DatabaseConnection
+from src.config import DATABASE_CONFIG
+from src.database import DatabaseConnection
 
 redirection = Blueprint("redirection", __name__)
 database = DatabaseConnection(DATABASE_CONFIG)

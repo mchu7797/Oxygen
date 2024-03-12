@@ -1,5 +1,6 @@
-from tools.encrypt import make_new_password_token, make_email_auth_token
 from enum import Enum
+
+from src.tools.encrypt import make_new_password_token, make_email_auth_token
 
 
 class GameChannelId(Enum):
@@ -350,5 +351,58 @@ class DatabaseUtils:
         )
 
         cursor.commit()
+
+        return True
+
+    def check_password_strength(self, token, password):
+        used_upper = False
+        used_lower = False
+        used_digit = False
+        used_special = False
+
+        for i in password:
+            if i.isupper() and used_upper is False:
+                used_upper = True
+            if i.islower() and used_lower is False:
+                used_lower = True
+            if i.isdigit() and used_digit is False:
+                used_digit = True
+            if i.isspecial() and used_special is False:
+                used_special = True
+
+        password_strength = used_upper + used_lower + used_digit + used_special
+
+        if password_strength < 3:
+            return False
+
+        cursor = self._connection.cursor()
+
+        cursor.execute("""
+        SELECT
+            m.userid
+        FROM dbo.member AS m
+        RIGHT OUTER JOIN dbo.password_reset_token AS t ON m.id = t.member_id
+        WHERE t.password_reset_token = ?""", token)
+
+        username = cursor.fetchval()
+
+        cursor.execute("SELECT email FROM dbo.member WHERE userid=?", username)
+        email = cursor.fetchval()
+
+        if password in email:
+            return False
+
+        cursor.execute("SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_ID=?", username)
+        nickname = cursor.fetchval()
+
+        if password in nickname:
+            return False
+
+        cursor.execute("SELECT COUNT(1) FROM dbo.bad_password WHERE password=?", password)
+
+        is_bad_password = cursor.fetchval()
+
+        if is_bad_password > 0:
+            return False
 
         return True

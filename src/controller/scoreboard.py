@@ -1,8 +1,8 @@
 from flask import Blueprint, request, render_template, abort, redirect, g
 
-from config import DATABASE_CONFIG
-from database import DatabaseConnection
-from tools.search_parser import parse_search
+from src.config import DATABASE_CONFIG
+from src.database import DatabaseConnection
+from src.tools.search_parser import parse_search
 
 scoreboard = Blueprint("scoreboard", __name__)
 

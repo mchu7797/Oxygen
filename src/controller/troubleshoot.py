@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, g, redirect, url_for
 
-from config import DATABASE_CONFIG
-from tools.mail import send_password_reset_mail
-from tools.encrypt import check_turnstile_auth
-from database import DatabaseConnection
+from src.config import DATABASE_CONFIG
+from src.tools.mail import send_password_reset_mail
+from src.tools.encrypt import check_turnstile_auth
+from src.database import DatabaseConnection
 
 troubleshoot = Blueprint("troubleshoot", __name__, url_prefix="/troubleshoot")
 
@@ -136,6 +136,13 @@ def reset_password_phase_2():
             )
 
         database = get_db()
+
+        if not database.utils.check_password_strength(token_id, password):
+            return render_template(
+                "reset-password.html",
+                status=4,
+                error_message="password is weak!",
+            )
 
         if not database.utils.reset_password(token_id, password):
             return render_template(

@@ -1,8 +1,8 @@
 from flask import Blueprint, request, abort, json, make_response, g
 
-import database
-from config import DATABASE_CONFIG
-from database import DatabaseConnection
+from src.config import DATABASE_CONFIG
+from src.database import DatabaseConnection
+from src.database.player_ranking_manager import PlayerRankingOption
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
@@ -195,7 +195,7 @@ def get_chart_ranking():
 def get_all_player():
     return make_json_response(
         get_db().player_ranking.get_player_ranking(
-            database.player_ranking_manager.PlayerRankingOption.ORDER_CLEAR
+            PlayerRankingOption.ORDER_CLEAR
         )
     )
 

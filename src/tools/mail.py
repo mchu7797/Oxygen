@@ -1,7 +1,7 @@
 import smtplib
 from email.mime.text import MIMEText
 
-from config import EMAIL_CONFIG
+from src.config import EMAIL_CONFIG
 
 
 def send_password_reset_mail(destination_email, token):

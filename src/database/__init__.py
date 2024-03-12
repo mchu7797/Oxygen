@@ -1,9 +1,9 @@
 import pyodbc
 
-from database.info_manager import InfoManager
-from database.chart_ranking_manager import ChartRankingManager
-from database.player_ranking_manager import PlayerRankingManager
-from database.utils import DatabaseUtils
+from src.database.info_manager import InfoManager
+from src.database.chart_ranking_manager import ChartRankingManager
+from src.database.player_ranking_manager import PlayerRankingManager
+from src.database.utils import DatabaseUtils
 
 class DatabaseConnection:
     def __init__(self, database_config):

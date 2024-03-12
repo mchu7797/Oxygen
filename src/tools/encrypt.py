@@ -2,7 +2,7 @@ from secrets import token_urlsafe
 
 import requests
 
-from config import TURNSTILE_PRIVATE_KEY, TURNSTILE_ENDPOINT
+from src.config import TURNSTILE_PRIVATE_KEY, TURNSTILE_ENDPOINT
 
 
 def make_new_password_token():
@@ -13,10 +13,6 @@ def make_new_password_token():
 def make_email_auth_token():
     # 1Byte = 1.3 Character
     return token_urlsafe(12)
-
-
-def check_password_strength(password):
-    pass
 
 
 def check_turnstile_auth(token, remote_ip):
