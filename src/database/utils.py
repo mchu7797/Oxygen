@@ -91,7 +91,7 @@ class DatabaseUtils:
               charInfo.Level,
               login.SUB_CH
             FROM
-              dbo.T_o2jam_login login
+                dbo.T_o2jam_login login
               LEFT OUTER JOIN dbo.T_o2jam_charinfo charInfo on charinfo.USER_INDEX_ID = login.USER_INDEX_ID
             ORDER BY
               charInfo.Level desc
@@ -337,7 +337,13 @@ class DatabaseUtils:
         cursor = self._connection.cursor()
 
         cursor.execute(
-            "SELECT member_id FROM dbo.password_reset_token WHERE password_reset_token = ? AND GETDATE() < token_expiration_period",
+            """
+            SELECT 
+                member_id
+            FROM
+                dbo.password_reset_token
+            WHERE
+                password_reset_token = ? AND GETDATE() < token_expiration_period""",
             token,
         )
 
@@ -346,9 +352,17 @@ class DatabaseUtils:
         if member_id is None:
             return False
 
+        cursor.execute("SELECT password_reset_blocked FROM dbo.member WHERE id = ?", member_id)
+
+        password_reset_blocked = cursor.fetchval()
+
+        if password_reset_blocked is not None and password_reset_blocked == 1:
+            return False
+
         cursor.execute(
             "UPDATE dbo.member SET passwd=? WHERE id=?", (password, member_id)
         )
+        cursor.execute("DELETE FROM dbo.password_reset_token WHERE password_reset_token = ?", token)
 
         cursor.commit()
 
