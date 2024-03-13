@@ -410,13 +410,15 @@ class DatabaseUtils:
         cursor.execute("SELECT email FROM dbo.member WHERE userid=?", username)
         email = cursor.fetchval()
 
-        if email is not None and password in email:
-            return False
+        if email is not None:
+            email = email[:email.index('@')]
+            if email in password:
+                return False
 
         cursor.execute("SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_ID=?", username)
         nickname = cursor.fetchval()
 
-        if nickname is not None and password in nickname:
+        if nickname is not None and nickname in password:
             return False
 
         cursor.execute("SELECT COUNT(1) FROM dbo.bad_password WHERE password=?", password)
