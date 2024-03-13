@@ -355,7 +355,7 @@ class DatabaseUtils:
         return True
 
     def check_password_strength(self, token, password):
-        special_characters = " !\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"
+        special_characters = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
 
         used_upper = False
         used_lower = False
