@@ -397,8 +397,9 @@ class DatabaseUtils:
         cursor.execute("SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_ID=?", username)
         nickname = cursor.fetchval()
 
-        if password in nickname:
-            return False
+        if nickname is not None:
+            if password in nickname:
+                return False
 
         cursor.execute("SELECT COUNT(1) FROM dbo.bad_password WHERE password=?", password)
 
