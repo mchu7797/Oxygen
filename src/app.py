@@ -1,10 +1,10 @@
 from flask import Flask, render_template
 from flask_cors import CORS
 
-from controller.api import api
-from controller.redirection import redirection
-from controller.scoreboard import scoreboard
-from controller.troubleshoot import troubleshoot
+from src.controller.api import api
+from src.controller.redirection import redirection
+from src.controller.scoreboard import scoreboard
+from src.controller.troubleshoot import troubleshoot
 
 app = Flask(__name__)
 
