@@ -1,9 +1,9 @@
 from flask import Blueprint, render_template, request, g, redirect, url_for
 
 from src.config import DATABASE_CONFIG
-from src.tools.mail import send_password_reset_mail
-from src.tools.encrypt import check_turnstile_auth
 from src.database import DatabaseConnection
+from src.tools.encrypt import check_turnstile_auth
+from src.tools.mail import send_password_reset_mail
 
 troubleshoot = Blueprint("troubleshoot", __name__, url_prefix="/troubleshoot")
 
@@ -78,13 +78,12 @@ def gem_to_cash():
 
 @troubleshoot.route("/reset-password", methods=["GET", "POST"])
 def reset_password():
-
     if request.method == "GET":
         return render_template("reset-password.html", status=0)
     else:
         account_id = request.values.get("account-id")
-        cf_turnstile_response = request.values.get("cf_turnstile-response")
-        ip = request.values.get("CF-Connecting-IP")
+        cf_turnstile_response = request.values.get("cf-turnstile-response")
+        ip = request.headers.get("CF-Connecting-IP")
 
         if not check_turnstile_auth(cf_turnstile_response, ip):
             return render_template(
