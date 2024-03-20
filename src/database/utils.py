@@ -247,6 +247,9 @@ class DatabaseUtils:
 
         raw_result = cursor.fetchone()
 
+        if raw_result is None:
+            return None
+
         return {
             "player_code": raw_result[0],
             "gem": raw_result[1],
