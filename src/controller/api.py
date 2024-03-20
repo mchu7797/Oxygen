@@ -50,7 +50,7 @@ def check_login():
     login_token = get_db().utils.generate_login_token(user_id, password)
 
     if login_token is None:
-        abort(404)
+        abort(403)
 
     return login_token
 
