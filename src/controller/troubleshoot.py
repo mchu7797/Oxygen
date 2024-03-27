@@ -194,5 +194,5 @@ def find_my_id():
         return render_template(
             "find-my-id.html",
             status=2,
-            error_message="Account id sent to your email!",
+            error_message="Account id sent to your email if your email is correct!",
         )
