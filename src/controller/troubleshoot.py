@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, g, redirect, url_for
 from src.config import DATABASE_CONFIG
 from src.database import DatabaseConnection
 from src.tools.encrypt import check_turnstile_auth
-from src.tools.mail import send_password_reset_mail
+from src.tools.mail import send_password_reset_mail, send_account_id_notice_mail
 
 troubleshoot = Blueprint("troubleshoot", __name__, url_prefix="/troubleshoot")
 
@@ -43,7 +43,12 @@ def cash_to_gem():
 
     player_id = request.form.get("o2jam-id")
     password = request.form.get("o2jam-pw")
-    exchange_rate = int(request.form.get("gem-amount"))
+    exchange_rate = request.form.get("gem-amount")
+
+    if exchange_rate == '':
+        exchange_rate = 0
+    else:
+        exchange_rate = int(exchange_rate)
 
     result = database.utils.exchange_cash(player_id, password, exchange_rate, "gem")
     wallet = database.utils.get_wallet_info(player_id)
@@ -153,4 +158,39 @@ def reset_password_phase_2():
         return render_template(
             "reset-password.html",
             status=2,
+        )
+
+
+@troubleshoot.route("/find-my-id", methods=["GET", "POST"])
+def find_my_id():
+    if request.method == "GET":
+        return render_template("find-my-id.html", status=0)
+    else:
+        email = request.values.get("email")
+        cf_turnstile_response = request.values.get("cf-turnstile-response")
+        ip = request.headers.get("CF-Connecting-IP")
+
+        if not check_turnstile_auth(cf_turnstile_response, ip):
+            return render_template(
+                "find-my-id.html",
+                status=1,
+                error_message="Capcha not passed!",
+            )
+
+        if email is None:
+            return render_template(
+                "find-my-id.html",
+                status=1,
+                error_message="Invalid input data!",
+            )
+
+        database = get_db()
+
+        account_id = database.utils.find_user_by_email(email)
+        send_account_id_notice_mail(email, account_id)
+
+        return render_template(
+            "find-my-id.html",
+            status=2,
+            error_message="Account id sent to your email!",
         )

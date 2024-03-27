@@ -432,3 +432,15 @@ class DatabaseUtils:
             return False
 
         return True
+
+    def find_user_by_email(self, email):
+        cursor = self._connection.cursor()
+
+        cursor.execute("SELECT userid FROM dbo.member WHERE email=?", email)
+
+        account_id = cursor.fetchval()
+
+        if account_id is None:
+            return None
+
+        return account_id
