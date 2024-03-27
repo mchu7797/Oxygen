@@ -187,7 +187,9 @@ def find_my_id():
         database = get_db()
 
         account_id = database.utils.find_user_by_email(email)
-        send_account_id_notice_mail(email, account_id)
+
+        if account_id is not None:
+            send_account_id_notice_mail(email, account_id)
 
         return render_template(
             "find-my-id.html",
