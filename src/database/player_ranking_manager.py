@@ -129,6 +129,32 @@ class PlayerRankingManager:
                     LEFT OUTER JOIN dbo.TierInfo t on s.Tier = t.tier_index
             """
             )
+        elif sort_option == PlayerRankingOption.ORDER_CLEAR:
+            cursor.execute(
+                f"""
+                            SELECT
+                                s.PlayerCode, 
+                                c.USER_NICKNAME, 
+                                s.{self._ranking_option_to_string(sort_option)},
+                                t.tier_name,
+                                RANK() OVER (
+                                    ORDER BY
+                                        s.{self._ranking_option_to_string(sort_option)} desc,
+                                        s.D desc,
+                                        s.C desc,
+                                        s.B desc,
+                                        s.A desc,
+                                        s.S desc,
+                                        s.SS desc,
+                                        s.P desc,
+                                        s.UpdatedTime desc
+                                ) RowNum
+                            FROM 
+                                dbo.O2JamStatus s
+                                LEFT OUTER JOIN dbo.T_o2jam_charinfo c on s.PlayerCode = c.USER_INDEX_ID 
+                                LEFT OUTER JOIN dbo.TierInfo t on s.Tier = t.tier_index
+                        """
+            )
         else:
             cursor.execute(
                 f"""
@@ -140,7 +166,7 @@ class PlayerRankingManager:
                     RANK() OVER (
                         ORDER BY
                             s.{self._ranking_option_to_string(sort_option)} desc,
-                            s.Tier
+                            s.UpdatedTime desc
                     ) RowNum
                 FROM 
                     dbo.O2JamStatus s
