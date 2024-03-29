@@ -78,10 +78,12 @@ def player_scoreboard(player_code, difficulty):
 @scoreboard.route("/music-scoreboard/<music_code>")
 @scoreboard.route("/music-scoreboard/<music_code>/<difficulty>")
 def music_scoreboard(music_code, difficulty=2):
+    order_by_date = True if request.args.get("order-by-date", type=int) == 1 else False
+
     if music_code is None:
         return abort(404)
 
-    music_scores = get_db().chart_ranking.get_chart_top_records(music_code, difficulty)
+    music_scores = get_db().chart_ranking.get_chart_top_records(music_code, difficulty, order_by_date)
     music_metadata = get_db().info.get_music_info(music_code, difficulty)
     url_before = request.headers.get("referer")
 
@@ -93,6 +95,7 @@ def music_scoreboard(music_code, difficulty=2):
         scoreboard=music_scores,
         metadata=music_metadata,
         referer=url_before,
+        order_by_date=order_by_date
     )
 
 
@@ -120,7 +123,7 @@ def chart_ranking():
     if top is None:
         top = 200
 
-    ranking_data = get_db().chart_ranking.get_playcount_ranking(top=top)
+    ranking_data = get_db().chart_ranking.get_play_count_ranking(top=top)
 
     return render_template("chart-ranking.html", ranking=ranking_data)
 

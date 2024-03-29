@@ -188,7 +188,7 @@ def get_chart_ranking():
     if top is None:
         top = 200
 
-    return make_json_response(get_db().chart_ranking.get_playcount_ranking(top=top))
+    return make_json_response(get_db().chart_ranking.get_play_count_ranking(top=top))
 
 
 @api.route("/players")
