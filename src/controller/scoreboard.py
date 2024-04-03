@@ -78,12 +78,10 @@ def player_scoreboard(player_code, difficulty):
 @scoreboard.route("/music-scoreboard/<music_code>")
 @scoreboard.route("/music-scoreboard/<music_code>/<difficulty>")
 def music_scoreboard(music_code, difficulty=2):
-    order_by_date = True if request.args.get("order-by-date", type=int) == 1 else False
-
     if music_code is None:
         return abort(404)
 
-    music_scores = get_db().chart_ranking.get_chart_top_records(music_code, difficulty, order_by_date)
+    music_scores = get_db().chart_ranking.get_chart_top_records(music_code, difficulty)
     music_metadata = get_db().info.get_music_info(music_code, difficulty)
     url_before = request.headers.get("referer")
 
@@ -94,8 +92,7 @@ def music_scoreboard(music_code, difficulty=2):
         "music.html",
         scoreboard=music_scores,
         metadata=music_metadata,
-        referer=url_before,
-        order_by_date=order_by_date
+        referer=url_before
     )
 
 
@@ -133,6 +130,9 @@ def history():
     player_id = request.args.get("player_id", type=int)
     chart_id = request.args.get("chart_id", type=int)
     gauge_difficulty = request.args.get("gauge_difficulty", type=int)
+    order_by_date = request.args.get("order_by_date", False, type=lambda value: value == "true")
+
+    print(order_by_date)
 
     if player_id is None or chart_id is None:
         abort(404)
@@ -141,7 +141,7 @@ def history():
         gauge_difficulty = 2
 
     histories = get_db().player_ranking.get_record_histories(
-        player_id, chart_id, gauge_difficulty
+        player_id, chart_id, gauge_difficulty, order_by_date=order_by_date
     )
 
     chart_data = get_db().info.get_music_info(chart_id, gauge_difficulty)
@@ -154,4 +154,5 @@ def history():
         chart_info=chart_data,
         player_id=player_id,
         gauge_difficulty=gauge_difficulty,
+        order_by_date=order_by_date
     )

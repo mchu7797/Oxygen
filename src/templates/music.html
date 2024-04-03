@@ -47,10 +47,6 @@
                 <span class="badge bg-secondary">BPM : {{ metadata['bpm'] }}</span>
                 <span class="badge bg-secondary">CHART PLAYCOUNT : {{ metadata['play_count'] }}</span>
             </div>
-            <div class="col-auto">
-                <a id="order-by-date" class="btn btn-outline-light btn-sm {% if order_by_date == 1 %}active{% endif %}"
-                   {% if order_by_date == 1 %}aria-pressed="true"{% endif %} data-bs-toggle="button">Order by Date</a>
-            </div>
         </div>
         {% if scoreboard != None %}
             <div class="table-responsive-lg">
@@ -140,30 +136,4 @@
             </div>
         {% endif %}
     </div>
-{% endblock %}
-{% block scripts %}
-    <script>
-        const url = new URL(window.location.href);
-        const parameters = url.searchParams;
-
-        let orderByDateButton = document.getElementById("order-by-date");
-        let orderByDate = parameters.get("order-by-date") == 1 ? 1 : 0;
-
-        function setOption() {
-            let newUrl = new URL("/music-scoreboard/{{ metadata['music_code'] }}/{{ metadata['difficulty'] }}", url);
-
-            if (orderByDate == 1) {
-                newUrl.searchParams.set("order-by-date", 1);
-            } else {
-                newUrl.searchParams.set("order-by-date", 0);
-            }
-
-            window.location.replace(newUrl);
-        }
-
-        orderByDateButton.addEventListener("click", () => {
-            orderByDate = !orderByDate;
-            setOption();
-        });
-    </script>
 {% endblock %}

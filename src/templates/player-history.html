@@ -24,16 +24,22 @@
         2023년 12월 20일 이전 기록은 조회되지 않습니다.
         <br>
         Records before December 20th, 2023, are not available for viewing.
-        <div class="mb-3 mt-3">
-            <span class="badge bg-info bg-opacity-75">PLAYER : {{ player_info['nickname'] }}</span>
-            {% if chart_info['difficulty'] == 0 %}
-                <span class="badge bg-success">LEVEL {{ chart_info['level'] }}</span>
-            {% elif chart_info['difficulty'] == 1 %}
-                <span class="badge bg-warning">LEVEL {{ chart_info['level'] }}</span>
-            {% else %}
-                <span class="badge bg-danger">LEVEL {{ chart_info['level'] }}</span>
-            {% endif %}
-            <span class="badge bg-secondary">BPM : {{ chart_info['bpm'] }}</span>
+        <div class="row mb-3 mt-3">
+            <div class="col-auto me-auto">
+                <span class="badge bg-info bg-opacity-75">PLAYER : {{ player_info['nickname'] }}</span>
+                {% if chart_info['difficulty'] == 0 %}
+                    <span class="badge bg-success">LEVEL {{ chart_info['level'] }}</span>
+                {% elif chart_info['difficulty'] == 1 %}
+                    <span class="badge bg-warning">LEVEL {{ chart_info['level'] }}</span>
+                {% else %}
+                    <span class="badge bg-danger">LEVEL {{ chart_info['level'] }}</span>
+                {% endif %}
+                <span class="badge bg-secondary">BPM : {{ chart_info['bpm'] }}</span>
+            </div>
+            <div class="col-auto">
+                <a id="order-by-date" class="btn btn-outline-light btn-sm {% if order_by_date == 1 %}active{% endif %}"
+                   {% if order_by_date == 1 %}aria-pressed="true"{% endif %} data-bs-toggle="button">Order by Date</a>
+            </div>
         </div>
         {% if histories != [] %}
             <div class="table-responsive-lg">
@@ -118,4 +124,37 @@
             </div>
         {% endif %}
     </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        const url = new URL(window.location.href);
+        const parameters = url.searchParams;
+
+        let orderByDateButton = document.getElementById("order-by-date");
+        let orderByDate = parameters.get("order_by_date") == "true";
+        let playerId = parameters.get("player_id");
+        let chartId = parameters.get("chart_id");
+        let gaugeDifficulty = parameters.get("gauge_difficulty");
+
+        function setOption() {
+            let newUrl = new URL("/history", url);
+
+            if (orderByDate) {
+                newUrl.searchParams.set("order_by_date", true);
+            } else {
+                newUrl.searchParams.set("order_by_date", false);
+            }
+
+            newUrl.searchParams.set("player_id", playerId);
+            newUrl.searchParams.set("chart_id", chartId);
+            newUrl.searchParams.set("gauge_difficulty", gaugeDifficulty);
+
+            window.location.replace(newUrl);
+        }
+
+        orderByDateButton.addEventListener("click", () => {
+            orderByDate = !orderByDate;
+            setOption();
+        });
+    </script>
 {% endblock %}

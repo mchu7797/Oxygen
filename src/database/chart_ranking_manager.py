@@ -2,29 +2,8 @@ class ChartRankingManager:
     def __init__(self, connection):
         self._connection = connection
 
-    def get_chart_top_records(self, music_id, gauge_difficulty, order_by_date=False):
+    def get_chart_top_records(self, music_id, gauge_difficulty):
         cursor = self._connection.cursor()
-
-        if order_by_date:
-            order_query = """
-                ORDER BY
-                    h.PlayedTime DESC,
-                    h.Score DESC,
-                    h.isClear DESC,
-                    h.Cool DESC,
-                    s.Clear,
-                    h.PlayerCode DESC
-            """
-        else:
-            order_query = """
-                ORDER BY
-                    h.Score DESC,
-                    h.isClear DESC,
-                    h.Cool DESC,
-                    s.Clear,
-                    h.PlayedTime DESC,
-                    h.PlayerCode DESC
-            """
 
         cursor.execute(
             f"""
@@ -40,7 +19,13 @@ class ChartRankingManager:
                 h.isClear,
                 FORMAT(h.PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
                 p.progress_name,
-                ROW_NUMBER() OVER ({order_query}) status
+                ROW_NUMBER() OVER (ORDER BY
+                    h.Score DESC,
+                    h.isClear DESC,
+                    h.Cool DESC,
+                    s.Clear,
+                    h.PlayedTime DESC,
+                    h.PlayerCode DESC) status
             FROM 
                 dbo.O2JamHighscore h 
                 LEFT OUTER JOIN dbo.T_o2jam_charinfo c on h.PlayerCode = c.USER_INDEX_ID

@@ -218,11 +218,16 @@ class PlayerRankingManager:
             case _:
                 return "Unknown"
 
-    def get_record_histories(self, player_id, chart_id, difficulty):
+    def get_record_histories(self, player_id, chart_id, difficulty, order_by_date):
         cursor = self._connection.cursor()
 
+        if order_by_date:
+            order_query = "ORDER BY PlayedTime DESC"
+        else:
+            order_query = "ORDER BY Score DESC"
+
         cursor.execute(
-            """
+            f"""
                 SELECT TOP 50
                     FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
                     Score,
@@ -233,10 +238,7 @@ class PlayerRankingManager:
                     Bad,
                     Miss,
                     MaxCombo,
-                    ROW_NUMBER() OVER (
-                        ORDER BY
-                            Score DESC
-                    ) RowNum
+                    ROW_NUMBER() OVER ({order_query}) RowNum
                 FROM dbo.O2JamPlaylog
                 WHERE
                     PlayerCode = ?
