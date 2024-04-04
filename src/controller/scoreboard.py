@@ -132,8 +132,6 @@ def history():
     gauge_difficulty = request.args.get("gauge_difficulty", type=int)
     order_by_date = request.args.get("order_by_date", False, type=lambda value: value == "true")
 
-    print(order_by_date)
-
     if player_id is None or chart_id is None:
         abort(404)
 

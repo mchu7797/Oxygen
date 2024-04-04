@@ -289,6 +289,23 @@ class DatabaseUtils:
         if cursor.fetchone() is None:
             return None
 
+        cursor.execute(
+            """
+            SELECT
+                COUNT(member_index_id)
+            FROM
+                dbo.banishment
+            WHERE 
+                member_id = ? AND
+                (expiration_date > GETDATE() OR expiration_date IS NULL)
+            """
+        )
+
+        banishment_flag = cursor.fetchval()
+
+        if banishment_flag is not None and banishment_flag > 0:
+            return None
+
         new_token = make_new_password_token()
 
         cursor.execute(

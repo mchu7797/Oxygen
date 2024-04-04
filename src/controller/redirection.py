@@ -6,6 +6,7 @@ from src.database import DatabaseConnection
 redirection = Blueprint("redirection", __name__)
 database = DatabaseConnection(DATABASE_CONFIG)
 
+
 def get_db():
     if 'db' not in g:
         g.db = DatabaseConnection(DATABASE_CONFIG)
