@@ -298,13 +298,13 @@ class DatabaseUtils:
             WHERE 
                 member_id = ? AND
                 (expiration_date > GETDATE() OR expiration_date IS NULL)
-            """
+            """,
+            username
         )
 
         banishment_flag = cursor.fetchval()
 
         if banishment_flag is not None and banishment_flag > 0:
-            print(f"{username} Banned")
             return None
 
         new_token = make_new_password_token()
