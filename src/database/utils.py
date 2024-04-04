@@ -297,7 +297,7 @@ class DatabaseUtils:
                 dbo.banishment
             WHERE 
                 member_id = ? AND
-                (expiration_date > GETDATE() OR expiration_date IS NULL)
+                (DATEADD(DAY, banishment_period, occur_date) > GETDATE() OR banishment_period IS NULL)
             """,
             username
         )
