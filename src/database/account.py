@@ -99,9 +99,9 @@ class AccountManager:
         nickname_exchange_money = cursor.fetchval()
 
         return (
-            player_gem is not None
-            and nickname_exchange_money is not None
-            and player_gem >= nickname_exchange_money
+                player_gem is not None
+                and nickname_exchange_money is not None
+                and player_gem >= nickname_exchange_money
         )
 
     def change_nickname(self, token, nickname):
@@ -124,6 +124,15 @@ class AccountManager:
         nickname_history_count = cursor.fetchval()
 
         if nickname_history_count is not None and nickname_history_count > 0:
+            return False
+
+        cursor.execute(
+            "SELECT COUNT(USER_NICKNAME) FROM dbo.T_o2jam_charinfo WHERE USER_NICKNAME = ?", nickname
+        )
+
+        nickname_count = cursor.fetchval()
+
+        if nickname_count is not None and nickname_count > 0:
             return False
 
         cursor.execute(
