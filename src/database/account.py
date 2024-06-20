@@ -1,3 +1,5 @@
+from pyodbc import DataError
+
 from src.tools.encrypt import make_email_auth_token
 
 
@@ -168,10 +170,16 @@ class AccountManager:
             "UPDATE dbo.T_o2jam_charCash SET gem = ? WHERE USER_INDEX_ID = ?",
             (gem - nickname_exchange_money, player_index_id),
         )
-        cursor.execute(
-            "UPDATE dbo.T_o2jam_charinfo SET USER_NICKNAME = ? WHERE USER_INDEX_ID = ?",
-            (nickname, player_index_id),
-        )
+
+        try:
+            cursor.execute(
+                "UPDATE dbo.T_o2jam_charinfo SET USER_NICKNAME = ? WHERE USER_INDEX_ID = ?",
+                (nickname, player_index_id),
+            )
+        except DataError:
+            self._connection.rollback()
+            return False
+
         cursor.execute(
             "INSERT INTO dbo.nickname_history (player_id, nickname, occur_date) VALUES (?, ?, GETDATE())",
             (player_index_id, nickname),
