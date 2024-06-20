@@ -267,5 +267,5 @@ def change_nickname_phase_2():
         else:
             return render_template(
                 "change-nickname.html",
-                phase=2,
+                phase=1,
                 info_message="Nickname changed successfully!")
