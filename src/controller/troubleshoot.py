@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, g, redirect, url_for
 from src.config import DATABASE_CONFIG
 from src.database import DatabaseConnection
 from src.tools.encrypt import check_turnstile_auth
-from src.tools.mail import send_password_reset_mail, send_account_id_notice_mail
+from src.tools.mail import send_password_reset_mail, send_account_id_notice_mail, send_nickname_change_notice_mail
 
 troubleshoot = Blueprint("troubleshoot", __name__, url_prefix="/troubleshoot")
 
@@ -196,3 +196,71 @@ def find_my_id():
             status=2,
             error_message="Account id sent to your email if your email is correct!",
         )
+
+
+@troubleshoot.route("/change-nickname-phase-1", methods=["GET", "POST"])
+def change_nickname_phase_1():
+    if request.method == "GET":
+        return render_template("change-nickname.html", phase=0)
+    else:
+        account_id = request.values.get("account-id")
+        password = request.values.get("password")
+        cf_turnstile_response = request.values.get("cf-turnstile-response")
+        ip = request.headers.get("CF-Connecting-IP")
+
+        if not check_turnstile_auth(cf_turnstile_response, ip):
+            return render_template(
+                "change-nickname.html",
+                phase=0,
+                error_message="Capcha not passed!",
+            )
+
+        if account_id is None:
+            return render_template(
+                "change-nickname.html",
+                phase=0,
+                error_message="Cannot found your id!",
+            )
+
+        database = get_db()
+
+        token_id = database.account_manager.get_change_nickname_token(account_id, password)
+        email = database.utils.get_player_email(account_id)
+        nickname_changable = database.account_manager.get_nickname_changeable(account_id, password)
+
+        if not nickname_changable:
+            return render_template(
+                "change-nickname.html",
+                phase=0,
+                error_message="Cannot change nickname! Your gem amount is not enough!",
+            )
+
+        if token_id is None or email is None:
+            return render_template(
+                "change-nickname.html",
+                phase=0,
+                error_message="Cannot found your email or Cannot made of new token!",
+            )
+
+        send_nickname_change_notice_mail(email, token_id)
+
+        return redirect(url_for("troubleshoot.change_nickname_phase_2"))
+
+
+@troubleshoot.route("/change-nickname-phase-2", methods=["GET", "POST"])
+def change_nickname_phase_2():
+    if request.method == "GET":
+        return render_template("change-nickname.html", phase=1)
+    else:
+        token_id = request.values.get("token-id")
+        new_nickname = request.values.get("new-nickname")
+
+        database = get_db()
+
+        result = database.account_manager.change_nickname(token_id, new_nickname)
+
+        if result is not True:
+            return render_template(
+                "change-nickname.html",
+                phase=1,
+                error_message="That something went wrong!")

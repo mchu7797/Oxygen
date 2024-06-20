@@ -3,7 +3,7 @@ name = "oxygen"
 version = "0.0.1"
 description = "O2Jam internet ranking service"
 authors = ["Chu Minseok <mchu7797@gmail.com>"]
-readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"

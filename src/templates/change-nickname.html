@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Tools{% endblock %}
+{% block content %}
+    <div class="container-lg text-white">
+        <div class="text-center">
+            <h1 class="display-3">Nickname Change</h1>
+            <h3>닉네임 변경</h3>
+        </div>
+        {% if phase == 0 %}
+            {% if error_message|length > 0 %}
+                <div class="alert alert-danger">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+            <form action="/troubleshoot/change-nickname-phase-1" method="post">
+                <div class="mb-3">
+                    <label for="account-id">ID</label>
+                    <input type="text" name="account-id" id="account-id" class="form-control">
+                    <div class="cf-turnstile mt-2" data-sitekey="0x4AAAAAAAUifEG8f8cMg-gj"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Send Email</button>
+            </form>
+            <div class="mt-4">
+                <h3 class="displa-3">Nickname Change Price</h3>
+                <table class="table table-dark">
+                    <thead>
+                    <tr>
+                        <th scope="col">Change</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="row">1st</th>
+                        <td>Free</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2nd</th>
+                        <td>2,000,000 Gems</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3rd</th>
+                        <td>5,000,000 Gems</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">4th</th>
+                        <td>10,000,000 Gems</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">5th</th>
+                        <td>25,000,000 Gems</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">6th</th>
+                        <td>50,000,000 Gems</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">7th</th>
+                        <td>100,000,000 Gems</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">8th</th>
+                        <td>250,000,000 Gems</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">9th</th>
+                        <td>500,000,000 Gems</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">10th and later</th>
+                        <td>1,000,000,000 Gems</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        {% elif phase == 1 %}
+            {% if error_message|length > 0 %}
+                <div class="alert alert-danger">
+                    {{ error_message }}
+                </div>
+            {% endif %}
+            <form action="/troubleshoot/change-nickname-phase-2" method="post">
+                <div class="mb-3">
+                    <label for="token-id">Token</label>
+                    <br>
+                    <input type="text" name="token-id" id="token-id" class="form-control">
+                    <small>Please proceed within 5 minutes after receiving the email.</small>
+                </div>
+                <div class="mb-3">
+                    <label for="new-nickname">New Nickname</label>
+                    <input type="text" name="new-nickname" id="new-nickname" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-primary">Reset Password</button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

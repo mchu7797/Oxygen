@@ -4,7 +4,12 @@
     <div class="container-lg text-white">
         <h1 class="text-center mb-2">DMJAM CHART RANKING</h1>
         <div class="d-flex justify-content-between">
-            <span style="color: darkgray;">Collect started when 2023-09-06 00:00 (KST)</span>
+            <span style="color: darkgray;">
+                <label for="date-start" class="form-label">Date Start</label>
+                <input type="text" name="date-start" id="date-start">
+                <label for="date-end" class="form-label">Date End</label>
+                <input type="text" name="date-end" id="date-end">
+            </span>
             <div class="btn-group btn-group-sm" role="group" aria-label="Top options">
                 <a href="/ranking/chart?top=200" class="btn btn-outline-secondary">Top 200</a>
                 <a href="/ranking/chart?top=500" class="btn btn-outline-secondary">Top 500</a>

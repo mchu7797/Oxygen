@@ -4,6 +4,7 @@ from src.database.chart_ranking_manager import ChartRankingManager
 from src.database.info_manager import InfoManager
 from src.database.player_ranking_manager import PlayerRankingManager
 from src.database.utils import DatabaseUtils
+from src.database.account import AccountManager
 
 
 class DatabaseConnection:
@@ -15,6 +16,7 @@ class DatabaseConnection:
         self.chart_ranking = ChartRankingManager(self._connection)
         self.info = InfoManager(self._connection)
         self.utils = DatabaseUtils(self._connection, self._trade_connection)
+        self.account_manager = AccountManager(self._connection, self._trade_connection)
 
     def close(self):
         try:
