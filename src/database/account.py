@@ -177,6 +177,10 @@ class AccountManager:
             (player_index_id, nickname),
         )
 
+        cursor.execute(
+            "DELETE FROM dbo.nickname_exchange_token WHERE player_id = ?",
+            player_index_id)
+
         self._connection.commit()
 
         return True
