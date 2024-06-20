@@ -226,9 +226,9 @@ def change_nickname_phase_1():
 
         token_id = database.account_manager.get_change_nickname_token(account_id, password)
         email = database.utils.get_player_email(account_id)
-        nickname_changable = database.account_manager.get_nickname_changeable(account_id, password)
+        nickname_changeable = database.account_manager.get_nickname_changeable(account_id, password)
 
-        if not nickname_changable:
+        if not nickname_changeable:
             return render_template(
                 "change-nickname.html",
                 phase=0,
@@ -264,3 +264,8 @@ def change_nickname_phase_2():
                 "change-nickname.html",
                 phase=1,
                 error_message="That something went wrong!")
+        else:
+            return render_template(
+                "change-nickname.html",
+                phase=2,
+                info_message="Nickname changed successfully!")

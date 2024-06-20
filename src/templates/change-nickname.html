@@ -83,6 +83,11 @@
                     {{ error_message }}
                 </div>
             {% endif %}
+            {% if info_message|length > 0 %}
+                <div class="alert alert-info">
+                    {{ info_message }}
+                </div>
+            {% endif %}
             <form action="/troubleshoot/change-nickname-phase-2" method="post">
                 <div class="mb-3">
                     <label for="token-id">Token</label>
@@ -94,7 +99,7 @@
                     <label for="new-nickname">New Nickname</label>
                     <input type="text" name="new-nickname" id="new-nickname" class="form-control">
                 </div>
-                <button type="submit" class="btn btn-primary">Reset Password</button>
+                <button type="submit" class="btn btn-primary">Change Nickname</button>
             </form>
         {% endif %}
     </div>

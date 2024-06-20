@@ -76,17 +76,24 @@ class AccountManager:
         cursor.execute(
             """
             SELECT exchange_money
-            FROM dbo.nickname_exchange_info
-            WHERE nickname_count = (
-                SELECT COUNT(nickname)
-                FROM dbo.nickname_history
-                WHERE player_id = ?
-            )
+            FROM
+                dbo.nickname_exchange_info
+            WHERE
+                nickname_count = COALESCE((
+                    SELECT
+                        COUNT(nickname)
+                    FROM
+                        dbo.nickname_history
+                    WHERE
+                        player_id = ?
+                ), 1)
             """,
             player_index_id
         )
 
         nickname_exchange_money = cursor.fetchval()
+
+        print(player_gem, nickname_exchange_money)
 
         return player_gem is not None and nickname_exchange_money is not None and player_gem >= nickname_exchange_money
 
@@ -108,8 +115,8 @@ class AccountManager:
 
         if player_nickname_count is None:
             return False
-        elif player_nickname_count > 10:
-            player_nickname_count = 10
+        elif player_nickname_count > 9:
+            player_nickname_count = 9
 
         cursor.execute("SELECT exchange_money FROM dbo.nickname_exchange_info WHERE nickname_count = ?",
                        player_nickname_count)
