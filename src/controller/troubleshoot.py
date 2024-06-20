@@ -219,7 +219,7 @@ def change_nickname_phase_1():
             return render_template(
                 "change-nickname.html",
                 phase=0,
-                error_message="Cannot found your id!",
+                error_message="Your account id is empty!",
             )
 
         database = get_db()
@@ -228,18 +228,18 @@ def change_nickname_phase_1():
         email = database.utils.get_player_email(account_id)
         nickname_changeable = database.account_manager.get_nickname_changeable(account_id, password)
 
+        if token_id is None or email is None:
+            return render_template(
+                "change-nickname.html",
+                phase=0,
+                error_message="Your account is invalid or password is wrong!"
+            )
+
         if not nickname_changeable:
             return render_template(
                 "change-nickname.html",
                 phase=0,
                 error_message="Cannot change nickname! Your gem amount is not enough!",
-            )
-
-        if token_id is None or email is None:
-            return render_template(
-                "change-nickname.html",
-                phase=0,
-                error_message="Cannot found your email or Cannot made of new token!",
             )
 
         send_nickname_change_notice_mail(email, token_id)
