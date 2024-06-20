@@ -1,4 +1,4 @@
-from tools.encrypt import make_email_auth_token
+from src.tools.encrypt import make_email_auth_token
 
 
 class AccountManager:
@@ -9,13 +9,18 @@ class AccountManager:
     def get_change_nickname_token(self, username, password):
         cursor = self._connection.cursor()
 
-        cursor.execute("SELECT id FROM dbo.member WHERE userid=? AND passwd=?", (username, password))
+        cursor.execute(
+            "SELECT id FROM dbo.member WHERE userid=? AND passwd=?",
+            (username, password),
+        )
         account_id = cursor.fetchval()
 
         if account_id is None:
             return None
 
-        cursor.execute("SELECT USER_INDEX_ID FROM dbo.T_o2jam_charinfo WHERE USER_ID=?", username)
+        cursor.execute(
+            "SELECT USER_INDEX_ID FROM dbo.T_o2jam_charinfo WHERE USER_ID=?", username
+        )
         player_id = cursor.fetchval()
 
         if player_id is None:
@@ -51,7 +56,7 @@ class AccountManager:
             WHERE
                 m.userid = ? AND m.passwd = ?
             """,
-            (username, password)
+            (username, password),
         )
 
         player_index_id = cursor.fetchval()
@@ -68,7 +73,7 @@ class AccountManager:
             WHERE
                 USER_INDEX_ID = ?
             """,
-            player_index_id
+            player_index_id,
         )
 
         player_gem = cursor.fetchval()
@@ -88,26 +93,34 @@ class AccountManager:
                         player_id = ?
                 ), 1)
             """,
-            player_index_id
+            player_index_id,
         )
 
         nickname_exchange_money = cursor.fetchval()
 
-        return player_gem is not None and nickname_exchange_money is not None and player_gem >= nickname_exchange_money
+        return (
+            player_gem is not None
+            and nickname_exchange_money is not None
+            and player_gem >= nickname_exchange_money
+        )
 
     def change_nickname(self, token, nickname):
         cursor = self._connection.cursor()
 
         cursor.execute(
             "SELECT player_id FROM dbo.nickname_exchange_token WHERE token = ? AND token_expiration_period > GETDATE()",
-            token)
+            token,
+        )
 
         player_index_id = cursor.fetchval()
 
         if player_index_id is None:
             return False
 
-        cursor.execute("SELECT COUNT(nickname) FROM dbo.nickname_history WHERE player_id = ?", player_index_id)
+        cursor.execute(
+            "SELECT COUNT(nickname) FROM dbo.nickname_history WHERE player_id = ?",
+            player_index_id,
+        )
 
         player_nickname_count = cursor.fetchval()
 
@@ -116,24 +129,35 @@ class AccountManager:
         elif player_nickname_count > 9:
             player_nickname_count = 9
 
-        cursor.execute("SELECT exchange_money FROM dbo.nickname_exchange_info WHERE nickname_count = ?",
-                       player_nickname_count)
+        cursor.execute(
+            "SELECT exchange_money FROM dbo.nickname_exchange_info WHERE nickname_count = ?",
+            player_nickname_count,
+        )
 
         nickname_exchange_money = cursor.fetchval()
 
-        cursor.execute("SELECT GEM FROM dbo.T_o2jam_charCash WHERE USER_INDEX_ID = ?", player_index_id)
+        cursor.execute(
+            "SELECT GEM FROM dbo.T_o2jam_charCash WHERE USER_INDEX_ID = ?",
+            player_index_id,
+        )
 
         gem = cursor.fetchval()
 
         if gem is None or nickname_exchange_money > gem:
             return False
 
-        cursor.execute("UPDATE dbo.T_o2jam_charCash SET gem = ? WHERE USER_INDEX_ID = ?",
-                       (gem - nickname_exchange_money, player_index_id))
-        cursor.execute("UPDATE dbo.T_o2jam_charinfo SET USER_NICKNAME = ? WHERE USER_INDEX_ID = ?",
-                       (nickname, player_index_id))
-        cursor.execute("INSERT INTO dbo.nickname_history (player_id, nickname, occur_date) VALUES (?, ?, GETDATE())",
-                       (player_index_id, nickname))
+        cursor.execute(
+            "UPDATE dbo.T_o2jam_charCash SET gem = ? WHERE USER_INDEX_ID = ?",
+            (gem - nickname_exchange_money, player_index_id),
+        )
+        cursor.execute(
+            "UPDATE dbo.T_o2jam_charinfo SET USER_NICKNAME = ? WHERE USER_INDEX_ID = ?",
+            (nickname, player_index_id),
+        )
+        cursor.execute(
+            "INSERT INTO dbo.nickname_history (player_id, nickname, occur_date) VALUES (?, ?, GETDATE())",
+            (player_index_id, nickname),
+        )
 
         self._connection.commit()
 
