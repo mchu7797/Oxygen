@@ -118,6 +118,15 @@ class AccountManager:
             return False
 
         cursor.execute(
+            "SELECT COUNT(nickname) FROM dbo.nickname_history WHERE nickname = ?", nickname
+        )
+
+        nickname_history_count = cursor.fetchval()
+
+        if nickname_history_count is not None and nickname_history_count > 0:
+            return False
+
+        cursor.execute(
             "SELECT COUNT(nickname) FROM dbo.nickname_history WHERE player_id = ?",
             player_index_id,
         )
