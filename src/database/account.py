@@ -93,8 +93,6 @@ class AccountManager:
 
         nickname_exchange_money = cursor.fetchval()
 
-        print(player_gem, nickname_exchange_money)
-
         return player_gem is not None and nickname_exchange_money is not None and player_gem >= nickname_exchange_money
 
     def change_nickname(self, token, nickname):
