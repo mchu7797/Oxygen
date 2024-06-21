@@ -107,6 +107,10 @@ class AccountManager:
         )
 
     def change_nickname(self, token, nickname):
+        # 공백 닉네임 방지
+        if len(nickname) == 0:
+            return False
+
         cursor = self._connection.cursor()
 
         cursor.execute(
