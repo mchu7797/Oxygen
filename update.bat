@@ -2,7 +2,7 @@
 
 taskkill /F /IM python.exe /T
 
-gh repo sync
+git pull
 
 start /b run.bat
 
