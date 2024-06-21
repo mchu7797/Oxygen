@@ -1,4 +1,4 @@
-name: Remote SSH Update
+name: Remote SSH Deploy
 on:
   push:
     branches: [ main ]
@@ -6,17 +6,14 @@ on:
 
 jobs:
   deploy:
+    name: deploy to server
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Install SSH key
-      uses: shimataro/ssh-key-action@v2
+    - name: execute update script
+      uses: appleboy/ssh-action@v1.0.3
       with:
-        key: ${{ secrets.SSH_SSH_KEY }}
-        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
-
-    - name: Run update script
-      run: |
-        ssh ${{ secrets.SERVER_ACCOUNT_ID }}@${{ secrets.SERVER_ADDRESS }} 'C:\ServerPackage\Scoreboard\Oxygen\update.bat'
+        host: ${{ secrets.SERVER_ADDRESS }}
+        username: ${{ secrets.SERVER_ACCOUNT_ID }}
+        password: ${{ secrets.SERVER_PASSWORD }}
+        port: ${{ secrets.SERVER_PORT }}
+        script: C:\ServerPackage\Scoreboard\Oxygen\update.bat
