@@ -107,8 +107,7 @@ class AccountManager:
         )
 
     def change_nickname(self, token, nickname):
-        # 공백 닉네임 방지
-        if len(nickname) == 0:
+        if len(nickname.encode('utf-8')) < 3:
             return False
 
         cursor = self._connection.cursor()
