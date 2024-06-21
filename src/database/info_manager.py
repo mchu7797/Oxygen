@@ -46,7 +46,10 @@ class InfoManager:
             player_id,
         )
 
-        player_ranking = cursor.fetchone()
+        player_ranking = cursor.fetchval()
+
+        if player_ranking is None:
+            player_ranking = 0
 
         cursor.execute(
             """
@@ -60,7 +63,7 @@ class InfoManager:
             player_id,
         )
 
-        tie_player_count = int(cursor.fetchone()[0])
+        tie_player_count = cursor.fetchval()
 
         cursor.execute(
             """
@@ -74,22 +77,41 @@ class InfoManager:
             player_id,
         )
 
-        clear_count = int(cursor.fetchone()[0])
+        clear_count = cursor.fetchval()
 
         if raw_player_info is None:
             return None
+
+        cursor.execute(
+            """
+            SELECT
+                Nickname
+            FROM
+                dbo.nickname_history
+            WHERE
+                player_id = ?
+            """,
+            player_id
+        )
+
+        raw_nickname_history = cursor.fetchall()
+        nickname_history = []
+
+        for nickname in raw_nickname_history:
+            nickname_history.append(nickname[0])
 
         return {
             "nickname": raw_player_info[0],
             "level": raw_player_info[1],
             "play_count": raw_player_info[2],
             "admin_level": raw_player_info[3],
-            "player_ranking": player_ranking[0] if player_ranking is not None else 0,
+            "player_ranking": player_ranking,
             "current_view_difficulty": int(gauge_difficulty),
             "tie_player_count": tie_player_count,
             "player_code": raw_player_info[4],
             "cleared_charts_count": clear_count,
             "last_access_time": raw_player_info[5],
+            "nickname_history": nickname_history
         }
 
     def get_tier_info(self, player_id):

@@ -134,6 +134,12 @@ class AccountManager:
 
         nickname_count = cursor.fetchval()
 
+        cursor.execute(
+            "SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_INDEX_ID = ?", player_index_id
+        )
+
+        current_nickname = cursor.fetchval()
+
         if nickname_count is not None and nickname_count > 0:
             return False
 
@@ -182,7 +188,7 @@ class AccountManager:
 
         cursor.execute(
             "INSERT INTO dbo.nickname_history (player_id, nickname, occur_date) VALUES (?, ?, GETDATE())",
-            (player_index_id, nickname),
+            (player_index_id, current_nickname),
         )
 
         cursor.execute(
