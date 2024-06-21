@@ -16,4 +16,4 @@ jobs:
         username: ${{ secrets.SERVER_ACCOUNT_ID }}
         password: ${{ secrets.SERVER_PASSWORD }}
         port: ${{ secrets.SERVER_PORT }}
-        script: C:\ServerPackage\Scoreboard\Oxygen\update.bat
+        script: cd C:\ServerPackage\Scoreboard\Oxygen && update.bat
