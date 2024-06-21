@@ -1,0 +1,22 @@
+name: Remote SSH Update
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_SSH_KEY }}
+        known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+    - name: Run update script
+      run: |
+        ssh ${{ secrets.SERVER_ACCOUNT_ID }}@${{ secrets.SERVER_ADDRESS }} 'C:\ServerPackage\Scoreboard\Oxygen\update.bat'
