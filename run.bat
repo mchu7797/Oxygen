@@ -1,1 +1,2 @@
-start poetry run waitress-serve --host 127.0.0.1 --port 10443 src.app:app
+@echo off
+start /b poetry run waitress-serve --host 127.0.0.1 --port 10443 src.app:app
