@@ -36,6 +36,7 @@ def get_online():
 
 
 @api.route("/login", methods=["POST"])
+@api.route("/login_v2", methods=["POST"])
 @api.route("/player/login", methods=["POST"])
 def check_login():
     request_data = request.get_json()
