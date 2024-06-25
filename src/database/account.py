@@ -110,6 +110,9 @@ class AccountManager:
         if len(nickname.encode('utf-8')) < 3:
             return False
 
+        if any(char in nickname for char in "~`!@#$%^&*()-+=[]{}<>/?'\""):
+            return False
+
         cursor = self._connection.cursor()
 
         cursor.execute(
