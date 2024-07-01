@@ -1,4 +1,5 @@
 from secrets import token_urlsafe
+from random import randint
 
 import requests
 
@@ -23,3 +24,21 @@ def check_turnstile_auth(token, remote_ip):
         return True
 
     return False
+
+
+def mask_email(email):
+    parts = email.split('@')
+    if len(parts) != 2:
+        return None
+
+    username, domain = parts
+
+    if len(username) <= 4:
+        visible_length = 1
+    else:
+        visible_length = randint(2, len(username) // 2)
+
+    masked_length = randint(3, 6)
+    masked_username = username[:visible_length] + '*' * masked_length
+
+    return f"{masked_username}@{domain}"

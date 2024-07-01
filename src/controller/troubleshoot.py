@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, g, redirect, url_for
 
 from src.config import DATABASE_CONFIG
 from src.database import DatabaseConnection
-from src.tools.encrypt import check_turnstile_auth
+from src.tools.encrypt import check_turnstile_auth, mask_email
 from src.tools.mail import send_password_reset_mail, send_account_id_notice_mail, send_nickname_change_notice_mail
 
 troubleshoot = Blueprint("troubleshoot", __name__, url_prefix="/troubleshoot")
@@ -84,7 +84,7 @@ def gem_to_cash():
 @troubleshoot.route("/reset-password", methods=["GET", "POST"])
 def reset_password():
     if request.method == "GET":
-        return render_template("reset-password.html", status=0)
+        return render_template("reset-password.html", phase=0)
     else:
         account_id = request.values.get("account-id")
         cf_turnstile_response = request.values.get("cf-turnstile-response")
@@ -93,14 +93,14 @@ def reset_password():
         if not check_turnstile_auth(cf_turnstile_response, ip):
             return render_template(
                 "reset-password.html",
-                status=3,
+                phase=0,
                 error_message="Capcha not passed!",
             )
 
         if account_id is None:
             return render_template(
                 "reset-password.html",
-                status=3,
+                phase=0,
                 error_message="Cannot found your id!",
             )
 
@@ -112,21 +112,23 @@ def reset_password():
         if token_id is None or email is None:
             return render_template(
                 "reset-password.html",
-                status=3,
+                phase=0,
                 error_message="Cannot found your id!",
             )
 
         send_password_reset_mail(email, token_id)
 
-        return redirect(url_for("troubleshoot.reset_password_phase_2"))
+        return redirect(url_for("troubleshoot.reset_password_phase_2", email=mask_email(email)))
 
 
 @troubleshoot.route("/reset-password-phase-2", methods=["GET", "POST"])
 def reset_password_phase_2():
     if request.method == "GET":
+        email = request.args.get("email")
         return render_template(
             "reset-password.html",
-            status=1,
+            info_message=f"Email sent to {email}!",
+            phase=1,
         )
     else:
         token_id = request.values.get("token-id")
@@ -135,7 +137,7 @@ def reset_password_phase_2():
         if token_id is None or password is None:
             return render_template(
                 "reset-password.html",
-                status=4,
+                phase=1,
                 error_message="Token or password is invalid!",
             )
 
@@ -144,20 +146,21 @@ def reset_password_phase_2():
         if not database.utils.check_password_strength(token_id, password):
             return render_template(
                 "reset-password.html",
-                status=4,
+                phase=1,
                 error_message="password is weak!",
             )
 
         if not database.utils.reset_password(token_id, password):
             return render_template(
                 "reset-password.html",
-                status=4,
+                status=1,
                 error_message="Token or password is invalid!",
             )
 
         return render_template(
             "reset-password.html",
-            status=2,
+            status=1,
+            info_message="Password reset successfully!",
         )
 
 
@@ -244,13 +247,14 @@ def change_nickname_phase_1():
 
         send_nickname_change_notice_mail(email, token_id)
 
-        return redirect(url_for("troubleshoot.change_nickname_phase_2"))
+        return redirect(url_for("troubleshoot.change_nickname_phase_2", email=mask_email(email)))
 
 
 @troubleshoot.route("/change-nickname-phase-2", methods=["GET", "POST"])
 def change_nickname_phase_2():
     if request.method == "GET":
-        return render_template("change-nickname.html", phase=1)
+        email = request.args.get("email")
+        return render_template("change-nickname.html", phase=1, info_message=f"Email sent to {email}!")
     else:
         token_id = request.values.get("token-id")
         new_nickname = request.values.get("new-nickname")

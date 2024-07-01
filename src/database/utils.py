@@ -271,12 +271,12 @@ class DatabaseUtils:
             nickname,
         )
 
-        raw_result = cursor.fetchone()
+        player_id = cursor.fetchval()
 
-        if raw_result[0] == 0:
-            return None
+        if player_id is None:
+            return -1
 
-        return raw_result[0]
+        return player_id
 
     def generate_login_token(self, username, password):
         cursor = self._connection.cursor()

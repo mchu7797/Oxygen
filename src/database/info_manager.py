@@ -100,6 +100,34 @@ class InfoManager:
         for nickname in raw_nickname_history:
             nickname_history.append(nickname[0])
 
+        cursor.execute(
+            """
+            SELECT
+                b.badge_name,
+                b.badge_css_tag
+            FROM 
+                dbo.player_badge AS b
+            INNER JOIN
+                dbo.O2JamHighscore AS h ON b.chart_id = h.MusicCode
+            INNER JOIN
+                dbo.o2jam_music_data AS m ON h.MusicCode = m.MusicCode AND h.Difficulty = m.Difficulty
+            WHERE
+                h.isClear = 1 AND h.Difficulty = 2 AND h.PlayerCode = ?
+            ORDER BY
+                m.NoteLevel DESC
+        """,
+            player_id)
+
+        raw_badge_info = cursor.fetchone()
+
+        if raw_badge_info is not None:
+            badge_info = {
+                "badge_name": raw_badge_info[0],
+                "badge_css_tag": raw_badge_info[1]
+            }
+        else:
+            badge_info = None
+
         return {
             "nickname": raw_player_info[0],
             "level": raw_player_info[1],
@@ -111,7 +139,8 @@ class InfoManager:
             "player_code": raw_player_info[4],
             "cleared_charts_count": clear_count,
             "last_access_time": raw_player_info[5],
-            "nickname_history": nickname_history
+            "nickname_history": nickname_history,
+            "badge_info": badge_info
         }
 
     def get_tier_info(self, player_id):
