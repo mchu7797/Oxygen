@@ -114,7 +114,7 @@ class InfoManager:
             WHERE
                 h.isClear = 1 AND h.Difficulty = 2 AND h.PlayerCode = ?
             ORDER BY
-                m.NoteLevel DESC
+                b.badge_priority
         """,
             player_id)
 
