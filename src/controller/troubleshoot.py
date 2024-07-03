@@ -127,7 +127,7 @@ def reset_password_phase_2():
         email = request.args.get("email")
         return render_template(
             "reset-password.html",
-            info_message=f"Email sent to {email}!" if len(email) > 0 else None,
+            info_message=f"Email sent to {email}!" if email is not None else "",
             phase=1,
         )
     else:
@@ -255,7 +255,7 @@ def change_nickname_phase_2():
     if request.method == "GET":
         email = request.args.get("email")
         return render_template("change-nickname.html", phase=1,
-                               info_message=f"Email sent to {email}!" if len(email) > 0 else None)
+                               info_message=f"Email sent to {email}!" if email is not None else "")
     else:
         token_id = request.values.get("token-id")
         new_nickname = request.values.get("new-nickname")
