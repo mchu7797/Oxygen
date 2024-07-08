@@ -25,7 +25,7 @@ class PlayerRankingManager:
     def __init__(self, connection):
         self._connection = connection
 
-    def get_player_top_records(self, player_id, gauge_difficulty, show_f_rank):
+    def get_player_top_records(self, player_id, gauge_difficulty, show_f_rank, page):
         cursor = self._connection.cursor()
 
         if show_f_rank:
@@ -35,53 +35,53 @@ class PlayerRankingManager:
 
         cursor.execute(
             f"""
+                    WITH RankedResults AS (
+                        SELECT
+                            h.PlayerCode,
+                            h.MusicCode,
+                            md.Title,
+                            h.Difficulty,
+                            d.NoteLevel,
+                            h.Score,
+                            p.progress_name,
+                            h.isClear,
+                            h.PlayedTime,
+                            RANK() OVER (
+                                PARTITION BY h.MusicCode, h.Difficulty
+                                ORDER BY h.Score DESC
+                            ) AS SongRank,
+                            ROW_NUMBER() OVER (
+                                ORDER BY d.NoteLevel DESC, h.Score DESC
+                            ) AS RowNumber
+                        FROM dbo.O2JamHighscore h
+                        INNER JOIN dbo.o2jam_music_data d
+                            ON d.MusicCode = h.MusicCode 
+                            AND d.Difficulty = h.Difficulty
+                        LEFT JOIN dbo.o2jam_music_metadata md
+                            ON md.MusicCode = h.MusicCode
+                        LEFT JOIN dbo.ProgressInfo p
+                            ON p.progress_index = h.Progress
+                        WHERE h.PlayerCode = ?
+                            AND h.Difficulty = ?
+                            AND {view_option_query}
+                    )
                     SELECT
-                        h.PlayerCode,
-                        h.MusicCode,
-                        md.Title,
-                        h.Difficulty,
-                        d.NoteLevel,
-                        h.Score,
-                        p.progress_name,
-                        h.isClear,
-                        FORMAT(h.PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
-                        sr.SongRank,
-                        ROW_NUMBER() OVER (
-                        ORDER BY
-                            d.NoteLevel DESC,
-                            h.Score DESC
-                        ) RowNumber
-                    FROM
-                        dbo.O2JamHighscore h
-                        LEFT OUTER JOIN
-                            dbo.o2jam_music_metadata md ON md.MusicCode = h.MusicCode
-                        LEFT OUTER JOIN
-                            dbo.o2jam_music_data d
-                                ON d.MusicCode = h.MusicCode AND d.Difficulty = h.Difficulty
-                        LEFT OUTER JOIN
-                            dbo.ProgressInfo p ON p.progress_index = h.Progress
-                        LEFT OUTER JOIN (
-                            SELECT
-                                PlayerCode,
-                                MusicCode,
-                                Difficulty,
-                                RANK() OVER (
-                                PARTITION BY MusicCode,
-                                Difficulty
-                                ORDER BY
-                                    Score DESC
-                                ) SongRank
-                            FROM
-                                dbo.O2JamHighscore
-                            ) sr on sr.PlayerCode = h.PlayerCode
-                        AND sr.MusicCode = h.MusicCode
-                        AND sr.Difficulty = h.Difficulty
-                    WHERE
-                        h.PlayerCode = ?
-                        AND h.Difficulty = ?
-                        AND {view_option_query}
+                        PlayerCode,
+                        MusicCode,
+                        Title,
+                        Difficulty,
+                        NoteLevel,
+                        Score,
+                        progress_name,
+                        isClear,
+                        FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
+                        SongRank,
+                        RowNumber
+                    FROM RankedResults
+                    WHERE RowNumber BETWEEN ? * 100 + 1 AND (? + 1) * 100
+                    ORDER BY RowNumber;
                 """,
-            (player_id, gauge_difficulty),
+            (player_id, gauge_difficulty, page, page),
         )
 
         raw_records = cursor.fetchall()
@@ -108,6 +108,27 @@ class PlayerRankingManager:
             return None
 
         return response
+
+    def get_player_top_records_count(self, player_id, gauge_difficulty, show_f_rank):
+        cursor = self._connection.cursor()
+
+        if show_f_rank:
+            view_option_query = "Score >= 50000"
+        else:
+            view_option_query = "isClear = 1"
+
+        cursor.execute(
+            f"""
+                SELECT COUNT(PlayerCode)
+                FROM dbo.O2JamHighscore
+                WHERE PlayerCode = ?
+                      AND Difficulty = ?
+                      AND {view_option_query}
+            """,
+            (player_id, gauge_difficulty),
+        )
+
+        return cursor.fetchval()
 
     def get_player_ranking(self, sort_option: int):
         cursor = self._connection.cursor()
@@ -284,7 +305,7 @@ class PlayerRankingManager:
 
         cursor.execute(
             f"""
-                SELECT
+                SELECT TOP 50
                     p.MusicCode,
                     mt.Title,
                     m.NoteLevel,

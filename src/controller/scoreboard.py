@@ -49,6 +49,10 @@ def append_difficulty(player_code):
 def player_scoreboard(player_code, difficulty):
     show_f_rank = True if request.args.get("show-f-rank", type=int) == 1 else False
     show_recent = True if request.args.get("show-recent", type=int) == 1 else False
+    page = request.args.get("page", type=int)
+
+    if page is None:
+        page = 0
 
     if show_recent:
         player_scores = get_db().player_ranking.get_recent_records(
@@ -56,11 +60,13 @@ def player_scoreboard(player_code, difficulty):
         )
     else:
         player_scores = get_db().player_ranking.get_player_top_records(
-            player_code, difficulty, show_f_rank
+            player_code, difficulty, show_f_rank, page=page
         )
 
     player_metadata = get_db().info.get_player_info(player_code, difficulty)
     player_tiers = get_db().info.get_tier_info(player_code)
+    player_score_count = get_db().player_ranking.get_player_top_records_count(player_code, difficulty, show_f_rank)
+
 
     if player_metadata is None:
         return abort(404)
@@ -72,6 +78,8 @@ def player_scoreboard(player_code, difficulty):
         tier=player_tiers,
         show_f_rank=show_f_rank,
         show_recent=show_recent,
+        page=page,
+        max_page=int(player_score_count / 100)
     )
 
 

@@ -2,6 +2,7 @@
 {% block title %}{{ metadata['nickname'] }}{% endblock %}
 {% block head %}
     <link rel="stylesheet" href="/static/statistic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 {% block content %}
     <div class="container-lg text-white">
@@ -14,9 +15,7 @@
                 <button class="btn btn-sm btn-primary"
                         data-bs-toggle="popover"
                         data-bs-title="Nickname History"
-                        data-bs-content="
-
-                                {% for nickname in metadata['nickname_history'][:-1] %}{{ nickname }}, {% endfor %}{{ metadata['nickname_history'][-1] }}">
+                        data-bs-content="{% for nickname in metadata['nickname_history'][:-1] %}{{ nickname }}, {% endfor %}{{ metadata['nickname_history'][-1] }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-person-lines-fill" viewBox="0 0 16 16">
                         <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
@@ -28,8 +27,8 @@
             Rank #{{ metadata['player_ranking'] }}
             {% if metadata['tie_player_count'] > 1 %}({{ metadata['tie_player_count'] }}){% endif %}
         </h3>
-        <div class="d-none d-sm-block">
-            <div class="ui four statistics mt-3 mb-3">
+        <div class="d-none d-sm-block mt-3 mb-3">
+            <div class="ui four statistics mb-1">
                 <div class="ui grey inverted statistic">
                     <div class="value">
                         {{ '{0:03d}'.format(tier['cleared']) }}
@@ -54,34 +53,38 @@
                     </div>
                     <div class="label">B Rank</div>
                 </div>
-                <div class="ui olive inverted statistic">
-                    <div class="value">
-                        {{ '{0:03d}'.format(tier['a_rank']) }}
+            </div>
+            <div class="collapse" id="status-collapse">
+                <div class="ui four statistics">
+                    <div class="ui olive inverted statistic">
+                        <div class="value">
+                            {{ '{0:03d}'.format(tier['a_rank']) }}
+                        </div>
+                        <div class="label">A Rank</div>
                     </div>
-                    <div class="label">A Rank</div>
-                </div>
-                <div class="ui green inverted statistic">
-                    <div class="value">
-                        {{ '{0:03d}'.format(tier['s_rank']) }}
+                    <div class="ui green inverted statistic">
+                        <div class="value">
+                            {{ '{0:03d}'.format(tier['s_rank']) }}
+                        </div>
+                        <div class="label">S Rank</div>
                     </div>
-                    <div class="label">S Rank</div>
-                </div>
-                <div class="ui orange inverted statistic">
-                    <div class="value">
-                        {{ '{0:03d}'.format(tier['ss_rank']) }}
+                    <div class="ui orange inverted statistic">
+                        <div class="value">
+                            {{ '{0:03d}'.format(tier['ss_rank']) }}
+                        </div>
+                        <div class="label">SS Rank</div>
                     </div>
-                    <div class="label">SS Rank</div>
-                </div>
-                <div class="ui yellow inverted statistic">
-                    <div class="value">
-                        {{ '{0:03d}'.format(tier['p_rank']) }}
+                    <div class="ui yellow inverted statistic">
+                        <div class="value">
+                            {{ '{0:03d}'.format(tier['p_rank']) }}
+                        </div>
+                        <div class="label">P Rank</div>
                     </div>
-                    <div class="label">P Rank</div>
                 </div>
             </div>
         </div>
-        <div class="d-block d-sm-none">
-            <div class="ui four mini statistics mt-3 mb-1">
+        <div class="d-block d-sm-none mt-3 mb-3">
+            <div class="ui four mini statistics mb-1">
                 <div class="ui grey inverted statistic">
                     <div class="value">
                         {{ '{0:03d}'.format(tier['cleared']) }}
@@ -106,32 +109,50 @@
                     </div>
                     <div class="label">B Rank</div>
                 </div>
-                <div class="ui olive inverted statistic">
-                    <div class="value">
-                        {{ '{0:03d}'.format(tier['a_rank']) }}
+            </div>
+            <div class="collapse" id="status-collapse">
+                <div class="ui four mini statistics mb-1">
+                    <div class="ui olive inverted statistic">
+                        <div class="value">
+                            {{ '{0:03d}'.format(tier['a_rank']) }}
+                        </div>
+                        <div class="label">A Rank</div>
                     </div>
-                    <div class="label">A Rank</div>
-                </div>
-                <div class="ui green inverted statistic">
-                    <div class="value">
-                        {{ '{0:03d}'.format(tier['s_rank']) }}
+                    <div class="ui green inverted statistic">
+                        <div class="value">
+                            {{ '{0:03d}'.format(tier['s_rank']) }}
+                        </div>
+                        <div class="label">S Rank</div>
                     </div>
-                    <div class="label">S Rank</div>
-                </div>
-                <div class="ui orange inverted statistic">
-                    <div class="value">
-                        {{ '{0:03d}'.format(tier['ss_rank']) }}
+                    <div class="ui orange inverted statistic">
+                        <div class="value">
+                            {{ '{0:03d}'.format(tier['ss_rank']) }}
+                        </div>
+                        <div class="label">SS Rank</div>
                     </div>
-                    <div class="label">SS Rank</div>
-                </div>
-                <div class="ui yellow inverted statistic">
-                    <div class="value">
-                        {{ '{0:03d}'.format(tier['p_rank']) }}
+                    <div class="ui yellow inverted statistic">
+                        <div class="value">
+                            {{ '{0:03d}'.format(tier['p_rank']) }}
+                        </div>
+                        <div class="label">P Rank</div>
                     </div>
-                    <div class="label">P Rank</div>
                 </div>
             </div>
         </div>
+        <div class="d-grid gap-2 col-2 mx-auto">
+            <a class="btn btn-secondary btn-sm" data-bs-toggle="collapse" role="button"
+               href="#status-collapse" aria-expanded="false" aria-controls="status-collapse">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+                </svg>
+            </a>
+        </div>
+        {% if show_recent == 0 %}
+            <div class="mb-3">
+                <canvas id="level-chart"></canvas>
+            </div>
+        {% endif %}
         <div class="row">
             <div class="col-auto me-auto">
                 <a id="show-recent" class="btn btn-outline-light {% if show_recent == True %}active{% endif %}" {% if
@@ -153,14 +174,23 @@
                 <span class="badge text-bg-secondary">{{ tier['tier'] }}</span>
             </div>
             <div class="col-auto">
-                <a id="show-f-rank" class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %}"
+                <a id="show-f-rank"
+                   class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %} me-1"
                    {% if
                 show_f_rank==True %}aria-pressed="true" {% endif %} data-bs-toggle="button">Show F</a>
+                {% if show_recent == 0 %}
+                    <div class="btn-group" role="group" aria-label="Pagination Options">
+                        <button class="btn btn-sm btn-outline-light" id="prev-page">Prev</button>
+                        <a class="btn btn-sm btn-outline-light enabled" aria-disabled="true">{{ page * 100 + 1 }}
+                            - {{ (page + 1) * 100 }}</a>
+                        <button class="btn btn-sm btn-outline-light" id="next-page">Next</button>
+                    </div>
+                {% endif %}
             </div>
         </div>
         {% if scoreboard != None %}
             {% if show_recent != True %}
-                <div class="table-responsive-lg overflow-auto" height="70%">
+                <div class="table-responsive-lg overflow-auto">
                     <table class="table table-dark table-borderless table-sm">
                         <thead>
                         <th scope="col">Rank</th>
@@ -244,7 +274,7 @@
                     </table>
                 </div>
             {% else %}
-                <div class="table-responsive-sm">
+                <div class="table-responsive-sm overflow-auto">
                     <table class="table table-dark table-borderless table-sm">
                         <thead>
                         <th scope="col">#</th>
@@ -349,6 +379,7 @@
 {% endblock %}
 {% block scripts %}
     <script>
+        const levelChart = document.getElementById('level-chart');
         const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
         const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
@@ -357,9 +388,16 @@
 
         let showFRankButton = document.getElementById("show-f-rank");
         let showRecentButton = document.getElementById("show-recent");
+        let nextPageButton = document.getElementById("next-page");
+        let prevPageButton = document.getElementById("prev-page");
 
         let showFRank = parameters.get('show-f-rank') == 1 ? 1 : 0;
         let showRecent = parameters.get('show-recent') == 1 ? 1 : 0;
+        let page = parseInt(parameters.get('page'));
+
+        if (isNaN(page)) {
+            page = 0;
+        }
 
         function setOption() {
             let newUrl = new URL("/player-scoreboard/{{ metadata['player_code'] }}/{{ metadata['current_view_difficulty'] }}", url);
@@ -368,6 +406,10 @@
                 newUrl.searchParams.set('show-recent', 1);
             } else {
                 newUrl.searchParams.set('show-recent', 0);
+
+                if (page != null) {
+                    newUrl.searchParams.set('page', page);
+                }
             }
 
             if (showFRank == 1) {
@@ -383,9 +425,74 @@
             showFRank = !showFRank;
             setOption()
         });
+
         showRecentButton.addEventListener('click', () => {
             showRecent = !showRecent;
             setOption()
+        });
+
+        prevPageButton.addEventListener('click', () => {
+            if (page > 0) {
+                page = page - 1;
+                setOption()
+            }
+        });
+
+        nextPageButton.addEventListener('click', () => {
+            if (page < {{ max_page }}) {
+                page = page + 1;
+                setOption()
+            }
+        });
+
+        new Chart(levelChart, {
+            type: 'line',
+            data: {
+                labels: {{ metadata["clear_history"]["date"]|tojson|safe }},
+                datasets: [{
+                    label: 'Level',
+                    data: {{ metadata["clear_history"]["level"]|tojson|safe }},
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                aspectRatio: 2,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index',
+                        intersect: false,
+                        displayColors: false,
+                        callbacks: {
+                            label: (context) => {
+                                let label = context.dataset.label || '';
+
+                                if (label) {
+                                    label += ': ';
+                                }
+
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                }
+
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
         });
     </script>
 {% endblock %}

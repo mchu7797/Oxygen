@@ -128,6 +128,30 @@ class InfoManager:
         else:
             badge_info = None
 
+        cursor.execute(
+            """
+            SELECT
+                CONVERT(char(10), date, 23), level
+            FROM
+                status_clear_history
+            WHERE
+                date >= CAST(DATEADD(day, -60, GETDATE()) AS DATE)
+                AND player_id = ?
+            ORDER BY
+                date
+            """, player_id
+        )
+
+        raw_clear_history = cursor.fetchall()
+        clear_history = {
+            "date": [],
+            "level": []
+        }
+
+        for clear in raw_clear_history:
+            clear_history["date"].append(clear[0])
+            clear_history["level"].append(clear[1])
+
         return {
             "nickname": raw_player_info[0],
             "level": raw_player_info[1],
@@ -140,7 +164,8 @@ class InfoManager:
             "cleared_charts_count": clear_count,
             "last_access_time": raw_player_info[5],
             "nickname_history": nickname_history,
-            "badge_info": badge_info
+            "badge_info": badge_info,
+            "clear_history": clear_history
         }
 
     def get_tier_info(self, player_id):
