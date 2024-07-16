@@ -262,15 +262,15 @@ def change_nickname_phase_2():
 
         database = get_db()
 
-        result = database.account_manager.change_nickname(token_id, new_nickname)
+        result, message = database.account_manager.change_nickname(token_id, new_nickname)
 
         if result is not True:
             return render_template(
                 "change-nickname.html",
                 phase=1,
-                error_message="That something went wrong!")
+                error_message=message)
         else:
             return render_template(
                 "change-nickname.html",
                 phase=1,
-                info_message="Nickname changed successfully!")
+                info_message=message)

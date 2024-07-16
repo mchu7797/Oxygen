@@ -108,10 +108,10 @@ class AccountManager:
 
     def change_nickname(self, token, nickname):
         if len(nickname.encode('utf-8')) < 3:
-            return False
+            return False, "Nickname must be at least 3 characters long."
 
         if any(char in nickname for char in "~`!@#$%^&*()-+=[]{}<>/?'\""):
-            return False
+            return False, "Nickname cannot contain special characters."
 
         cursor = self._connection.cursor()
 
@@ -123,7 +123,7 @@ class AccountManager:
         player_index_id = cursor.fetchval()
 
         if player_index_id is None:
-            return False
+            return False, "Cannot found nickname change token!"
 
         cursor.execute(
             "SELECT COUNT(nickname) FROM dbo.nickname_history WHERE nickname = ?", nickname
@@ -132,7 +132,7 @@ class AccountManager:
         nickname_history_count = cursor.fetchval()
 
         if nickname_history_count is not None and nickname_history_count > 0:
-            return False
+            return False, "Your new nickname already existed before!"
 
         cursor.execute(
             "SELECT COUNT(USER_NICKNAME) FROM dbo.T_o2jam_charinfo WHERE USER_NICKNAME = ?", nickname
@@ -147,7 +147,7 @@ class AccountManager:
         current_nickname = cursor.fetchval()
 
         if nickname_count is not None and nickname_count > 0:
-            return False
+            return False, "Your new nickname already exists from another player!"
 
         cursor.execute(
             "SELECT COUNT(nickname) FROM dbo.nickname_history WHERE player_id = ?",
@@ -176,7 +176,7 @@ class AccountManager:
         gem = cursor.fetchval()
 
         if gem is None or nickname_exchange_money > gem:
-            return False
+            return False, "Your gem amount is not enough!"
 
         cursor.execute(
             "UPDATE dbo.T_o2jam_charCash SET gem = ? WHERE USER_INDEX_ID = ?",
@@ -190,7 +190,7 @@ class AccountManager:
             )
         except DataError:
             self._connection.rollback()
-            return False
+            return False, "Something went wrong while changing your nickname!"
 
         cursor.execute(
             "INSERT INTO dbo.nickname_history (player_id, nickname, occur_date) VALUES (?, ?, GETDATE())",
@@ -203,4 +203,4 @@ class AccountManager:
 
         self._connection.commit()
 
-        return True
+        return True, "Nickname changed successfully!"
