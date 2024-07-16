@@ -126,7 +126,8 @@ class AccountManager:
             return False, "Cannot found nickname change token!"
 
         cursor.execute(
-            "SELECT COUNT(nickname) FROM dbo.nickname_history WHERE nickname = ?", nickname
+            "SELECT COUNT(nickname) FROM dbo.nickname_history WHERE nickname = ? AND player_id <> ?",
+            (nickname, player_index_id)
         )
 
         nickname_history_count = cursor.fetchval()
