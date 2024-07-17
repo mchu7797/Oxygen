@@ -46,24 +46,34 @@ class PlayerRankingManager:
                             p.progress_name,
                             h.isClear,
                             h.PlayedTime,
-                            RANK() OVER (
-                                PARTITION BY h.MusicCode, h.Difficulty
-                                ORDER BY h.Score DESC
-                            ) AS SongRank,
+                            sr.SongRank AS SongRank,
                             ROW_NUMBER() OVER (
                                 ORDER BY d.NoteLevel DESC, h.Score DESC
                             ) AS RowNumber
                         FROM dbo.O2JamHighscore h
                         INNER JOIN dbo.o2jam_music_data d
-                            ON d.MusicCode = h.MusicCode 
+                            ON d.MusicCode = h.MusicCode
                             AND d.Difficulty = h.Difficulty
                         LEFT JOIN dbo.o2jam_music_metadata md
                             ON md.MusicCode = h.MusicCode
                         LEFT JOIN dbo.ProgressInfo p
                             ON p.progress_index = h.Progress
+                        LEFT JOIN (
+                            SELECT
+                                PlayerCode,
+                                MusicCode,
+                                Difficulty,
+                                RANK() OVER (
+                                    PARTITION BY MusicCode, Difficulty
+                                    ORDER BY Score DESC
+                                ) AS SongRank
+                            FROM dbo.O2JamHighscore
+                        ) sr ON sr.PlayerCode = h.PlayerCode AND
+                                sr.MusicCode = h.MusicCode AND
+                                sr.Difficulty = h.Difficulty
                         WHERE h.PlayerCode = ?
                             AND h.Difficulty = ?
-                            AND {view_option_query}
+                            {view_option_query}
                     )
                     SELECT
                         PlayerCode,
