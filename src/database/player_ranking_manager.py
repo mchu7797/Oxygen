@@ -73,7 +73,7 @@ class PlayerRankingManager:
                                 sr.Difficulty = h.Difficulty
                         WHERE h.PlayerCode = ?
                             AND h.Difficulty = ?
-                            {view_option_query}
+                            AND {view_option_query}
                     )
                     SELECT
                         PlayerCode,
