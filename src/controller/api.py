@@ -69,7 +69,7 @@ def get_scoreboard_by_player(player_id):
         show_f_rank = True
 
     player_scoreboard = get_db().player_ranking.get_player_top_records(
-        player_id, gauge_difficulty, show_f_rank
+        player_id, gauge_difficulty, show_f_rank, None
     )
 
     if player_scoreboard is None:

@@ -88,10 +88,10 @@ class PlayerRankingManager:
                         SongRank,
                         RowNumber
                     FROM RankedResults
-                    WHERE RowNumber BETWEEN ? * 100 + 1 AND (? + 1) * 100
+                    {"WHERE RowNumber BETWEEN ? * 100 + 1 AND (? + 1) * 100" if page is not None else ""}
                     ORDER BY RowNumber;
                 """,
-            (player_id, gauge_difficulty, page, page),
+            (player_id, gauge_difficulty, page, page) if page is not None else (player_id, gauge_difficulty),
         )
 
         raw_records = cursor.fetchall()
