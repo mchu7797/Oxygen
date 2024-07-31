@@ -205,3 +205,12 @@ class AccountManager:
         self._connection.commit()
 
         return True, "Nickname changed successfully!"
+    def get_player_id(self, username):
+        cursor = self._connection.cursor()
+
+        cursor.execute(
+            "SELECT USER_INDEX_ID FROM dbo.T_o2jam_charinfo WHERE USER_ID = ?",
+            username,
+        )
+
+        return cursor.fetchval()

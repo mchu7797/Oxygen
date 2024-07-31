@@ -55,6 +55,16 @@ def check_login():
     return login_token
 
 
+@api.route("/player_id/<login_id>")
+def get_player_id(login_id):
+    player_id = get_db().account_manager.get_player_id(login_id)
+
+    if player_id is None:
+        abort(404)
+
+    return str(player_id)
+
+
 # Below four endpoint has argument as query string
 # gauge_difficulty : If you set this argument, result only shows selected gauge difficulty
 @api.route("/scoreboard/player/<int:player_id>", methods=["GET"])
