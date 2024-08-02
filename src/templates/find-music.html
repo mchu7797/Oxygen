@@ -96,7 +96,7 @@
             const search_field = document.getElementById("search-field").value;
             const level_minimum = document.getElementById("min-level").value;
             const level_maximum = document.getElementById("max-level").value;
-            var url = "/music?keyword=" + encodeURIComponent(search_field);
+            let url = "/music?keyword=" + encodeURIComponent(search_field);
 
             switch (option) {
                 case searchOption.TITLE:
@@ -112,15 +112,31 @@
                     break;
             }
 
-            if (level_minimum != '' || level_maximum != '') {
+            if (level_minimum !== '' && level_maximum !== '') {
                 url = url.concat('--level', ' ', level_minimum, ' ', level_maximum)
+            } else if (level_minimum !== '') {
+                url = url.concat('--level', ' ', level_minimum, ' 180')
+            } else if (level_maximum !== '') {
+                url = url.concat('--level', ' 0 ', level_maximum)
             }
 
             window.location = url;
         }
 
+        document.getElementById("min-level").addEventListener("keyup", (event) => {
+            if (event.code === "Enter") {
+                search(searchOption.DEFAULT)
+            }
+        });
+
+        document.getElementById("max-level").addEventListener("keyup", (event) => {
+            if (event.code === "Enter") {
+                search(searchOption.DEFAULT)
+            }
+        });
+
         document.getElementById("search-field").addEventListener("keyup", (event) => {
-            if (event.code == "Enter") {
+            if (event.code === "Enter") {
                 search(searchOption.DEFAULT)
             }
         });

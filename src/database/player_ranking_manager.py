@@ -259,7 +259,7 @@ class PlayerRankingManager:
 
         cursor.execute(
             f"""
-                SELECT TOP 50
+                SELECT TOP 150
                     FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
                     Score,
                     Progress,
