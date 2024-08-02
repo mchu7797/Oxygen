@@ -206,7 +206,7 @@
                         {% for score in scoreboard %}
                             <tr>
                                 <th scope="row">#{{ score['row_number'] }}</th>
-                                <td width="50%">
+                                <td>
                                     <a
                                             href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
                                         {{ score['music_title'] }}
