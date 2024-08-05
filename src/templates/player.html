@@ -445,6 +445,26 @@
             }
         });
 
+        const dynamicLimits = {
+            id: 'dynamicLimits',
+            beforeInit: (chart) => {
+                const dataValues = chart.data.datasets[0].data;
+                const minValue = Math.min(...dataValues);
+                const maxValue = Math.max(...dataValues);
+
+                if (minValue === maxValue) {
+                    // 최솟값과 최댓값이 같을 때만 범위를 확장
+                    chart.options.scales.y.min = Math.max(0, minValue - 10);  // 최소 0
+                    chart.options.scales.y.max = maxValue + 10;
+                } else {
+                    // 최솟값과 최댓값이 다를 때는 실제 데이터 범위 사용
+                    chart.options.scales.y.min = minValue;
+                    chart.options.scales.y.max = maxValue;
+                }
+            }
+        };
+
+
         new Chart(levelChart, {
             type: 'line',
             data: {
@@ -478,21 +498,19 @@
                         callbacks: {
                             label: (context) => {
                                 let label = context.dataset.label || '';
-
                                 if (label) {
                                     label += ': ';
                                 }
-
                                 if (context.parsed.y !== null) {
                                     label += context.parsed.y;
                                 }
-
                                 return label;
                             }
                         }
                     }
                 }
-            }
+            },
+            plugins: [dynamicLimits]
         });
     </script>
 {% endblock %}
