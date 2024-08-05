@@ -12,7 +12,8 @@
             <a href="/ranking/player/4" class="btn btn-dark btn-sm {% if category_code == 4 %}active{% endif %}">B</a>
             <a href="/ranking/player/5" class="btn btn-dark btn-sm {% if category_code == 5 %}active{% endif %}">C</a>
             <a href="/ranking/player/6" class="btn btn-dark btn-sm {% if category_code == 6 %}active{% endif %}">D</a>
-            <a href="/ranking/player/7" class="btn btn-dark btn-sm {% if category_code == 7 %}active{% endif %}">Clear</a>
+            <a href="/ranking/player/7"
+               class="btn btn-dark btn-sm {% if category_code == 7 %}active{% endif %}">Clear</a>
             <a href="/ranking/player/8" class="btn btn-dark btn-sm {% if category_code == 8 %}active{% endif %}">Playcount</a>
         </div>
         <hr style="border: 1px solid darkgrey" class="mb-3 mt-3">
@@ -34,7 +35,12 @@
                             </td>
                             <td>{{ stat['tier'] }}</td>
                             <td>
-                                <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#ranking-modal" onclick="changeRankingFrame({{ stat['player_code'] }})">{{ stat['rank'] }}</a>
+                                {% if category_code == 8 %}
+                                    {{ stat['rank'] }}
+                                {% else %}
+                                    <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#ranking-modal"
+                                       onclick="changeRankingFrame({{ stat['player_code'] }})">{{ stat['rank'] }}</a>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -46,22 +52,22 @@
         {% endif %}
     </div>
     <div class="modal fade" tabindex="-2" id="ranking-modal" aria-labelledby="ranking-modal" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content bg-dark text-light">
-            <div class="modal-header">
-                <h5 class="modal-title">Best Plays</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <iframe src="" width="100%" height="450px" id="ranking-iframe"></iframe>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-light">
+                <div class="modal-header">
+                    <h5 class="modal-title">Best Plays</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="" width="100%" height="450px" id="ranking-iframe"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
 {% block scripts %}
     <script>

@@ -372,12 +372,17 @@ class PlayerRankingManager:
         return response
 
     def get_best_play(self, player_id, sort_option=PlayerRankingOption.ORDER_CLEAR):
+        if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:
+            return None
+
         cursor = self._connection.cursor()
 
         if sort_option == PlayerRankingOption.ORDER_CLEAR:
             record_count = 8
+            option_string = "AND isClear = 1"
         else:
             record_count = 10
+            option_string = ""
 
         cursor.execute(f'''
             SELECT TOP {record_count} mm.Title,
@@ -389,8 +394,9 @@ class PlayerRankingManager:
             WHERE h.PlayerCode = ?
               AND h.Progress <= ?
               AND h.Difficulty = 2
+              {option_string}
             ORDER BY m.NoteLevel DESC
-        ''', (player_id, sort_option.value))
+        ''', (player_id, sort_option.value + 1))
 
         query_results = cursor.fetchall()
 
