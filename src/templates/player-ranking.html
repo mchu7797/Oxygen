@@ -3,26 +3,17 @@
 {% block content %}
     <div class="container-lg text-white">
         <h1 class="text-center">DMJAM PLAYER RANKING</h1>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="ranking-category"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                Ranking Category
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="ranking-category">
-                <li><a href="/ranking/player/0" class="dropdown-item">P</a></li>
-                <li><a href="/ranking/player/1" class="dropdown-item">SS</a></li>
-                <li><a href="/ranking/player/2" class="dropdown-item">S</a></li>
-                <li><a href="/ranking/player/3" class="dropdown-item">A</a></li>
-                <li><a href="/ranking/player/4" class="dropdown-item">B</a></li>
-                <li><a href="/ranking/player/5" class="dropdown-item">C</a></li>
-                <li><a href="/ranking/player/6" class="dropdown-item">D</a></li>
-                <li><a href="/ranking/player/7" class="dropdown-item">Clear</a></li>
-                <li>
-                    <hr class="dropdown-divider">
-                </li>
-                <li><a href="/ranking/player/8" class="dropdown-item">Playcount</a></li>
-            </ul>
+        <div>
+            <small>ORDER BY : </small>
+            <a href="/ranking/player/0" class="btn btn-dark btn-sm {% if category_code == 0 %}active{% endif %}">P</a>
+            <a href="/ranking/player/1" class="btn btn-dark btn-sm {% if category_code == 1 %}active{% endif %}">SS</a>
+            <a href="/ranking/player/2" class="btn btn-dark btn-sm {% if category_code == 2 %}active{% endif %}">S</a>
+            <a href="/ranking/player/3" class="btn btn-dark btn-sm {% if category_code == 3 %}active{% endif %}">A</a>
+            <a href="/ranking/player/4" class="btn btn-dark btn-sm {% if category_code == 4 %}active{% endif %}">B</a>
+            <a href="/ranking/player/5" class="btn btn-dark btn-sm {% if category_code == 5 %}active{% endif %}">C</a>
+            <a href="/ranking/player/6" class="btn btn-dark btn-sm {% if category_code == 6 %}active{% endif %}">D</a>
+            <a href="/ranking/player/7" class="btn btn-dark btn-sm {% if category_code == 7 %}active{% endif %}">Clear</a>
+            <a href="/ranking/player/8" class="btn btn-dark btn-sm {% if category_code == 8 %}active{% endif %}">Playcount</a>
         </div>
         <hr style="border: 1px solid darkgrey" class="mb-3 mt-3">
         {% if status | length > 0 %}
@@ -42,7 +33,9 @@
                                 <a href="/player-scoreboard/{{ stat['player_code'] }}">{{ stat['player_nickname'] }}</a>
                             </td>
                             <td>{{ stat['tier'] }}</td>
-                            <td>{{ stat['rank'] }}</td>
+                            <td>
+                                <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#ranking-modal" onclick="changeRankingFrame({{ stat['player_code'] }})">{{ stat['rank'] }}</a>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -52,4 +45,28 @@
             <h1 class="text-center">SCOREBOARD ERROR!</h1>
         {% endif %}
     </div>
+    <div class="modal fade" tabindex="-2" id="ranking-modal" aria-labelledby="ranking-modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header">
+                <h5 class="modal-title">Best Plays</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe src="" width="100%" height="450px" id="ranking-iframe"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        function changeRankingFrame(player_id) {
+            document.getElementById('ranking-iframe').src = '/ranking/best_play/' + player_id + '?sort_option={{ category_code }}';
+        }
+    </script>
 {% endblock %}

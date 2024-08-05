@@ -370,3 +370,39 @@ class PlayerRankingManager:
             )
 
         return response
+
+    def get_best_play(self, player_id, sort_option=PlayerRankingOption.ORDER_CLEAR):
+        cursor = self._connection.cursor()
+
+        if sort_option == PlayerRankingOption.ORDER_CLEAR:
+            record_count = 8
+        else:
+            record_count = 10
+
+        cursor.execute(f'''
+            SELECT TOP {record_count} mm.Title,
+                         m.NoteLevel,
+                         m.MusicCode
+            FROM dbo.O2JamHighscore AS h
+                     LEFT JOIN dbo.o2jam_music_data AS m ON h.MusicCode = m.MusicCode AND h.Difficulty = m.Difficulty
+                     LEFT JOIN dbo.o2jam_music_metadata AS mm ON h.MusicCode = mm.MusicCode
+            WHERE h.PlayerCode = ?
+              AND h.Progress <= ?
+              AND h.Difficulty = 2
+            ORDER BY m.NoteLevel DESC
+        ''', (player_id, sort_option.value))
+
+        query_results = cursor.fetchall()
+
+        response = []
+
+        for rank_info in query_results:
+            response.append(
+                {
+                    "title": rank_info[0],
+                    "level": rank_info[1],
+                    "id": rank_info[2],
+                }
+            )
+
+        return response if len(response) > 0 else None
