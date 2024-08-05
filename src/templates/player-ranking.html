@@ -68,5 +68,9 @@
         function changeRankingFrame(player_id) {
             document.getElementById('ranking-iframe').src = '/ranking/best_play/' + player_id + '?sort_option={{ category_code }}';
         }
+
+        document.getElementById('ranking-modal').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('ranking-iframe').src = '';
+        });
     </script>
 {% endblock %}
