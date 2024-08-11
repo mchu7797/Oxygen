@@ -269,12 +269,21 @@ class PlayerRankingManager:
                     Bad,
                     Miss,
                     MaxCombo,
-                    ROW_NUMBER() OVER ({order_query}) RowNum
-                FROM dbo.O2JamPlaylog
-                WHERE
-                    PlayerCode = ?
-                    AND MusicCode = ?
-                    AND Difficulty = ?
+                    RowNum
+                FROM (
+                    SELECT *,
+                           ROW_NUMBER() OVER (
+                               PARTITION BY isClear
+                               ORDER BY 
+                                   CASE 
+                                       WHEN isClear = 1 THEN Score
+                                       ELSE Cool + Good + Bad + Miss
+                                   END DESC
+                           ) AS RowNum
+                    FROM dbo.O2JamPlaylog
+                    WHERE PlayerCode = ? AND MusicCode = ? AND Difficulty = ?
+                ) RankedScores
+                ORDER BY isClear DESC, RowNum
             """,
             (player_id, chart_id, difficulty),
         )
