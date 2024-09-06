@@ -269,12 +269,21 @@ class PlayerRankingManager:
                     Bad,
                     Miss,
                     MaxCombo,
-                    ROW_NUMBER() OVER ({order_query}) RowNum
-                FROM dbo.O2JamPlaylog
-                WHERE
-                    PlayerCode = ?
-                    AND MusicCode = ?
-                    AND Difficulty = ?
+                    RowNum
+                FROM (
+                    SELECT *,
+                           ROW_NUMBER() OVER (
+                               PARTITION BY isClear
+                               ORDER BY 
+                                   CASE 
+                                       WHEN isClear = 1 THEN Score
+                                       ELSE Cool + Good + Bad + Miss
+                                   END DESC
+                           ) AS RowNum
+                    FROM dbo.O2JamPlaylog
+                    WHERE PlayerCode = ? AND MusicCode = ? AND Difficulty = ?
+                ) RankedScores
+                ORDER BY isClear DESC, RowNum
             """,
             (player_id, chart_id, difficulty),
         )
@@ -370,3 +379,45 @@ class PlayerRankingManager:
             )
 
         return response
+
+    def get_best_play(self, player_id, sort_option=PlayerRankingOption.ORDER_CLEAR):
+        if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:
+            return None
+
+        cursor = self._connection.cursor()
+
+        if sort_option == PlayerRankingOption.ORDER_CLEAR:
+            record_count = 8
+            option_string = "AND isClear = 1"
+        else:
+            record_count = 10
+            option_string = ""
+
+        cursor.execute(f'''
+            SELECT TOP {record_count} mm.Title,
+                         m.NoteLevel,
+                         m.MusicCode
+            FROM dbo.O2JamHighscore AS h
+                     LEFT JOIN dbo.o2jam_music_data AS m ON h.MusicCode = m.MusicCode AND h.Difficulty = m.Difficulty
+                     LEFT JOIN dbo.o2jam_music_metadata AS mm ON h.MusicCode = mm.MusicCode
+            WHERE h.PlayerCode = ?
+              AND h.Progress <= ?
+              AND h.Difficulty = 2
+              {option_string}
+            ORDER BY m.NoteLevel DESC
+        ''', (player_id, sort_option.value + 1))
+
+        query_results = cursor.fetchall()
+
+        response = []
+
+        for rank_info in query_results:
+            response.append(
+                {
+                    "title": rank_info[0],
+                    "level": rank_info[1],
+                    "id": rank_info[2],
+                }
+            )
+
+        return response if len(response) > 0 else None

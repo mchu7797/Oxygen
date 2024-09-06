@@ -2,6 +2,7 @@ from flask import Blueprint, request, render_template, abort, redirect, g
 
 from src.config import DATABASE_CONFIG
 from src.database import DatabaseConnection
+from src.database.player_ranking_manager import PlayerRankingOption
 from src.tools.search_parser import parse_search
 
 scoreboard = Blueprint("scoreboard", __name__)
@@ -114,6 +115,7 @@ def player_ranking(ranking_category=7):
                 "player-ranking.html",
                 status=info["player_infos"],
                 category_name=info["current_option_name"],
+                category_code=ranking_category
             )
 
         return abort(404)
@@ -162,3 +164,14 @@ def history():
         gauge_difficulty=gauge_difficulty,
         order_by_date=order_by_date
     )
+
+@scoreboard.route("/ranking/best_play/<int:player_id>")
+def best_play_ranking(player_id):
+    sort_option = request.args.get("sort_option", type=int)
+
+    if sort_option is None:
+        sort_option = PlayerRankingOption.ORDER_CLEAR
+
+    ranking_data = get_db().player_ranking.get_best_play(player_id, PlayerRankingOption(sort_option))
+
+    return render_template("best-play.html", scoreboard=ranking_data)

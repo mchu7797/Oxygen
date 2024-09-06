@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Oxygen : Someone's Best Play</title>
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/jquery-ui.min.css">
+    <script src="/static/jquery-ui.min.js"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body class="bg-dark">
+    {% if scoreboard != None %}
+        <div class="table-responsive-lg overflow-auto">
+            <table class="table table-dark table-borderless table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in range(0, scoreboard|length) %}
+                        <tr>
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td>
+                                <a href="/music-scoreboard/{{ scoreboard[i]["id"] }}/2" target="_blank">{{ scoreboard[i]["title"] }}</a>
+                            </td>
+                            <td>{{ scoreboard[i]["level"] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <h1 class="text-center text-white">Record Empty!</h1>
+    {% endif %}
+</body>
+</html>
