@@ -9,7 +9,9 @@
         <h1>
             Lv.{{ metadata['level'] }} {{ metadata['nickname'] }}
             {% if metadata['badge_info'] is not none %}
-                <span class="badge {{ metadata['badge_info']['badge_css_tag'] }}">{{ metadata['badge_info']['badge_name'] }}</span>
+                <a href="/music-scoreboard/{{ metadata['badge_info']['badge_chart_id'] }}">
+                    <span class="badge {{ metadata['badge_info']['badge_css_tag'] }}">{{ metadata['badge_info']['badge_name'] }}</span>
+                </a>
             {% endif %}
             {% if metadata['nickname_history']|length > 0 %}
                 <button class="btn btn-sm btn-primary"
