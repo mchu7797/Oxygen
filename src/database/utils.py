@@ -1,3 +1,4 @@
+import re
 from enum import Enum
 
 from src.tools.encrypt import make_new_password_token, make_email_auth_token
@@ -16,70 +17,64 @@ class DatabaseUtils:
         self._trade_connection = trade_connection
 
     def search_chart(self, search_data):
-        cursor = self._connection.cursor()
+        def escape_like(s):
+            def escape_brackets(match):
+                return '[' + ''.join(f'[{c}]' for c in match.group(1)) + ']'
 
-        level_query = f"""
+            s = re.sub(r'\[([^\]]+)\]', escape_brackets, s)
+            return s.replace('%', '[%]').replace('_', '[_]')
+
+        query = """
+        SELECT
+            meta.MusicCode,
+            Title,
+            Artist,
+            NoteCharter,
+            BPM,
             data.NoteLevel
-            BETWEEN {search_data['options']['level'][0]}
-            AND {search_data['options']['level'][1]}
+        FROM
+            dbo.o2jam_music_metadata meta
+        RIGHT OUTER JOIN (
+            SELECT MusicCode, NoteLevel
+            FROM dbo.o2jam_music_data 
+            WHERE Difficulty = 2
+        ) data ON data.MusicCode = meta.MusicCode
+        WHERE
+            data.NoteLevel BETWEEN ? AND ?
         """
-        search_query = []
-        keyword = (
-            search_data["keywords"]
-            .replace("'", "''")
-            .replace("%", "[%]")
-            .replace("_", "[_]")
-        )
 
-        if search_data["options"]["title"]:
-            search_query.append("Title LIKE '%{string}%'")
-        if search_data["options"]["artist"]:
-            search_query.append("Artist LIKE '%{string}%'")
-        if search_data["options"]["mapper"]:
-            search_query.append("NoteCharter LIKE '%{string}%'")
+        params = [
+            search_data['options']['level'][0],
+            search_data['options']['level'][1]
+        ]
 
-        cursor.execute(
-            f"""
-            SELECT
-                meta.MusicCode,
-                Title,
-                Artist,
-                NoteCharter,
-                BPM,
-                data.NoteLevel
-            FROM
-                dbo.o2jam_music_metadata meta
-            RIGHT OUTER JOIN (
-                SELECT
-                    MusicCode,
-                    NoteLevel
-                FROM
-                    dbo.o2jam_music_data WHERE Difficulty = 2) data
-                        ON data.MusicCode = meta.MusicCode
-            WHERE
-                {level_query}
-                AND ({" OR ".join(search_query).format(string=keyword)})
-            ORDER BY
-                data.NoteLevel DESC
-        """
-        )
+        search_fields = ['Title', 'Artist', 'NoteCharter']
+        search_conditions = [f"{field} LIKE ?" for field, enabled in
+                             zip(search_fields, [search_data["options"]["title"],
+                                                 search_data["options"]["artist"],
+                                                 search_data["options"]["mapper"]])
+                             if enabled]
 
-        raw_result = cursor.fetchall()
-        chart_list = []
+        if search_conditions:
+            query += " AND (" + " OR ".join(search_conditions) + ")"
+            escaped_keyword = escape_like(search_data['keywords'])
+            params.extend([f"%{escaped_keyword}%"] * len(search_conditions))
 
-        for chart_info in raw_result:
-            chart_list.append(
+        query += " ORDER BY data.NoteLevel DESC"
+
+        with self._connection.cursor() as cursor:
+            cursor.execute(query, params)
+            return [
                 {
-                    "music_code": chart_info[0],
-                    "title": chart_info[1],
-                    "artist": chart_info[2],
-                    "note_charter": chart_info[3],
-                    "bpm": round(float(chart_info[4]), 2),
-                    "hard_level": chart_info[5],
+                    "music_code": code,
+                    "title": title,
+                    "artist": artist,
+                    "note_charter": charter,
+                    "bpm": round(float(bpm), 2),
+                    "hard_level": level,
                 }
-            )
-
-        return chart_list
+                for code, title, artist, charter, bpm, level in cursor.fetchall()
+            ]
 
     def get_online_players(self):
         cursor = self._connection.cursor()
@@ -455,18 +450,6 @@ class DatabaseUtils:
         cursor = self._connection.cursor()
 
         cursor.execute("SELECT userid FROM dbo.member WHERE email=?", email)
-
-        account_id = cursor.fetchval()
-
-        if account_id is None:
-            return None
-
-        return account_id
-
-    def find_user_by_nickname(self, nickname):
-        cursor = self._connection.cursor()
-
-        cursor.execute("SELECT USER_INDEX_ID FROM dbo.T_o2jam_charinfo WHERE USER_NICKNAME=?", nickname)
 
         account_id = cursor.fetchval()
 
