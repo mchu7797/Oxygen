@@ -12,6 +12,7 @@ Flask-Cors = "^4.0.1"
 pyodbc = "^5.1.0"
 waitress = "^3.0.0"
 requests = "^2.31.0"
+python-dateutil = "^2.9.0.post0"
 
 
 [build-system]

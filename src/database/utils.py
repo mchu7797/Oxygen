@@ -462,3 +462,15 @@ class DatabaseUtils:
             return None
 
         return account_id
+
+    def find_user_by_nickname(self, nickname):
+        cursor = self._connection.cursor()
+
+        cursor.execute("SELECT USER_INDEX_ID FROM dbo.T_o2jam_charinfo WHERE USER_NICKNAME=?", nickname)
+
+        account_id = cursor.fetchval()
+
+        if account_id is None:
+            return None
+
+        return account_id

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Player Ranking{% endblock %}
+{% block content %}
+    <div class="container-lg text-white">
+        <h1 class="text-center mb-3">FIND PLAYER</h1>
+        <div class="input-group mb-3 w-100">
+            <input type="text" id="search-field" class="form-control" aria-label="Keyword input for searching oxygen players">
+            <button type="button" class="btn btn-outline-secondary" onclick="">Search</button>
+        </div>
+        <hr style="border: 1px solid darkgrey" class="mb-3 mt-3">
+        {% if players | length > 0 %}
+            <div class="table-responsive-lg">
+                <table class="table table-dark table-borderless">
+                    <thead>
+                    <th scope="col">#</th>
+                    <th scope="col">Nickname</th>
+                    <th scope="col">Tier</th>
+                    </thead>
+                    <tbody>
+                    {% for stat in status %}
+                        <tr>
+                            <th scope="row">{{ stat['row_number'] }}</th>
+                            <td>
+                                <a href="/player-scoreboard/{{ stat['player_code'] }}">{{ stat['player_nickname'] }}</a>
+                            </td>
+                            <td>{{ stat['tier'] }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% elif init == True %}
+            <div class="text-white info-header">
+                <div class="d-flex justify-content-center">
+                    <h3>WELCOME TO FIND PLAYERS</h3>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-white info-header">
+                <div class="d-flex justify-content-center">
+                    <h3>THAT KEYWORD CAN'T FIND SONG</h3>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

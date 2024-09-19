@@ -1,3 +1,5 @@
+from random import random
+
 from flask import Blueprint, request, render_template, abort, redirect, g
 
 from src.config import DATABASE_CONFIG
@@ -35,10 +37,10 @@ def music_find():
     keyword = request.args.get("keyword")
 
     if keyword is None:
-        return render_template("find-music.html", song_list=[], init=True)
+        return render_template("find-chart.html", song_list=[], init=True)
 
     result_data = get_db().utils.search_chart(parse_search(keyword))
-    return render_template("find-music.html", song_list=result_data, init=False)
+    return render_template("find-chart.html", song_list=result_data, init=False)
 
 
 @scoreboard.route("/player-scoreboard/<player_code>")
@@ -98,7 +100,7 @@ def music_scoreboard(music_code, difficulty=2):
         return abort(404)
 
     return render_template(
-        "music.html",
+        "chart.html",
         scoreboard=music_scores,
         metadata=music_metadata,
         referer=url_before
@@ -126,11 +128,19 @@ def player_ranking(ranking_category=7):
 @scoreboard.route("/ranking/chart")
 def chart_ranking():
     top = request.args.get("top")
+    date_start = request.args.get("date_start")
+    date_end = request.args.get("date_end")
 
     if top is None:
         top = 200
 
-    ranking_data = get_db().chart_ranking.get_play_count_ranking(top=top)
+    if date_start is None and date_end is None:
+        ranking_data = get_db().chart_ranking.get_play_count_ranking(top=top)
+    else:
+        try:
+            ranking_data = get_db().chart_ranking.get_play_count_ranking(top=top, day_start=date_start, day_end=date_end)
+        except ValueError:
+            ranking_data = []
 
     return render_template("chart-ranking.html", ranking=ranking_data)
 

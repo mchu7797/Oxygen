@@ -1,3 +1,6 @@
+from dateutil.parser import parse as date_parse
+import datetime
+
 class ChartRankingManager:
     def __init__(self, connection):
         self._connection = connection
@@ -64,42 +67,75 @@ class ChartRankingManager:
 
         return records
 
-    def get_play_count_ranking(self, top=200):
+    def get_play_count_ranking(self, top=200, day_start=None, day_end=None):
+        def validate_date(date_str):
+            if date_str is None:
+                return None
+            try:
+                return datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
+            except ValueError:
+                raise ValueError(f"Invalid date format: {date_str}. Use YYYY-MM-DD format.")
+
+        try:
+            top = int(top)
+            if top < 1:
+                top = abs(top)
+        except ValueError:
+            top = 200
+
+        start_date = validate_date(day_start)
+        end_date = validate_date(day_end)
+
+        # 날짜 범위 설정 로직
+        if start_date and end_date:
+            if start_date > end_date:
+                raise ValueError("start_date must be earlier than or equal to end_date")
+        elif start_date:
+            end_date = start_date + datetime.timedelta(days=60)
+        elif end_date:
+            start_date = end_date - datetime.timedelta(days=60)
+        else:
+            end_date = datetime.date.today()
+            start_date = end_date - datetime.timedelta(days=60)
+        query = f"""
+        WITH RankedPlaycounts AS (
+            SELECT
+                chart_id,
+                chart_difficulty,
+                playcount,
+                timestamp,
+                ROW_NUMBER() OVER (PARTITION BY chart_id, chart_difficulty ORDER BY timestamp ASC) AS rn_asc,
+                ROW_NUMBER() OVER (PARTITION BY chart_id, chart_difficulty ORDER BY timestamp DESC) AS rn_desc
+            FROM dbo.O2JamPlaycounts
+            WHERE timestamp BETWEEN '{start_date.strftime("%Y-%m-%d")}' AND '{end_date.strftime("%Y-%m-%d")}'
+        ),
+        PlaycountDifference AS (
+            SELECT
+                chart_id,
+                chart_difficulty,
+                MAX(CASE WHEN rn_desc = 1 THEN playcount END) -
+                MAX(CASE WHEN rn_asc = 1 THEN playcount END) AS playcount_diff
+            FROM RankedPlaycounts
+            GROUP BY chart_id, chart_difficulty
+        )
+        SELECT {'TOP {}'.format(top) if top else ''}
+            p.chart_id,
+            p.playcount_diff AS total_playcount,
+            mm.NoteLevel,
+            m.Title,
+            ROW_NUMBER() OVER (ORDER BY p.playcount_diff DESC, mm.NoteLevel DESC) AS Rank
+        FROM PlaycountDifference AS p
+        JOIN dbo.o2jam_music_metadata AS m ON p.chart_id = m.MusicCode
+        JOIN dbo.o2jam_music_data AS mm ON p.chart_id = mm.MusicCode AND p.chart_difficulty = mm.Difficulty
+        WHERE p.playcount_diff > 0 AND mm.Difficulty = 2
+        ORDER BY total_playcount DESC, mm.NoteLevel DESC
+        """
+
+        print(query)
+
         cursor = self._connection.cursor()
 
-        cursor.execute(
-            """
-            DECLARE @top int;
-            SELECT @top = ?;
-
-            IF @top = 0
-            BEGIN
-                SELECT @top = (SELECT COUNT(*) FROM dbo.o2jam_music_metadata)
-            END
-
-            SELECT
-                *
-            FROM (
-                SELECT
-                    m.MusicCode,
-                    m.PlayCount,
-                    m.NoteLevel,
-                    mm.Title,
-                    ROW_NUMBER() OVER (
-                        ORDER BY m.PlayCount desc, m.NoteLevel desc
-                    ) AS Rank
-                FROM
-                    dbo.o2jam_music_data m
-                LEFT OUTER JOIN
-                    dbo.o2jam_music_metadata mm
-                    ON m.MusicCode = mm.MusicCode
-                WHERE
-                    m.Difficulty = 2
-            ) A
-            WHERE Rank <= @top
-        """,
-            top,
-        )
+        cursor.execute(query)
 
         query_results = cursor.fetchall()
 
@@ -109,14 +145,12 @@ class ChartRankingManager:
         response = []
 
         for rank_info in query_results:
-            response.append(
-                {
-                    "chart_id": rank_info[0],
-                    "playcount": rank_info[1],
-                    "level": rank_info[2],
-                    "chart_title": rank_info[3],
-                    "rank_index": rank_info[4],
-                }
-            )
+            response.append({
+                "chart_id": rank_info[0],
+                "playcount": rank_info[1],
+                "level": rank_info[2],
+                "chart_title": rank_info[3],
+                "rank_index": rank_info[4],
+            })
 
         return response

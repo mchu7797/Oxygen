@@ -104,7 +104,8 @@ class InfoManager:
             """
             SELECT
                 b.badge_name,
-                b.badge_css_tag
+                b.badge_css_tag,
+                h.MusicCode
             FROM 
                 dbo.player_badge AS b
             INNER JOIN
@@ -123,7 +124,8 @@ class InfoManager:
         if raw_badge_info is not None:
             badge_info = {
                 "badge_name": raw_badge_info[0],
-                "badge_css_tag": raw_badge_info[1]
+                "badge_css_tag": raw_badge_info[1],
+                "badge_chart_id": raw_badge_info[2]
             }
         else:
             badge_info = None

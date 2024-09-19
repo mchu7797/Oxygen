@@ -11,10 +11,10 @@
                 <input type="text" name="date-end" id="date-end">
             </span>
             <div class="btn-group btn-group-sm" role="group" aria-label="Top options">
-                <a href="/ranking/chart?top=200" class="btn btn-outline-secondary">Top 200</a>
-                <a href="/ranking/chart?top=500" class="btn btn-outline-secondary">Top 500</a>
-                <a href="/ranking/chart?top=1000" class="btn btn-outline-secondary">Top 1000</a>
-                <a href="/ranking/chart?top=0" class="btn btn-outline-secondary">No Limit</a>
+                <button class="btn btn-outline-secondary" data-top="200">Top 200</button>
+                <button class="btn btn-outline-secondary" data-top="500">Top 500</button>
+                <button class="btn btn-outline-secondary" data-top="1000">Top 1000</button>
+                <button class="btn btn-outline-secondary" data-top="0">No Limit</button>
             </div>
         </div>
         <hr style="border: 1px solid darkgray;" class="mb-3 mt-3">
@@ -45,4 +45,41 @@
             <h1 class="text-center">SCOREBOARD ERROR!</h1>
         {% endif %}
     </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        const dateStart = document.getElementById('date-start');
+        const dateEnd = document.getElementById('date-end');
+
+        const buttons = document.querySelectorAll('.btn-group button');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                // Get the top value from the button's data attribute
+                const topValue = this.getAttribute('data-top');
+
+                // Get the date values
+                const startDate = dateStart.value;
+                const endDate = dateEnd.value;
+
+                // Check if the dates are in the correct format YYYY-MM-DD
+                const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+
+                // Construct the base URL
+                let newUrl = `/ranking/chart?top=${topValue}`;
+
+                // If both dates are valid, append them to the URL
+                if (datePattern.test(startDate) && datePattern.test(endDate)) {
+                    newUrl += `&date_start=${startDate}&date_end=${endDate}`;
+                } else if (datePattern.test(startDate)) {
+                    newUrl += `&date_start=${startDate}`;
+                } else if (datePattern.test(endDate)) {
+                    newUrl += `&date_end=${endDate}`;
+                }
+
+                // Redirect to the new URL
+                window.location.href = newUrl;
+            });
+        });
+    </script>
 {% endblock %}
