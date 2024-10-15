@@ -222,7 +222,7 @@ def get_all_charts():
 
 @api.route("/command/status")
 def get_command_status():
-
+    abort(404)
 
 
 def make_json_response(data):
