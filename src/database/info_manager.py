@@ -250,3 +250,7 @@ class InfoManager:
             "note_charter": raw_result[6],
             "bpm": round(float(raw_result[7])),
         }
+
+    def get_score_status(self, player_id, chart_id, gauge_difficulty):
+        # TODO: 데이터 가져오는 부분 구현
+        pass
