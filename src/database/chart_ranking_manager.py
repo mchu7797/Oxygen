@@ -86,6 +86,9 @@ class ChartRankingManager:
         start_date = validate_date(day_start)
         end_date = validate_date(day_end)
 
+        # 지정된 날짜의 23시 59분 59초까지 집계하기 위함.
+        end_date += datetime.timedelta(days=1)
+
         # 날짜 범위 설정 로직
         if start_date and end_date:
             if start_date > end_date:
@@ -107,7 +110,7 @@ class ChartRankingManager:
                 ROW_NUMBER() OVER (PARTITION BY chart_id, chart_difficulty ORDER BY timestamp ASC) AS rn_asc,
                 ROW_NUMBER() OVER (PARTITION BY chart_id, chart_difficulty ORDER BY timestamp DESC) AS rn_desc
             FROM dbo.O2JamPlaycounts
-            WHERE timestamp BETWEEN '{start_date.strftime("%Y-%m-%d")}' AND '{end_date.strftime("%Y-%m-%d")}'
+            WHERE timestamp BETWEEN '{start_date.strftime("%Y-%m-%d %H:%M:%S")}' AND '{end_date.strftime("%Y-%m-%d %H:%M:%S")}'
         ),
         PlaycountDifference AS (
             SELECT
@@ -130,6 +133,8 @@ class ChartRankingManager:
         WHERE p.playcount_diff > 0 AND mm.Difficulty = 2
         ORDER BY total_playcount DESC, mm.NoteLevel DESC
         """
+
+        print(query)
 
         cursor = self._connection.cursor()
 
