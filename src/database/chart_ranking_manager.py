@@ -131,8 +131,6 @@ class ChartRankingManager:
         ORDER BY total_playcount DESC, mm.NoteLevel DESC
         """
 
-        print(query)
-
         cursor = self._connection.cursor()
 
         cursor.execute(query)
