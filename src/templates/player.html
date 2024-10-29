@@ -183,8 +183,13 @@
                 {% if show_recent == 0 %}
                     <div class="btn-group" role="group" aria-label="Pagination Options">
                         <button class="btn btn-sm btn-outline-light" id="prev-page">Prev</button>
-                        <a class="btn btn-sm btn-outline-light enabled" aria-disabled="true">{{ page * 100 + 1 }}
-                            - {{ (page + 1) * 100 }}</a>
+                        <a class="btn btn-sm btn-outline-light enabled" aria-disabled="true">
+                            {% if scoreboard != None %}
+                                {{ scoreboard[0]['music_level'] }} - {{ scoreboard[-1]['music_level'] }}
+                            {% else %}
+                                Invalid
+                            {% endif %}
+                        </a>
                         <button class="btn btn-sm btn-outline-light" id="next-page">Next</button>
                     </div>
                 {% endif %}
