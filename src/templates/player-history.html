@@ -99,6 +99,15 @@
                                     <span class="badge f_grade_tag">F Rank</span>
                                 </td>
                             {% endif %}
+                            {% if score['is_cleared_record'] == 1 %}
+                                <td>
+                                    <span class="badge clear_tag">Cleared</span>
+                                </td>
+                            {% else %}
+                                <td>
+                                    <span class="badge fail_tag">Failed</span>
+                                </td>
+                            {% endif %}
                             <td>{{ score['cleared_time'] }}</td>
                         </tr>
                     {% endfor %}
