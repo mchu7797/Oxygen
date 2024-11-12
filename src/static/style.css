@@ -13,3 +13,53 @@ th,
 td {
     white-space: nowrap;
 }
+
+.p_grade_tag {
+    background-color: #FBBD08;
+    color: #000000;
+}
+
+.ss_grade_tag {
+    background-color: #F2711C;
+    color: #000000;
+}
+
+.s_grade_tag {
+    background-color: #21BA45;
+    color: #000000;
+}
+
+.a_grade_tag {
+    background-color: #B5CC18;
+    color: #000000;
+}
+
+.b_grade_tag {
+    background-color: #6435C9;
+    color: #000000;
+}
+
+.c_grade_tag {
+    background-color: #A333C8;
+    color: #000000;
+}
+
+.d_grade_tag {
+    background-color: #DB2828;
+    color: #000000;
+}
+
+.f_grade_tag {
+    background-color: #767676;
+    color: #000000;
+}
+
+.fail_tag {
+    background-color: #DC3545;
+    color: #000000;
+}
+
+.clear_tag {
+    background-color: #198754;
+    color: #000000;
+}
