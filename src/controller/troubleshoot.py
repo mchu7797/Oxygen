@@ -153,13 +153,13 @@ def reset_password_phase_2():
         if not database.utils.reset_password(token_id, password):
             return render_template(
                 "reset-password.html",
-                status=1,
+                phase=1,
                 error_message="Token or password is invalid!",
             )
 
         return render_template(
             "reset-password.html",
-            status=1,
+            phase=1,
             info_message="Password reset successfully!",
         )
 
