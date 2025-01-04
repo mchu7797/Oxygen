@@ -216,12 +216,17 @@
                             <tr>
                                 <th scope="row">#{{ score['row_number'] }}</th>
                                 <td>
-                                    <a
-                                            href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
+                                    <a href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
                                         {{ score['music_title'] }}
                                     </a>
                                 </td>
-                                <td>{{ score['score'] }}</td>
+                                <td
+                                        data-bs-toggle="popover"
+                                        data-bs-title="Mod Options"
+                                        data-bs-content="Pattern Order: {{ score['pattern_order'] }}<br>Speed Rate: {{ score['play_speed_rate'] }}<br>Timing Rate: {{ score['play_timing_rate'] }}<br>FLN Option: {{ score['fln_option'] }}<br>SLN Option: {{ score['sln_option'] }}<br>NLN Enabled: {{ score['is_nln'] }}"
+                                        data-bs-html="true">
+                                    {{ score['score'] }}
+                                </td>
                                 {% if score['is_cleared_record'] == 1 %}
                                     <td>
                                         <span class="badge clear_tag">Cleared</span>
@@ -300,7 +305,12 @@
                                     </a>
                                 </td>
                                 <td>{{ score['music_level'] }}</td>
-                                <td>{{ score['score'] }}</td>
+                                <td
+                                        data-bs-toggle="popover"
+                                        data-bs-title="Mod Options"
+                                        data-bs-content="Pattern Order: {{ score['pattern_order'] }}<br>Speed Rate: {{ score['play_speed_rate'] }}<br>Timing Rate: {{ score['play_timing_rate'] }}<br>FLN Option: {{ score['fln_option'] }}<br>SLN Option: {{ score['sln_option'] }}<br>NLN Enabled: {{ score['is_nln'] }}"
+                                        data-bs-html="true">
+                                    {{ score['score'] }}</td>
                                 {% if score['is_cleared_record'] == 1 %}
                                     <td>
                                         <span class="badge clear_tag">Cleared</span>
@@ -348,9 +358,7 @@
                                 <td>{{ score['score_bad'] }}</td>
                                 <td>{{ score['score_miss'] }}</td>
                                 <td>{{ score['score_max_combo'] }}</td>
-                                <td data-bs-toggle="popover" data-bs-container="body" data-bs-placement="left"
-                                    data-bs-content="{{ score['cleared_time'] }}">
-                                    {{ score['cleared_time'] }}</td>
+                                <td>{{ score['cleared_time'] }}</td>
                             </tr>
                         {% endfor %}
                         </tbody>

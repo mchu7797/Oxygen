@@ -22,6 +22,12 @@ class ChartRankingManager:
                 h.isClear,
                 FORMAT(h.PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
                 p.progress_name,
+                h.PatternOrder,
+                ROUND(h.PlaySpeedRate, 3) AS PlaySpeedRate,
+                h.PlayTimingRate,
+                h.FLNOption,
+                h.SLNOption,
+                h.isNLN,
                 ROW_NUMBER() OVER (ORDER BY
                     h.Score DESC,
                     h.isClear DESC,
@@ -58,7 +64,13 @@ class ChartRankingManager:
                     "is_cleared_record": record[8],
                     "cleared_time": record[9],
                     "progress": record[10],
-                    "row_number": record[11],
+                    "pattern_order": record[11],
+                    "play_speed_rate": record[12],
+                    "play_timing_rate": record[13],
+                    "fln_option": record[14],
+                    "sln_option": record[15],
+                    "is_nln": record[16],
+                    "row_number": record[17],
                 }
             )
 

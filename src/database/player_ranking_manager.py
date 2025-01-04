@@ -46,6 +46,12 @@ class PlayerRankingManager:
                             p.progress_name,
                             h.isClear,
                             h.PlayedTime,
+                            h.PatternOrder,
+                            ROUND(h.PlaySpeedRate, 3) AS PlaySpeedRate,
+                            h.PlayTimingRate,
+                            h.FLNOption,
+                            h.SLNOption,
+                            h.isNLN,
                             sr.SongRank AS SongRank,
                             ROW_NUMBER() OVER (
                                 ORDER BY d.NoteLevel DESC, h.Score DESC
@@ -86,6 +92,12 @@ class PlayerRankingManager:
                         isClear,
                         FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
                         SongRank,
+                        PatternOrder,
+                        PlaySpeedRate,
+                        PlayTimingRate,
+                        FLNOption,
+                        SLNOption,
+                        isNLN,
                         RowNumber
                     FROM RankedResults
                     {"WHERE RowNumber BETWEEN ? * 100 + 1 AND (? + 1) * 100" if page is not None else ""}
@@ -110,7 +122,13 @@ class PlayerRankingManager:
                     "is_cleared_record": record[7],
                     "cleared_time": record[8],
                     "record_rank": record[9],
-                    "row_number": record[10],
+                    "pattern_order": record[10],
+                    "play_speed_rate": record[11],
+                    "play_timing_rate": record[12],
+                    "fln_option": record[13],
+                    "sln_option": record[14],
+                    "is_nln": record[15],
+                    "row_number": record[16]
                 }
             )
 
@@ -269,6 +287,12 @@ class PlayerRankingManager:
                     Bad,
                     Miss,
                     MaxCombo,
+                    PatternOrder,
+                    ROUND(PlaySpeedRate, 3) AS PlaySpeedRate,
+                    PlayTimingRate,
+                    FLNOption,
+                    SLNOption,
+                    isNLN,
                     RowNum
                 FROM (
                     SELECT *,
@@ -308,7 +332,13 @@ class PlayerRankingManager:
                     "score_bad": rank_info[6],
                     "score_miss": rank_info[7],
                     "score_max_combo": rank_info[8],
-                    "row_number": rank_info[9],
+                    "pattern_order": rank_info[9],
+                    "play_speed_rate": rank_info[10],
+                    "play_timing_rate": rank_info[11],
+                    "fln_option": rank_info[12],
+                    "sln_option": rank_info[13],
+                    "is_nln": rank_info[14],
+                    "row_number": rank_info[15],
                 }
             )
 
@@ -337,6 +367,12 @@ class PlayerRankingManager:
                     Bad,
                     Miss,
                     MaxCombo,
+                    PatternOrder,
+                    ROUND(PlaySpeedRate, 3) AS PlaySpeedRate,
+                    PlayTimingRate,
+                    FLNOption,
+                    SLNOption,
+                    isNLN,
                     ROW_NUMBER() OVER (ORDER BY PlayedTime DESC) RowNum
                 FROM dbo.O2JamPlaylog AS p
                 RIGHT OUTER JOIN
@@ -374,7 +410,13 @@ class PlayerRankingManager:
                     "score_bad": rank_info[9],
                     "score_miss": rank_info[10],
                     "score_max_combo": rank_info[11],
-                    "row_number": rank_info[12],
+                    "pattern_order": rank_info[12],
+                    "play_speed_rate": rank_info[13],
+                    "play_timing_rate": rank_info[14],
+                    "fln_option": rank_info[15],
+                    "sln_option": rank_info[16],
+                    "is_nln": rank_info[17],
+                    "row_number": rank_info[18],
                 }
             )
 
