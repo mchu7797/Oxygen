@@ -71,7 +71,7 @@
                             <td data-toggle="tooltip" data-placement="top"
                                 title="Played when {{ score['cleared_time'] }} UTC+9">
                                 <a href="/player-scoreboard/{{ score['player_code'] }}/{{ metadata['difficulty'] }}">{{ score['player_nickname'] }}</a>
-                                {% if score['pattern_order'] != "1234567" %}
+                                {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
                                     <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
                                 {% endif %}
                             </td>
