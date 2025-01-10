@@ -71,7 +71,9 @@
                             <td data-toggle="tooltip" data-placement="top"
                                 title="Played when {{ score['cleared_time'] }} UTC+9">
                                 <a href="/player-scoreboard/{{ score['player_code'] }}/{{ metadata['difficulty'] }}">{{ score['player_nickname'] }}</a>
-                                <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                {% if score['pattern_order'] != "1234567" %}
+                                    <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                {% endif %}
                             </td>
                             <td>{{ score['score_cool'] }}</td>
                             <td>{{ score['score_good'] }}</td>

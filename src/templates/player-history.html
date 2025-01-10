@@ -116,7 +116,9 @@
                                 {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
                                     <span class="badge {% if score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
                                 {% endif %}
-                                <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                {% if score['pattern_order'] != "1234567" %}
+                                    <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                {% endif %}
                             </td>
                             <td>{{ score['cleared_time'] }}</td>
                         </tr>

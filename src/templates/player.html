@@ -222,7 +222,9 @@
                                     <a href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
                                         {{ score['music_title'] }}
                                     </a>
-                                    <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                    {% if score['pattern_order'] != "1234567" %}
+                                        <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {{ score['score'] }}
@@ -305,7 +307,9 @@
                                     {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
                                         <span class="badge {% if score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
                                     {% endif %}
-                                    <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                    {% if score['pattern_order'] != "1234567" %}
+                                        <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                    {% endif %}
                                 </td>
                                 <td>{{ score['music_level'] }}</td>
                                 <td data-bs-toggle="popover"
