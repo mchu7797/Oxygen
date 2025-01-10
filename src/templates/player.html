@@ -16,8 +16,11 @@
             {% if metadata['nickname_history']|length > 0 %}
                 <button class="btn btn-sm btn-primary"
                         data-bs-toggle="popover"
+                        data-bs-trigger="focus"
+                        tabindex="0"
                         data-bs-title="Nickname History"
-                        data-bs-content="{% for nickname in metadata['nickname_history'][:-1] %}{{ nickname }}, {% endfor %}{{ metadata['nickname_history'][-1] }}">
+                        data-bs-content="
+                                {% for nickname in metadata['nickname_history'][:-1] %}{{ nickname }}, {% endfor %}{{ metadata['nickname_history'][-1] }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-person-lines-fill" viewBox="0 0 16 16">
                         <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
@@ -219,12 +222,15 @@
                                     <a href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
                                         {{ score['music_title'] }}
                                     </a>
+                                    {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
+                                        {% if score['pattern_order'] != "7654321" %}
+                                            <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                        {% else %}
+                                            <span class="badge mod_tag">MIRROR</span>
+                                        {% endif %}
+                                    {% endif %}
                                 </td>
-                                <td
-                                        data-bs-toggle="popover"
-                                        data-bs-title="Mod Options"
-                                        data-bs-content="Pattern Order: {{ score['pattern_order'] }}<br>Speed Rate: {{ score['play_speed_rate'] }}<br>Timing Rate: {{ score['play_timing_rate'] }}<br>FLN Option: {{ score['fln_option'] }}<br>SLN Option: {{ score['sln_option'] }}<br>NLN Enabled: {{ score['is_nln'] }}"
-                                        data-bs-html="true">
+                                <td>
                                     {{ score['score'] }}
                                 </td>
                                 {% if score['is_cleared_record'] == 1 %}
@@ -299,18 +305,29 @@
                             <tr>
                                 <th scope="row">{{ score['row_number'] }}</th>
                                 <td>
-                                    <a
-                                            href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
+                                    <a href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
                                         {{ score['music_title'] }}
                                     </a>
+                                    {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
+                                        <span class="badge {% if score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
+                                    {% endif %}
+                                    {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
+                                        {% if score['pattern_order'] != "7654321" %}
+                                            <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                        {% else %}
+                                            <span class="badge mod_tag">MIRROR</span>
+                                        {% endif %}
+                                    {% endif %}
                                 </td>
                                 <td>{{ score['music_level'] }}</td>
-                                <td
-                                        data-bs-toggle="popover"
-                                        data-bs-title="Mod Options"
-                                        data-bs-content="Pattern Order: {{ score['pattern_order'] }}<br>Speed Rate: {{ score['play_speed_rate'] }}<br>Timing Rate: {{ score['play_timing_rate'] }}<br>FLN Option: {{ score['fln_option'] }}<br>SLN Option: {{ score['sln_option'] }}<br>NLN Enabled: {{ score['is_nln'] }}"
-                                        data-bs-html="true">
-                                    {{ score['score'] }}</td>
+                                <td data-bs-toggle="popover"
+                                    data-bs-trigger="focus"
+                                    tabindex="0"
+                                    data-bs-title="Mod Options"
+                                    data-bs-content="Pattern Order: {{ score['pattern_order'] }}<br>Speed Rate: {{ score['play_speed_rate'] }}<br>Timing Rate: {{ score['play_timing_rate'] }}<br>FLN Option: {{ score['fln_option'] }}<br>SLN Option: {{ score['sln_option'] }}<br>NLN Enabled: {{ score['is_nln'] }}"
+                                    data-bs-html="true">
+                                    {{ score['score'] }}
+                                </td>
                                 {% if score['is_cleared_record'] == 1 %}
                                     <td>
                                         <span class="badge clear_tag">Cleared</span>
@@ -378,7 +395,11 @@
     <script>
         const levelChart = document.getElementById('level-chart');
         const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+        const popoverList = [...popoverTriggerList].map(popoverTriggerEl =>
+            new bootstrap.Popover(popoverTriggerEl, {
+                trigger: 'focus'
+            })
+        );
 
         const url = new URL(window.location.href);
         const parameters = url.searchParams;

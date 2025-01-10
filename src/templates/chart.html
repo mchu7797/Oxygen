@@ -71,17 +71,20 @@
                             <td data-toggle="tooltip" data-placement="top"
                                 title="Played when {{ score['cleared_time'] }} UTC+9">
                                 <a href="/player-scoreboard/{{ score['player_code'] }}/{{ metadata['difficulty'] }}">{{ score['player_nickname'] }}</a>
+                                {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
+                                    {% if score['pattern_order'] != "7654321" %}
+                                        <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                    {% else %}
+                                        <span class="badge mod_tag">MIRROR</span>
+                                    {% endif %}
+                                {% endif %}
                             </td>
                             <td>{{ score['score_cool'] }}</td>
                             <td>{{ score['score_good'] }}</td>
                             <td>{{ score['score_bad'] }}</td>
                             <td>{{ score['score_miss'] }}</td>
                             <td>{{ score['score_max_combo'] }}</td>
-                            <td
-                                    data-bs-toggle="popover"
-                                    data-bs-title="Mod Options"
-                                    data-bs-content="Pattern Order: {{ score['pattern_order'] }}<br>Speed Rate: {{ score['play_speed_rate'] }}<br>Timing Rate: {{ score['play_timing_rate'] }}<br>FLN Option: {{ score['fln_option'] }}<br>SLN Option: {{ score['sln_option'] }}<br>NLN Enabled: {{ score['is_nln'] }}"
-                                    data-bs-html="true">
+                            <td>
                                 {{ score['score'] }}
                             </td>
                             {% if score['progress'] == 'P' %}
@@ -140,10 +143,4 @@
             </div>
         {% endif %}
     </div>
-{% endblock %}
-{% block scripts %}
-    <script>
-        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-    </script>
 {% endblock %}

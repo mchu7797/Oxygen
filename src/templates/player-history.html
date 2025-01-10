@@ -67,6 +67,8 @@
                             <td>{{ score['score_max_combo'] }}</td>
                             <td
                                     data-bs-toggle="popover"
+                                    data-bs-trigger="focus"
+                                    tabindex="0"
                                     data-bs-title="Mod Options"
                                     data-bs-content="Pattern Order: {{ score['pattern_order'] }}<br>Speed Rate: {{ score['play_speed_rate'] }}<br>Timing Rate: {{ score['play_timing_rate'] }}<br>FLN Option: {{ score['fln_option'] }}<br>SLN Option: {{ score['sln_option'] }}<br>NLN Enabled: {{ score['is_nln'] }}"
                                     data-bs-html="true">
@@ -105,15 +107,23 @@
                                     <span class="badge f_grade_tag">F Rank</span>
                                 </td>
                             {% endif %}
-                            {% if score['is_cleared_record'] == 1 %}
-                                <td>
+                            <td>
+                                {% if score['is_cleared_record'] == 1 %}
                                     <span class="badge clear_tag">Cleared</span>
-                                </td>
-                            {% else %}
-                                <td>
+                                {% else %}
                                     <span class="badge fail_tag">Failed</span>
-                                </td>
-                            {% endif %}
+                                {% endif %}
+                                {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
+                                    <span class="badge {% if score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
+                                {% endif %}
+                                {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
+                                    {% if score['pattern_order'] != "7654321" %}
+                                        <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                    {% else %}
+                                        <span class="badge mod_tag">MIRROR</span>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
                             <td>{{ score['cleared_time'] }}</td>
                         </tr>
                     {% endfor %}
@@ -131,8 +141,14 @@
 {% endblock %}
 {% block scripts %}
     <script>
+        const levelChart = document.getElementById('level-chart');
         const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+        const popoverList = [...popoverTriggerList].map(popoverTriggerEl =>
+            new bootstrap.Popover(popoverTriggerEl, {
+                trigger: 'focus'
+            })
+        );
+
         const url = new URL(window.location.href);
         const parameters = url.searchParams;
 
