@@ -6,7 +6,7 @@
     <h4>{{ chart_info['artist'] }}</h4>
     <h4>{{ chart_info['note_charter'] }}</h4>
     <div class="d-flex flex-row-reverse">
-        <div class="btn-group" role="group" aria-label="Guage options">
+        <div class="btn-group mx-1" role="group" aria-label="Guage options">
             <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=0"
                class="btn {% if gauge_difficulty == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
             <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=1"
@@ -15,7 +15,7 @@
                class="btn {% if gauge_difficulty == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
         </div>
         <a href="/music-scoreboard/{{ chart_info['music_code'] }}/{{ gauge_difficulty }}"
-           class="btn btn-outline-secondary">
+           class="btn btn-outline-secondary mx-1">
             Go Ranking
         </a>
     </div>
@@ -45,7 +45,23 @@
         {% for score in histories %}
             <div class="track-item track-item-inline">
                 <!-- Level Badge -->
-                <span class="badge row_number">#{{ score['row_number'] }}</span>
+                {% if score['row_number'] == 1 %}
+                    <span class="badge rank first_tag">
+                        #{{ score['row_number'] }}
+                    </span>
+                {% elif score['row_number'] == 2 %}
+                    <span class="badge rank second_tag">
+                        #{{ score['row_number'] }}
+                    </span>
+                {% elif score['row_number'] == 3 %}
+                    <span class="badge rank third_tag">
+                        #{{ score['row_number'] }}
+                    </span>
+                {% else %}
+                    <span class="badge rank">
+                        #{{ score['row_number'] }}
+                    </span>
+                {% endif %}
 
                 <!-- Stats Section -->
                 <div class="track-info-inline">
@@ -75,8 +91,11 @@
 
                 <!-- Status Badges -->
                 <div class="stats-inline">
-                    {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
-                        <span class="badge pattern_order_tag">{{ score['pattern_order'] }}</span>
+                    {% if score['is_cleared_record'] != 1 %}
+                        <span class="badge fail_tag">FAILED</span>
+                    {% endif %}
+                    {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
+                        <span class="badge {% if score['play_speed_rate'] is not none and score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
                     {% endif %}
                     {% if score['play_timing_rate'] is not none and score['play_timing_rate'] != 0 %}
                         <span class="badge mod_tag">T{{ score['play_timing_rate'] }}</span>
@@ -90,8 +109,8 @@
                     {% if score['sln_option'] is not none and score['sln_option'] != 0 %}
                         <span class="badge mod_tag">NLN</span>
                     {% endif %}
-                    {% if score['is_cleared_record'] != 1 %}
-                        <span class="badge fail_tag">FAILED</span>
+                    {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
+                        <span class="badge pattern_order_tag">{{ score['pattern_order'] }}</span>
                     {% endif %}
                 </div>
 
