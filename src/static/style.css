@@ -2,6 +2,9 @@
 
 body {
     font-family: sans-serif, 'Noto Sans KR';
+    background: #212529;
+    color: #fff;
+    padding: 4px;
 }
 
 a {
@@ -9,11 +12,117 @@ a {
     color: white;
 }
 
-th,
-td {
+th, td {
     white-space: nowrap;
 }
 
+/* 카드 레이아웃 스타일 */
+.track-item {
+    background: #2E343A;
+    border-radius: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding: 4px 6px;
+}
+
+.track-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 20px;
+}
+
+.title-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.track-title {
+    color: #fff;
+    font-size: .9em;
+    line-height: 1;
+    margin: 0;
+    padding-right: 8px;
+}
+
+.score-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+    min-width: fit-content;
+}
+
+.score {
+    font-size: .9em;
+    color: #ffd700;
+    font-weight: 700;
+}
+
+.difficulty {
+    background: #1C1F23;
+    color: #FFFFFF;
+}
+
+/* 하단 레이아웃 */
+.bottom-row {
+    display: flex;
+    align-items: center;
+    margin-top: 2px;
+    gap: 8px;
+}
+
+.stats-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.stats-pattern-group {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.stats-container {
+    display: flex;
+    gap: 2px;
+    font-size: .8em;
+    color: #aaa;
+    min-width: fit-content;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-value {
+    color: #fff;
+    font-weight: 700;
+    width: 45px;
+    text-align: left;
+    font-variant-numeric: tabular-nums;
+    margin-right: 2px;
+}
+
+.stat-label {
+    color: #aaa;
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+/* 기존 등급 태그 스타일 */
 .p_grade_tag {
     background-color: #FBBD08;
     color: #000000;
@@ -54,6 +163,7 @@ td {
     color: #000000;
 }
 
+/* 클리어 상태 태그 */
 .fail_tag {
     background-color: #DC3545;
     color: #000000;
@@ -64,6 +174,7 @@ td {
     color: #000000;
 }
 
+/* 속도 태그 */
 .rate_tag_upper {
     background-color: #DC3545;
     color: #000000;
@@ -74,7 +185,19 @@ td {
     color: #000000;
 }
 
+/* 모드 태그 */
 .mod_tag {
     background-color: #0D6EFD;
     color: #000000;
+}
+
+.pattern_order_tag {
+    background-color: #1C1F23;
+    color: #FFFFFF;
+}
+
+.timestamp {
+    color: #888;
+    font-size: .75em;
+    margin-left: auto;
 }

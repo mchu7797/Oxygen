@@ -20,6 +20,8 @@
                         tabindex="0"
                         data-bs-title="Nickname History"
                         data-bs-content="
+
+
                                 {% for nickname in metadata['nickname_history'][:-1] %}{{ nickname }}, {% endfor %}{{ metadata['nickname_history'][-1] }}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-person-lines-fill" viewBox="0 0 16 16">
@@ -173,7 +175,7 @@
             </div>
         </div>
         <hr style="border: 1px solid darkgrey;" class="mb-3 mt-3">
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-auto me-auto">
                 <span class="badge text-bg-secondary">LAST ACCESS : {{ metadata['last_access_time'] }}</span>
                 <span class="badge text-bg-secondary">{{ tier['tier'] }}</span>
@@ -199,185 +201,100 @@
             </div>
         </div>
         {% if scoreboard != None %}
-            {% if show_recent != True %}
-                <div class="table-responsive-lg overflow-auto">
-                    <table class="table table-dark table-borderless table-sm">
-                        <thead>
-                        <tr>
-                            <th scope="col">Rank</th>
-                            <th scope="col">Song Title</th>
-                            <th scope="col">Score</th>
-                            <th scope="col">Clear</th>
-                            <th scope="col">Grade</th>
-                            <th scope="col">Rank</th>
-                            <th scope="col">Level</th>
-                            <th scope="col">PlayTime</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for score in scoreboard %}
-                            <tr>
-                                <th scope="row">#{{ score['row_number'] }}</th>
-                                <td>
+            <div class="container-fluid">
+                {% for score in scoreboard %}
+                    <div class="track-item">
+                        <div class="track-info">
+                            <div class="title-section">
+                                <span class="badge difficulty">Lv.{{ score['music_level'] }}</span>
+                                <div class="track-title">
                                     <a href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
                                         {{ score['music_title'] }}
                                     </a>
-                                    {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
-                                        <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {{ score['score'] }}
-                                </td>
-                                {% if score['is_cleared_record'] == 1 %}
-                                    <td>
-                                        <span class="badge clear_tag">Cleared</span>
-                                    </td>
-                                {% else %}
-                                    <td>
-                                        <span class="badge fail_tag">Failed</span>
-                                    </td>
+                                </div>
+                                {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
+                                    <span class="badge {% if score['play_speed_rate'] is not none and score['play_speed_rate'] > 1.0 %}text-bg-danger{% else %}text-bg-success{% endif %}">x{{ score['play_speed_rate'] }}</span>
                                 {% endif %}
-                                {% if score['progress'] == 'P' %}
-                                    <td>
-                                        <span class="badge p_grade_tag">P Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 'SS' %}
-                                    <td>
-                                        <span class="badge ss_grade_tag">SS Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 'S' %}
-                                    <td>
-                                        <span class="badge s_grade_tag">S Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 'A' %}
-                                    <td>
-                                        <span class="badge a_grade_tag">A Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 'B' %}
-                                    <td>
-                                        <span class="badge b_grade_tag">B Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 'C' %}
-                                    <td>
-                                        <span class="badge c_grade_tag">C Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 'D' %}
-                                    <td>
-                                        <span class="badge d_grade_tag">D Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 'F' %}
-                                    <td>
-                                        <span class="badge f_grade_tag">F Rank</span>
-                                    </td>
+                            </div>
+                            <div class="score-section">
+                                <div class="score">{{ score['score'] }}</div>
+                                {% if score['progress'] == 'P' or score['progress'] == 1 %}
+                                    <span class="badge p_grade_tag">P Rank</span>
+                                {% elif score['progress'] == 'SS' or score['progress'] == 2 %}
+                                    <span class="badge ss_grade_tag">SS Rank</span>
+                                {% elif score['progress'] == 'S' or score['progress'] == 3 %}
+                                    <span class="badge s_grade_tag">S Rank</span>
+                                {% elif score['progress'] == 'A' or score['progress'] == 4 %}
+                                    <span class="badge a_grade_tag">A Rank</span>
+                                {% elif score['progress'] == 'B' or score['progress'] == 5 %}
+                                    <span class="badge b_grade_tag">B Rank</span>
+                                {% elif score['progress'] == 'C' or score['progress'] == 6 %}
+                                    <span class="badge c_grade_tag">C Rank</span>
+                                {% elif score['progress'] == 'D' or score['progress'] == 7 %}
+                                    <span class="badge d_grade_tag">D Rank</span>
+                                {% elif score['progress'] == 'F' or score['progress'] == 8 %}
+                                    <span class="badge f_grade_tag">F Rank</span>
                                 {% endif %}
-                                <td>{{ score['record_rank'] }}</td>
-                                <td>{{ score['music_level'] }}</td>
-                                <td>{{ score['cleared_time'] }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <div class="table-responsive-sm overflow-auto">
-                    <table class="table table-dark table-borderless table-sm">
-                        <thead>
-                        <th scope="col">#</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Level</th>
-                        <th scope="col">Score</th>
-                        <th scope="col">Clear</th>
-                        <th scope="col">Grade</th>
-                        <th scope="col">Cool</th>
-                        <th scope="col">Good</th>
-                        <th scope="col">Bad</th>
-                        <th scope="col">Miss</th>
-                        <th scope="col">Max Combo</th>
-                        <th scope="col">PlayTime</th>
-                        </thead>
-                        <tbody>
-                        {% for score in scoreboard %}
-                            <tr>
-                                <th scope="row">{{ score['row_number'] }}</th>
-                                <td>
-                                    <a href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
-                                        {{ score['music_title'] }}
-                                    </a>
-                                    {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
-                                        <span class="badge {% if score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
+                            </div>
+                        </div>
+                        <div class="bottom-row">
+                            <div class="stats-section">
+                                <div class="stats-pattern-group">
+                                    <div class="stats-container">
+                                        <span class="stat">
+                                            <span class="stat-label">COOL</span>
+                                            <span class="stat-value">{{ score['score_cool'] }}</span>
+                                        </span>
+                                                    <span class="stat">
+                                            <span class="stat-label">GOOD</span>
+                                            <span class="stat-value">{{ score['score_good'] }}</span>
+                                        </span>
+                                                    <span class="stat">
+                                            <span class="stat-label">BAD</span>
+                                            <span class="stat-value">{{ score['score_bad'] }}</span>
+                                        </span>
+                                                    <span class="stat">
+                                            <span class="stat-label">MISS</span>
+                                            <span class="stat-value">{{ score['score_miss'] }}</span>
+                                        </span>
+                                                    <span class="stat">
+                                            <span class="stat-label">COMBO</span>
+                                            <span class="stat-value">{{ score['score_max_combo'] }}</span>
+                                        </span>
+                                    </div>
+                                    {% if score['is_cleared_record'] != 1 %}
+                                        <span class="badge fail_tag">FAILED</span>
                                     {% endif %}
                                     {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
-                                        <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
+                                        <span class="badge pattern_order_tag">{{ score['pattern_order'] }}</span>
                                     {% endif %}
-                                </td>
-                                <td>{{ score['music_level'] }}</td>
-                                <td data-bs-toggle="popover"
-                                    data-bs-trigger="focus"
-                                    tabindex="0"
-                                    data-bs-title="Mod Options"
-                                    data-bs-content="Pattern Order: {{ score['pattern_order'] }}<br>Speed Rate: {{ score['play_speed_rate'] }}<br>Timing Rate: {{ score['play_timing_rate'] }}<br>FLN Option: {{ score['fln_option'] }}<br>SLN Option: {{ score['sln_option'] }}<br>NLN Enabled: {{ score['is_nln'] }}"
-                                    data-bs-html="true">
-                                    {{ score['score'] }}
-                                </td>
-                                {% if score['is_cleared_record'] == 1 %}
-                                    <td>
-                                        <span class="badge clear_tag">Cleared</span>
-                                    </td>
-                                {% else %}
-                                    <td>
-                                        <span class="badge fail_tag">Failed</span>
-                                    </td>
-                                {% endif %}
-                                {% if score['progress'] == 1 %}
-                                    <td>
-                                        <span class="badge p_grade_tag">P Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 2 %}
-                                    <td>
-                                        <span class="badge ss_grade_tag">SS Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 3 %}
-                                    <td>
-                                        <span class="badge s_grade_tag">S Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 4 %}
-                                    <td>
-                                        <span class="badge a_grade_tag">A Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 5 %}
-                                    <td>
-                                        <span class="badge b_grade_tag">B Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 6 %}
-                                    <td>
-                                        <span class="badge c_grade_tag">C Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 7 %}
-                                    <td>
-                                        <span class="badge d_grade_tag">D Rank</span>
-                                    </td>
-                                {% elif score['progress'] == 8 %}
-                                    <td>
-                                        <span class="badge f_grade_tag">F Rank</span>
-                                    </td>
-                                {% endif %}
-                                <td>{{ score['score_cool'] }}</td>
-                                <td>{{ score['score_good'] }}</td>
-                                <td>{{ score['score_bad'] }}</td>
-                                <td>{{ score['score_miss'] }}</td>
-                                <td>{{ score['score_max_combo'] }}</td>
-                                <td>{{ score['cleared_time'] }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% endif %}
+                                </div>
+                                <div class="right-section">
+                                    <div class="tags-container">
+                                        {% if score['play_timing_rate'] is not none and score['play_timing_rate'] != 0 %}
+                                            <span class="badge mod_tag">T{{ score['play_timing_rate'] }}</span>
+                                        {% endif %}
+                                        {% if score['fln_option'] is not none and score['fln_option'] != 0 %}
+                                            <span class="badge mod_tag">FLN {{ score['fln_option'] }}</span>
+                                        {% endif %}
+                                        {% if score['sln_option'] is not none and score['sln_option'] != 0 %}
+                                            <span class="badge mod_tag">SLN {{ score['sln_option'] }}</span>
+                                        {% endif %}
+                                        {% if score['sln_option'] is not none and score['sln_option'] != 0 %}
+                                            <span class="badge mod_tag">NLN</span>
+                                        {% endif %}
+                                    </div>
+                                    <span class="timestamp">{{ score['cleared_time'] }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         {% else %}
             <div class="text-white info-header">
                 <div class="d-flex justify-content-center">
-                    <h3>THIS PLAYER HAS NOT RECORD</h3>
+                    <h3>THIS PLAYER HAS NO RECORD</h3>
                 </div>
             </div>
         {% endif %}
