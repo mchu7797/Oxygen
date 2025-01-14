@@ -3,7 +3,6 @@
 body {
     font-family: sans-serif, 'Noto Sans KR';
     background: #212529;
-    color: #fff;
     padding: 4px;
 }
 
@@ -42,7 +41,7 @@ th, td {
 
 .track-title {
     color: #fff;
-    font-size: .9em;
+    font-size: 1em;
     line-height: 1;
     margin: 0;
     padding-right: 8px;
@@ -62,9 +61,31 @@ th, td {
     font-weight: 700;
 }
 
-.difficulty {
-    background: #1C1F23;
-    color: #FFFFFF;
+.track-item-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+}
+
+.track-info-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.stats-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+}
+
+
+.difficulty, .rank, .row_number {
+    background: #5AA9E6;
+    color: black;
 }
 
 /* 하단 레이아웃 */
@@ -166,11 +187,6 @@ th, td {
 /* 클리어 상태 태그 */
 .fail_tag {
     background-color: #DC3545;
-    color: #000000;
-}
-
-.clear_tag {
-    background-color: #198754;
     color: #000000;
 }
 

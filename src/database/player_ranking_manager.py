@@ -312,7 +312,6 @@ class PlayerRankingManager:
                 FROM (
                     SELECT *,
                            ROW_NUMBER() OVER (
-                               PARTITION BY isClear
                                ORDER BY 
                                    CASE 
                                        WHEN isClear = 1 THEN Score

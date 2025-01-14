@@ -2,138 +2,134 @@
 {% block title %}{{ chart_info['title'] }}{% endblock %}
 {% block content %}
     <div class="container-lg text-white">
-        <h1>{{ chart_info['title'] }}</h1>
-        <h4>{{ chart_info['artist'] }}</h4>
-        <h4>{{ chart_info['note_charter'] }}</h4>
-        <div class="d-flex flex-row-reverse">
-            <div class="btn-group" role="group" aria-label="Guage options">
-                <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=0"
-                   class="btn {% if gauge_difficulty == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
-                <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=1"
-                   class="btn {% if gauge_difficulty == 1 %}btn-warning{% else %}btn-secondary{% endif %}">Normal</a>
-                <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=2"
-                   class="btn {% if gauge_difficulty == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
-            </div>
-            &nbsp;
-            <a href="/music-scoreboard/{{ chart_info['music_code'] }}/{{ gauge_difficulty }}"
-               class="btn btn-outline-secondary">
-                Go Ranking
-            </a>
+    <h1>{{ chart_info['title'] }}</h1>
+    <h4>{{ chart_info['artist'] }}</h4>
+    <h4>{{ chart_info['note_charter'] }}</h4>
+    <div class="d-flex flex-row-reverse">
+        <div class="btn-group" role="group" aria-label="Guage options">
+            <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=0"
+               class="btn {% if gauge_difficulty == 0 %}btn-success{% else %}btn-secondary{% endif %}">Easy</a>
+            <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=1"
+               class="btn {% if gauge_difficulty == 1 %}btn-warning{% else %}btn-secondary{% endif %}">Normal</a>
+            <a href="history?player_id={{ player_id }}&chart_id={{ chart_info['music_code'] }}&gauge_difficulty=2"
+               class="btn {% if gauge_difficulty == 2 %}btn-danger{% else %}btn-secondary{% endif %}">Hard</a>
         </div>
-        <hr style="border: 1px solid darkgrey" class="mb-3 mt-3">
-        2023년 12월 20일 이전 기록은 조회되지 않습니다.
-        <br>
-        Records before December 20th, 2023, are not available for viewing.
-        <div class="row mb-3 mt-3">
-            <div class="col-auto me-auto">
-                <span class="badge bg-info bg-opacity-75">PLAYER : {{ player_info['nickname'] }}</span>
-                {% if chart_info['difficulty'] == 0 %}
-                    <span class="badge bg-success">LEVEL {{ chart_info['level'] }}</span>
-                {% elif chart_info['difficulty'] == 1 %}
-                    <span class="badge bg-warning">LEVEL {{ chart_info['level'] }}</span>
-                {% else %}
-                    <span class="badge bg-danger">LEVEL {{ chart_info['level'] }}</span>
-                {% endif %}
-                <span class="badge bg-secondary">BPM : {{ chart_info['bpm'] }}</span>
-            </div>
-            <div class="col-auto">
-                <a id="order-by-date" class="btn btn-outline-light btn-sm {% if order_by_date == 1 %}active{% endif %}"
-                   {% if order_by_date == 1 %}aria-pressed="true"{% endif %} data-bs-toggle="button">Order by Date</a>
-            </div>
+        <a href="/music-scoreboard/{{ chart_info['music_code'] }}/{{ gauge_difficulty }}"
+           class="btn btn-outline-secondary">
+            Go Ranking
+        </a>
+    </div>
+    <hr style="border: 1px solid darkgrey" class="mb-3 mt-3">
+    2023년 12월 20일 이전 기록은 조회되지 않습니다.
+    <br>
+    Records before December 20th, 2023, are not available for viewing.
+    <div class="row mb-3 mt-3">
+        <div class="col-auto me-auto">
+            <span class="badge bg-info bg-opacity-75">PLAYER : {{ player_info['nickname'] }}</span>
+            {% if chart_info['difficulty'] == 0 %}
+                <span class="badge bg-success">LEVEL {{ chart_info['level'] }}</span>
+            {% elif chart_info['difficulty'] == 1 %}
+                <span class="badge bg-warning">LEVEL {{ chart_info['level'] }}</span>
+            {% else %}
+                <span class="badge bg-danger">LEVEL {{ chart_info['level'] }}</span>
+            {% endif %}
+            <span class="badge bg-secondary">BPM : {{ chart_info['bpm'] }}</span>
         </div>
-        {% if histories != [] %}
-            <div class="table-responsive-lg">
-                <table class="table table-dark table-borderless table-sm">
-                    <thead>
-                    <th scope="col">#</th>
-                    <th scope="col">Cool</th>
-                    <th scope="col">Good</th>
-                    <th scope="col">Bad</th>
-                    <th scope="col">Miss</th>
-                    <th scope="col">MaxCombo</th>
-                    <th scope="col">Score</th>
-                    <th scope="col">Grade</th>
-                    <th scope="col">Clear</th>
-                    <th scope="col">PlayTime</th>
-                    </thead>
-                    <tbody>
-                    {% for score in histories %}
-                        <tr>
-                            <th scope="row">{{ score['row_number'] }}</th>
-                            <td>{{ score['score_cool'] }}</td>
-                            <td>{{ score['score_good'] }}</td>
-                            <td>{{ score['score_bad'] }}</td>
-                            <td>{{ score['score_miss'] }}</td>
-                            <td>{{ score['score_max_combo'] }}</td>
-                            <td
-                                    data-bs-toggle="popover"
-                                    data-bs-trigger="focus"
-                                    tabindex="0"
-                                    data-bs-title="Mod Options"
-                                    data-bs-content="Pattern Order: {{ score['pattern_order'] }}<br>Speed Rate: {{ score['play_speed_rate'] }}<br>Timing Rate: {{ score['play_timing_rate'] }}<br>FLN Option: {{ score['fln_option'] }}<br>SLN Option: {{ score['sln_option'] }}<br>NLN Enabled: {{ score['is_nln'] }}"
-                                    data-bs-html="true">
-                                {{ score['score'] }}
-                            </td>
-                            {% if score['progress'] == 1 %}
-                                <td>
-                                    <span class="badge p_grade_tag">P Rank</span>
-                                </td>
-                            {% elif score['progress'] == 2 %}
-                                <td>
-                                    <span class="badge ss_grade_tag">SS Rank</span>
-                                </td>
-                            {% elif score['progress'] == 3 %}
-                                <td>
-                                    <span class="badge s_grade_tag">S Rank</span>
-                                </td>
-                            {% elif score['progress'] == 4 %}
-                                <td>
-                                    <span class="badge a_grade_tag">A Rank</span>
-                                </td>
-                            {% elif score['progress'] == 5 %}
-                                <td>
-                                    <span class="badge b_grade_tag">B Rank</span>
-                                </td>
-                            {% elif score['progress'] == 6 %}
-                                <td>
-                                    <span class="badge c_grade_tag">C Rank</span>
-                                </td>
-                            {% elif score['progress'] == 7 %}
-                                <td>
-                                    <span class="badge d_grade_tag">D Rank</span>
-                                </td>
-                            {% elif score['progress'] == 8 %}
-                                <td>
-                                    <span class="badge f_grade_tag">F Rank</span>
-                                </td>
-                            {% endif %}
-                            <td>
-                                {% if score['is_cleared_record'] == 1 %}
-                                    <span class="badge clear_tag">Cleared</span>
-                                {% else %}
-                                    <span class="badge fail_tag">Failed</span>
-                                {% endif %}
-                                {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
-                                    <span class="badge {% if score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
-                                {% endif %}
-                                {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
-                                    <span class="badge mod_tag">{{ score['pattern_order'] }}</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ score['cleared_time'] }}</td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <div class="text-white info-header">
-                <div class="d-flex justify-content-center">
-                    <h3>YOU HAVEN'T PLAYED THIS CHART!</h3>
+        <div class="col-auto">
+            <a id="order-by-date" class="btn btn-outline-light btn-sm {% if order_by_date == 1 %}active{% endif %}"
+               {% if order_by_date == 1 %}aria-pressed="true"{% endif %} data-bs-toggle="button">Order by Date</a>
+        </div>
+    </div>
+    {% if histories != [] %}
+        <div class="container-fluid">
+        {% for score in histories %}
+            <div class="track-item track-item-inline">
+                <!-- Level Badge -->
+                <span class="badge row_number">#{{ score['row_number'] }}</span>
+
+                <!-- Stats Section -->
+                <div class="track-info-inline">
+                    <div class="stats-container">
+            <span class="stat">
+                <span class="stat-label">COOL</span>
+                <span class="stat-value">{{ score['score_cool'] }}</span>
+            </span>
+                        <span class="stat">
+                <span class="stat-label">GOOD</span>
+                <span class="stat-value">{{ score['score_good'] }}</span>
+            </span>
+                        <span class="stat">
+                <span class="stat-label">BAD</span>
+                <span class="stat-value">{{ score['score_bad'] }}</span>
+            </span>
+                        <span class="stat">
+                <span class="stat-label">MISS</span>
+                <span class="stat-value">{{ score['score_miss'] }}</span>
+            </span>
+                        <span class="stat">
+                <span class="stat-label">COMBO</span>
+                <span class="stat-value">{{ score['score_max_combo'] }}</span>
+            </span>
+                    </div>
+                </div>
+
+                <!-- Status Badges -->
+                <div class="stats-inline">
+                    {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
+                        <span class="badge pattern_order_tag">{{ score['pattern_order'] }}</span>
+                    {% endif %}
+                    {% if score['play_timing_rate'] is not none and score['play_timing_rate'] != 0 %}
+                        <span class="badge mod_tag">T{{ score['play_timing_rate'] }}</span>
+                    {% endif %}
+                    {% if score['fln_option'] is not none and score['fln_option'] != 0 %}
+                        <span class="badge mod_tag">FLN {{ score['fln_option'] }}</span>
+                    {% endif %}
+                    {% if score['sln_option'] is not none and score['sln_option'] != 0 %}
+                        <span class="badge mod_tag">SLN {{ score['sln_option'] }}</span>
+                    {% endif %}
+                    {% if score['sln_option'] is not none and score['sln_option'] != 0 %}
+                        <span class="badge mod_tag">NLN</span>
+                    {% endif %}
+                    {% if score['is_cleared_record'] != 1 %}
+                        <span class="badge fail_tag">FAILED</span>
+                    {% endif %}
+                </div>
+
+                <!-- Score Section -->
+                <div class="score-section">
+                    <div class="score">{{ score['score'] }}</div>
+                    {% if score['progress'] == 'P' or score['progress'] == 1 %}
+                        <span class="badge p_grade_tag">P Rank</span>
+                    {% elif score['progress'] == 'SS' or score['progress'] == 2 %}
+                        <span class="badge ss_grade_tag">SS Rank</span>
+                    {% elif score['progress'] == 'S' or score['progress'] == 3 %}
+                        <span class="badge s_grade_tag">S Rank</span>
+                    {% elif score['progress'] == 'A' or score['progress'] == 4 %}
+                        <span class="badge a_grade_tag">A Rank</span>
+                    {% elif score['progress'] == 'B' or score['progress'] == 5 %}
+                        <span class="badge b_grade_tag">B Rank</span>
+                    {% elif score['progress'] == 'C' or score['progress'] == 6 %}
+                        <span class="badge c_grade_tag">C Rank</span>
+                    {% elif score['progress'] == 'D' or score['progress'] == 7 %}
+                        <span class="badge d_grade_tag">D Rank</span>
+                    {% elif score['progress'] == 'F' or score['progress'] == 8 %}
+                        <span class="badge f_grade_tag">F Rank</span>
+                    {% endif %}
+                </div>
+                <!-- Right Section -->
+                <div class="right-section">
+                    <span class="timestamp">{{ score['cleared_time'] }}</span>
                 </div>
             </div>
-        {% endif %}
-    </div>
+        {% endfor %}
+    {% else %}
+        <div class="text-white info-header">
+            <div class="d-flex justify-content-center">
+                <h3>YOU HAVEN'T PLAYED THIS CHART!</h3>
+            </div>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}
 {% block scripts %}
     <script>
