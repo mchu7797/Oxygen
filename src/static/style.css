@@ -22,6 +22,11 @@ th, td {
     margin-top: 4px;
     margin-bottom: 4px;
     padding: 4px 6px;
+    width: 750px;
+}
+
+.track-item.failed {
+    opacity: 20%;
 }
 
 .track-item-link {
@@ -55,7 +60,7 @@ th, td {
     font-size: 1em;
     line-height: 1;
     margin: 0;
-    padding-right: 8px;
+    padding-right: 2px;
 }
 
 .score-section {
@@ -80,6 +85,7 @@ th, td {
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
+    width: 1000px;
 }
 
 .track-info-inline {
@@ -101,7 +107,7 @@ th, td {
     width: 4.6em;
     display: inline-block;
     text-align: center;
-    background: #5AA9E6;
+    background-color: #5AA9E6;
     color: black;
 }
 
@@ -109,7 +115,7 @@ th, td {
     width: 3.4em;
     display: inline-block;
     text-align: center;
-    background: #5AA9E6;
+    background-color: #5AA9E6;
     color: black;
 }
 
@@ -259,6 +265,15 @@ th, td {
     background-color: #DC3545;
     color: #000000;
     width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.chart_rank_tag {
+    background-color: #778DA9;
+    color: #000000;
+    width: 3.5em;
     display: inline-block;
     text-align: center;
     white-space: nowrap;

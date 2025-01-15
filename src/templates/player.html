@@ -19,9 +19,7 @@
                         data-bs-trigger="focus"
                         tabindex="0"
                         data-bs-title="Nickname History"
-                        data-bs-content="
-
-                                {% for nickname in metadata['nickname_history'][:-1] %}{{ nickname }}, {% endfor %}{{ metadata['nickname_history'][-1] }}">
+                        data-bs-content="{% for nickname in metadata['nickname_history'][:-1] %}{{ nickname }}, {% endfor %}{{ metadata['nickname_history'][-1] }}">
                     <i class="bi bi-people-fill"></i>
                 </button>
             {% endif %}
@@ -201,37 +199,46 @@
                 {% for score in scoreboard %}
                     <a class="track-item-link"
                        href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
-                        <div class="track-item">
+                        <div class="track-item {% if score["is_cleared_record"] != 1 %}failed{% endif %} mx-auto">
                             <div class="track-info">
                                 <div class="title-section">
-                                    <div class="tags-container">
-                                        <span class="badge difficulty">Lv.{{ score['music_level'] }}</span>
-                                        {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
-                                            <span class="badge {% if score['play_speed_rate'] is not none and score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
-                                        {% endif %}
-                                    </div>
+                                    <span class="badge difficulty">Lv.{{ score['music_level'] }}</span>
                                     <div class="track-title">
                                         {{ score['music_title'] }}
                                     </div>
+                                    {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
+                                        <span class="badge {% if score['play_speed_rate'] is not none and score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
+                                    {% endif %}
                                 </div>
                                 <div class="score-section">
                                     <div class="score">{{ score['score'] }}</div>
                                     {% if score['progress'] == 'P' or score['progress'] == 1 %}
-                                        <span class="badge p_grade_tag">P Rank</span>
+                                        <span class="badge p_grade_tag">P</span>
                                     {% elif score['progress'] == 'SS' or score['progress'] == 2 %}
-                                        <span class="badge ss_grade_tag">SS Rank</span>
+                                        <span class="badge ss_grade_tag">SS</span>
                                     {% elif score['progress'] == 'S' or score['progress'] == 3 %}
-                                        <span class="badge s_grade_tag">S Rank</span>
+                                        <span class="badge s_grade_tag">S</span>
                                     {% elif score['progress'] == 'A' or score['progress'] == 4 %}
-                                        <span class="badge a_grade_tag">A Rank</span>
+                                        <span class="badge a_grade_tag">A</span>
                                     {% elif score['progress'] == 'B' or score['progress'] == 5 %}
-                                        <span class="badge b_grade_tag">B Rank</span>
+                                        <span class="badge b_grade_tag">B</span>
                                     {% elif score['progress'] == 'C' or score['progress'] == 6 %}
-                                        <span class="badge c_grade_tag">C Rank</span>
+                                        <span class="badge c_grade_tag">C</span>
                                     {% elif score['progress'] == 'D' or score['progress'] == 7 %}
-                                        <span class="badge d_grade_tag">D Rank</span>
+                                        <span class="badge d_grade_tag">D</span>
                                     {% elif score['progress'] == 'F' or score['progress'] == 8 %}
-                                        <span class="badge f_grade_tag">F Rank</span>
+                                        <span class="badge f_grade_tag">F</span>
+                                    {% endif %}
+                                    {% if show_recent != True %}
+                                        {% if score['record_rank'] == 1 %}
+                                            <span class="badge first_tag chart_rank_tag">#{{ score['record_rank'] }}</span>
+                                        {% elif score['record_rank'] == 2 %}
+                                            <span class="badge second_tag chart_rank_tag">#{{ score['record_rank'] }}</span>
+                                        {% elif score['record_rank'] == 3 %}
+                                            <span class="badge third_tag chart_rank_tag">#{{ score['record_rank'] }}</span>
+                                        {% else %}
+                                            <span class="badge chart_rank_tag">#{{ score['record_rank'] }}</span>
+                                        {% endif %}
                                     {% endif %}
                                 </div>
                             </div>
@@ -260,9 +267,6 @@
                                             <span class="stat-value">{{ score['score_max_combo'] }}</span>
                                         </span>
                                         </div>
-                                        {% if score['is_cleared_record'] != 1 %}
-                                            <span class="badge fail_tag">FAILED</span>
-                                        {% endif %}
                                     </div>
                                     <div class="right-section">
                                         <div class="tags-container">

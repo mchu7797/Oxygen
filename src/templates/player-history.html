@@ -43,7 +43,7 @@
     {% if histories != [] %}
         <div class="container-fluid">
         {% for score in histories %}
-            <div class="track-item track-item-inline">
+            <div class="track-item {% if score['is_cleared_record'] != 1 %}failed{% endif %} track-item-inline mx-auto">
                 <!-- Level Badge -->
                 {% if score['row_number'] == 1 %}
                     <span class="badge rank first_tag">
@@ -66,34 +66,31 @@
                 <!-- Stats Section -->
                 <div class="track-info-inline">
                     <div class="stats-container">
-            <span class="stat">
-                <span class="stat-label">COOL</span>
-                <span class="stat-value">{{ score['score_cool'] }}</span>
-            </span>
                         <span class="stat">
-                <span class="stat-label">GOOD</span>
-                <span class="stat-value">{{ score['score_good'] }}</span>
-            </span>
+                            <span class="stat-label">COOL</span>
+                            <span class="stat-value">{{ score['score_cool'] }}</span>
+                        </span>
                         <span class="stat">
-                <span class="stat-label">BAD</span>
-                <span class="stat-value">{{ score['score_bad'] }}</span>
-            </span>
+                            <span class="stat-label">GOOD</span>
+                            <span class="stat-value">{{ score['score_good'] }}</span>
+                        </span>
                         <span class="stat">
-                <span class="stat-label">MISS</span>
-                <span class="stat-value">{{ score['score_miss'] }}</span>
-            </span>
+                            <span class="stat-label">BAD</span>
+                            <span class="stat-value">{{ score['score_bad'] }}</span>
+                        </span>
                         <span class="stat">
-                <span class="stat-label">COMBO</span>
-                <span class="stat-value">{{ score['score_max_combo'] }}</span>
-            </span>
+                            <span class="stat-label">MISS</span>
+                            <span class="stat-value">{{ score['score_miss'] }}</span>
+                        </span>
+                        <span class="stat">
+                            <span class="stat-label">COMBO</span>
+                            <span class="stat-value">{{ score['score_max_combo'] }}</span>
+                        </span>
                     </div>
                 </div>
 
                 <!-- Status Badges -->
                 <div class="stats-inline">
-                    {% if score['is_cleared_record'] != 1 %}
-                        <span class="badge fail_tag">FAILED</span>
-                    {% endif %}
                     {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
                         <span class="badge {% if score['play_speed_rate'] is not none and score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
                     {% endif %}
@@ -118,21 +115,21 @@
                 <div class="score-section">
                     <div class="score">{{ score['score'] }}</div>
                     {% if score['progress'] == 'P' or score['progress'] == 1 %}
-                        <span class="badge p_grade_tag">P Rank</span>
+                        <span class="badge p_grade_tag">P</span>
                     {% elif score['progress'] == 'SS' or score['progress'] == 2 %}
-                        <span class="badge ss_grade_tag">SS Rank</span>
+                        <span class="badge ss_grade_tag">SS</span>
                     {% elif score['progress'] == 'S' or score['progress'] == 3 %}
-                        <span class="badge s_grade_tag">S Rank</span>
+                        <span class="badge s_grade_tag">S</span>
                     {% elif score['progress'] == 'A' or score['progress'] == 4 %}
-                        <span class="badge a_grade_tag">A Rank</span>
+                        <span class="badge a_grade_tag">A</span>
                     {% elif score['progress'] == 'B' or score['progress'] == 5 %}
-                        <span class="badge b_grade_tag">B Rank</span>
+                        <span class="badge b_grade_tag">B</span>
                     {% elif score['progress'] == 'C' or score['progress'] == 6 %}
-                        <span class="badge c_grade_tag">C Rank</span>
+                        <span class="badge c_grade_tag">C</span>
                     {% elif score['progress'] == 'D' or score['progress'] == 7 %}
-                        <span class="badge d_grade_tag">D Rank</span>
+                        <span class="badge d_grade_tag">D</span>
                     {% elif score['progress'] == 'F' or score['progress'] == 8 %}
-                        <span class="badge f_grade_tag">F Rank</span>
+                        <span class="badge f_grade_tag">F</span>
                     {% endif %}
                 </div>
                 <!-- Right Section -->
