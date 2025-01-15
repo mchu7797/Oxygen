@@ -1,7 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
-
 body {
-    font-family: sans-serif, 'Noto Sans KR';
+    font-family: 'Pretendard JP', sans-serif;
     background: #212529;
     padding: 4px;
 }
