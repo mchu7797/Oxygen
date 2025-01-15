@@ -22,7 +22,7 @@ th, td {
     margin-top: 4px;
     margin-bottom: 4px;
     padding: 4px 6px;
-    width: 750px;
+    width: 800px;
 }
 
 .track-item.failed {
@@ -33,7 +33,7 @@ th, td {
     text-decoration: none;
     color: inherit;
     display: block;
-    width: 750px;
+    width: 800px;
 }
 
 .track-item-link:hover {
@@ -184,9 +184,6 @@ th, td {
     text-overflow: ellipsis;
 }
 
-.badge {
-    height: 1.6em;
-}
 
 /* 기존 등급 태그 스타일 */
 .p_grade_tag {

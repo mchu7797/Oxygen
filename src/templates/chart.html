@@ -49,7 +49,7 @@
         {% if scoreboard != None %}
             <div class="container-fluid">
                 {% for score in scoreboard %}
-                    <a class="track-item-link"
+                    <a class="track-item-link mx-auto"
                        href="/player-scoreboard/{{ score['player_code'] }}/{{ metadata['difficulty'] }}">
                         <div class="track-item {% if score['is_cleared_record'] != 1 %}failed{% endif %} mx-auto">
                             <div class="track-info">
