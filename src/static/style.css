@@ -33,6 +33,7 @@ th, td {
     text-decoration: none;
     color: inherit;
     display: block;
+    width: 750px;
 }
 
 .track-item-link:hover {

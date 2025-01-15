@@ -197,9 +197,9 @@
         {% if scoreboard != None %}
             <div class="container-fluid">
                 {% for score in scoreboard %}
-                    <a class="track-item-link"
+                    <a class="track-item-link mx-auto"
                        href="/history?player_id={{ metadata['player_code'] }}&chart_id={{ score['music_code'] }}&gauge_difficulty={{ metadata['current_view_difficulty'] }}">
-                        <div class="track-item {% if score["is_cleared_record"] != 1 %}failed{% endif %} mx-auto">
+                        <div class="track-item {% if score["is_cleared_record"] != 1 %}failed{% endif %}">
                             <div class="track-info">
                                 <div class="title-section">
                                     <span class="badge difficulty">Lv.{{ score['music_level'] }}</span>
