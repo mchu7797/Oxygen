@@ -10,7 +10,7 @@ class PlayerRankingOption(Enum):
     ORDER_C = 5
     ORDER_D = 6
     ORDER_CLEAR = 7
-    ORDER_PLAYCOUNT = 8
+    ORDER_PLAY_COUNT = 8
 
 
 class PeriodOption(Enum):
@@ -178,7 +178,7 @@ class PlayerRankingManager:
 
         sort_option = PlayerRankingOption(sort_option)
 
-        if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:
+        if sort_option == PlayerRankingOption.ORDER_PLAY_COUNT:
             cursor.execute(
                 """
                 SELECT 
@@ -240,10 +240,10 @@ class PlayerRankingManager:
             )
 
         raw_records = cursor.fetchall()
-        player_informations = []
+        player_information_list = []
 
         for player_information in raw_records:
-            player_informations.append(
+            player_information_list.append(
                 {
                     "player_code": player_information[0],
                     "player_nickname": player_information[1],
@@ -254,7 +254,7 @@ class PlayerRankingManager:
             )
 
         return {
-            "player_infos": player_informations,
+            "player_infos": player_information_list,
             "current_option_name": self._ranking_option_to_string(sort_option),
         }
 
@@ -277,7 +277,7 @@ class PlayerRankingManager:
                 return "D"
             case PlayerRankingOption.ORDER_CLEAR:
                 return "Clear"
-            case PlayerRankingOption.ORDER_PLAYCOUNT:
+            case PlayerRankingOption.ORDER_PLAY_COUNT:
                 return "PlayCount"
             case _:
                 return "Unknown"
@@ -288,7 +288,7 @@ class PlayerRankingManager:
         if order_by_date:
             order_query = "ORDER BY PlayedTime DESC"
         else:
-            order_query = "ORDER BY Score DESC"
+            order_query = "ORDER BY IIF(isClear = 1, Score, Cool + Good + Bad + Miss) DESC, Score DESC"
 
         cursor.execute(
             f"""
@@ -312,16 +312,11 @@ class PlayerRankingManager:
                 FROM (
                     SELECT *,
                            ROW_NUMBER() OVER (
-                               ORDER BY 
-                                   CASE 
-                                       WHEN isClear = 1 THEN Score
-                                       ELSE Cool + Good + Bad + Miss
-                                   END DESC
+                                 {order_query}
                            ) AS RowNum
                     FROM dbo.O2JamPlaylog
                     WHERE PlayerCode = ? AND MusicCode = ? AND Difficulty = ?
                 ) RankedScores
-                ORDER BY isClear DESC, RowNum
             """,
             (player_id, chart_id, difficulty),
         )
@@ -437,7 +432,7 @@ class PlayerRankingManager:
         return response
 
     def get_best_play(self, player_id, sort_option=PlayerRankingOption.ORDER_CLEAR):
-        if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:
+        if sort_option == PlayerRankingOption.ORDER_PLAY_COUNT:
             return None
 
         cursor = self._connection.cursor()

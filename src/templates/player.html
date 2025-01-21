@@ -276,7 +276,7 @@
                                             {% if score['sln_option'] is not none and score['sln_option'] != 0 %}
                                                 <span class="badge mod_tag">SLN {{ score['sln_option'] }}</span>
                                             {% endif %}
-                                            {% if score['sln_option'] is not none and score['sln_option'] != 0 %}
+                                            {% if score['is_nln'] is not none and score['is_nln'] != 0 %}
                                                 <span class="badge mod_tag">NLN</span>
                                             {% endif %}
                                             {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}

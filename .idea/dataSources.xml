@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="O2Jam@dmjam.net" uuid="fd1f0d30-3785-4211-8807-47952fb41721">
+    <data-source source="LOCAL" name="O2Jam@localhost" uuid="c672fee0-1c61-41b0-a44e-62785897fdce">
       <driver-ref>sqlserver.ms</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
-      <jdbc-url>jdbc:sqlserver://dmjam.net:8445;database=O2Jam</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="O2Jam@test2.dmjam.net" uuid="8997f10e-fa51-4973-9f94-a7fcac1a42af">
-      <driver-ref>sqlserver.ms</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
-      <jdbc-url>jdbc:sqlserver://test2.dmjam.net:8445;database=O2Jam</jdbc-url>
+      <jdbc-url>jdbc:sqlserver://localhost;database=O2Jam</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
