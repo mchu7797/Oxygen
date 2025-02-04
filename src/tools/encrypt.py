@@ -17,7 +17,11 @@ def make_email_auth_token():
 
 
 def check_turnstile_auth(token, remote_ip):
-    turnstile_auth_data = {"response": token, "remoteip": remote_ip, "secret": TURNSTILE_PRIVATE_KEY}
+    turnstile_auth_data = {
+        "response": token,
+        "remoteip": remote_ip,
+        "secret": TURNSTILE_PRIVATE_KEY,
+    }
     response = requests.post(TURNSTILE_ENDPOINT, data=turnstile_auth_data)
 
     if response.json()["success"]:
@@ -27,7 +31,7 @@ def check_turnstile_auth(token, remote_ip):
 
 
 def mask_email(email):
-    parts = email.split('@')
+    parts = email.split("@")
     if len(parts) != 2:
         return None
 
@@ -39,6 +43,6 @@ def mask_email(email):
         visible_length = randint(2, len(username) // 2)
 
     masked_length = randint(3, 6)
-    masked_username = username[:visible_length] + '*' * masked_length
+    masked_username = username[:visible_length] + "*" * masked_length
 
     return f"{masked_username}@{domain}"

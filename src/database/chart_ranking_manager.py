@@ -1,5 +1,5 @@
-from dateutil.parser import parse as date_parse
 import datetime
+
 
 class ChartRankingManager:
     def __init__(self, connection):
@@ -9,7 +9,7 @@ class ChartRankingManager:
         cursor = self._connection.cursor()
 
         cursor.execute(
-            f"""
+            """
             SELECT 
                 h.PlayerCode, 
                 c.USER_NICKNAME, 
@@ -84,9 +84,11 @@ class ChartRankingManager:
             if date_str is None:
                 return None
             try:
-                return datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
+                return datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
             except ValueError:
-                raise ValueError(f"Invalid date format: {date_str}. Use YYYY-MM-DD format.")
+                raise ValueError(
+                    f"Invalid date format: {date_str}. Use YYYY-MM-DD format."
+                )
 
         try:
             top = int(top)
@@ -134,7 +136,7 @@ class ChartRankingManager:
             FROM RankedPlaycounts
             GROUP BY chart_id, chart_difficulty
         )
-        SELECT {'TOP {}'.format(top) if top else ''}
+        SELECT {"TOP {}".format(top) if top else ""}
             p.chart_id,
             p.playcount_diff AS total_playcount,
             mm.NoteLevel,
@@ -159,12 +161,14 @@ class ChartRankingManager:
         response = []
 
         for rank_info in query_results:
-            response.append({
-                "chart_id": rank_info[0],
-                "playcount": rank_info[1],
-                "level": rank_info[2],
-                "chart_title": rank_info[3],
-                "rank_index": rank_info[4],
-            })
+            response.append(
+                {
+                    "chart_id": rank_info[0],
+                    "playcount": rank_info[1],
+                    "level": rank_info[2],
+                    "chart_title": rank_info[3],
+                    "rank_index": rank_info[4],
+                }
+            )
 
         return response

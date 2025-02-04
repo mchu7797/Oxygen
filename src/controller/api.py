@@ -3,7 +3,6 @@ from flask import Blueprint, request, abort, json, make_response, g
 from src.config import DATABASE_CONFIG
 from src.database import DatabaseConnection
 from src.database.player_ranking_manager import PlayerRankingOption
-from src.tools.command_response import make_status_response
 
 api = Blueprint("api", __name__, url_prefix="/api")
 
@@ -205,9 +204,7 @@ def get_chart_ranking():
 @api.route("/players")
 def get_all_player():
     return make_json_response(
-        get_db().player_ranking.get_player_ranking(
-            PlayerRankingOption.ORDER_CLEAR
-        )
+        get_db().player_ranking.get_player_ranking(PlayerRankingOption.ORDER_CLEAR)
     )
 
 
@@ -220,6 +217,7 @@ def get_all_charts():
 
     return make_json_response(get_db().utils.search_chart(empty_search_request))
 
+
 @api.route("/command/status")
 def get_command_status():
     abort(404)
@@ -230,4 +228,3 @@ def make_json_response(data):
     response.headers["Content-Type"] = "application/json"
 
     return response
-

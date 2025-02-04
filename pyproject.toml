@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oxygen"
-version = "0.0.1"
+version = "0.1.0"
 description = "O2Jam internet ranking service"
 authors = ["Chu Minseok <mchu7797@gmail.com>"]
 package-mode = false
@@ -15,6 +15,28 @@ requests = "^2.31.0"
 python-dateutil = "^2.9.0.post0"
 
 
+
+[tool.pdm.build]
+includes = []
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[project]
+authors = [
+    {name = "Chu Minseok", email = "mchu7797@gmail.com"},
+]
+requires-python = "<4.0,>=3.12"
+dependencies = [
+    "Flask<4.0.0,>=3.0.2",
+    "Flask-Cors<6.0.0,>=5.0.0",
+    "pyodbc<6.0.0,>=5.1.0",
+    "waitress<4.0.0,>=3.0.0",
+    "requests<3.0.0,>=2.31.0",
+    "python-dateutil<3.0.0.0,>=2.9.0.post0",
+]
+name = "oxygen"
+version = "0.0.1"
+description = "O2Jam internet ranking service"
+package-mode = false

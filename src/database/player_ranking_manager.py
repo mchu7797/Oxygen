@@ -113,7 +113,9 @@ class PlayerRankingManager:
                     {"WHERE RowNumber BETWEEN ? * 100 + 1 AND (? + 1) * 100" if page is not None else ""}
                     ORDER BY RowNumber;
                 """,
-            (player_id, gauge_difficulty, page, page) if page is not None else (player_id, gauge_difficulty),
+            (player_id, gauge_difficulty, page, page)
+            if page is not None
+            else (player_id, gauge_difficulty),
         )
 
         raw_records = cursor.fetchall()
@@ -138,12 +140,14 @@ class PlayerRankingManager:
                     "cleared_time": record[13],
                     "record_rank": record[14],
                     "pattern_order": record[15],
-                    "play_speed_rate": float(record[16]) if record[16] is not None else None,
+                    "play_speed_rate": float(record[16])
+                    if record[16] is not None
+                    else None,
                     "play_timing_rate": record[17],
                     "fln_option": record[18],
                     "sln_option": record[19],
                     "is_nln": record[20],
-                    "row_number": record[21]
+                    "row_number": record[21],
                 }
             )
 
@@ -342,7 +346,9 @@ class PlayerRankingManager:
                     "score_miss": rank_info[7],
                     "score_max_combo": rank_info[8],
                     "pattern_order": rank_info[9],
-                    "play_speed_rate": float(rank_info[10]) if rank_info[10] is not None else None,
+                    "play_speed_rate": float(rank_info[10])
+                    if rank_info[10] is not None
+                    else None,
                     "play_timing_rate": rank_info[11],
                     "fln_option": rank_info[12],
                     "sln_option": rank_info[13],
@@ -420,7 +426,9 @@ class PlayerRankingManager:
                     "score_miss": rank_info[10],
                     "score_max_combo": rank_info[11],
                     "pattern_order": rank_info[12],
-                    "play_speed_rate": float(rank_info[13]) if rank_info[13] is not None else None,
+                    "play_speed_rate": float(rank_info[13])
+                    if rank_info[13] is not None
+                    else None,
                     "play_timing_rate": rank_info[14],
                     "fln_option": rank_info[15],
                     "sln_option": rank_info[16],
@@ -444,7 +452,8 @@ class PlayerRankingManager:
             record_count = 10
             option_string = ""
 
-        cursor.execute(f'''
+        cursor.execute(
+            f"""
             SELECT TOP {record_count} mm.Title,
                          m.NoteLevel,
                          m.MusicCode
@@ -456,7 +465,9 @@ class PlayerRankingManager:
               AND h.Difficulty = 2
               {option_string}
             ORDER BY m.NoteLevel DESC
-        ''', (player_id, sort_option.value + 1))
+        """,
+            (player_id, sort_option.value + 1),
+        )
 
         query_results = cursor.fetchall()
 

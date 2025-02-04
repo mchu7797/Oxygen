@@ -1,5 +1,3 @@
-from random import random
-
 from flask import Blueprint, request, render_template, abort, redirect, g
 
 from src.config import DATABASE_CONFIG
@@ -68,8 +66,9 @@ def player_scoreboard(player_code, difficulty):
 
     player_metadata = get_db().info.get_player_info(player_code, difficulty)
     player_tiers = get_db().info.get_tier_info(player_code)
-    player_score_count = get_db().player_ranking.get_player_top_records_count(player_code, difficulty, show_f_rank)
-
+    player_score_count = get_db().player_ranking.get_player_top_records_count(
+        player_code, difficulty, show_f_rank
+    )
 
     if player_metadata is None:
         return abort(404)
@@ -82,7 +81,7 @@ def player_scoreboard(player_code, difficulty):
         show_f_rank=show_f_rank,
         show_recent=show_recent,
         page=page,
-        max_page=int(player_score_count / 100)
+        max_page=int(player_score_count / 100),
     )
 
 
@@ -103,7 +102,7 @@ def music_scoreboard(music_code, difficulty=2):
         "chart.html",
         scoreboard=music_scores,
         metadata=music_metadata,
-        referer=url_before
+        referer=url_before,
     )
 
 
@@ -117,7 +116,7 @@ def player_ranking(ranking_category=7):
                 "player-ranking.html",
                 status=info["player_infos"],
                 category_name=info["current_option_name"],
-                category_code=ranking_category
+                category_code=ranking_category,
             )
 
         return abort(404)
@@ -138,7 +137,9 @@ def chart_ranking():
         ranking_data = get_db().chart_ranking.get_play_count_ranking(top=top)
     else:
         try:
-            ranking_data = get_db().chart_ranking.get_play_count_ranking(top=top, day_start=date_start, day_end=date_end)
+            ranking_data = get_db().chart_ranking.get_play_count_ranking(
+                top=top, day_start=date_start, day_end=date_end
+            )
         except ValueError:
             ranking_data = []
 
@@ -150,7 +151,9 @@ def history():
     player_id = request.args.get("player_id", type=int)
     chart_id = request.args.get("chart_id", type=int)
     gauge_difficulty = request.args.get("gauge_difficulty", type=int)
-    order_by_date = request.args.get("order_by_date", False, type=lambda value: value == "true")
+    order_by_date = request.args.get(
+        "order_by_date", False, type=lambda value: value == "true"
+    )
 
     if player_id is None or chart_id is None:
         abort(404)
@@ -172,8 +175,9 @@ def history():
         chart_info=chart_data,
         player_id=player_id,
         gauge_difficulty=gauge_difficulty,
-        order_by_date=order_by_date
+        order_by_date=order_by_date,
     )
+
 
 @scoreboard.route("/ranking/best_play/<int:player_id>")
 def best_play_ranking(player_id):
@@ -182,6 +186,8 @@ def best_play_ranking(player_id):
     if sort_option is None:
         sort_option = PlayerRankingOption.ORDER_CLEAR
 
-    ranking_data = get_db().player_ranking.get_best_play(player_id, PlayerRankingOption(sort_option))
+    ranking_data = get_db().player_ranking.get_best_play(
+        player_id, PlayerRankingOption(sort_option)
+    )
 
     return render_template("best-play.html", scoreboard=ranking_data)

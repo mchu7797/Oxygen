@@ -10,7 +10,9 @@ from src.database.account import AccountManager
 class DatabaseConnection:
     def __init__(self, database_config):
         self._connection = pyodbc.connect(database_config["connection_string"])
-        self._trade_connection = pyodbc.connect(database_config["trade_connection_string"])
+        self._trade_connection = pyodbc.connect(
+            database_config["trade_connection_string"]
+        )
 
         self.player_ranking = PlayerRankingManager(self._connection)
         self.chart_ranking = ChartRankingManager(self._connection)

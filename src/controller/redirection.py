@@ -8,7 +8,7 @@ database = DatabaseConnection(DATABASE_CONFIG)
 
 
 def get_db():
-    if 'db' not in g:
+    if "db" not in g:
         g.db = DatabaseConnection(DATABASE_CONFIG)
 
     return g.db
@@ -16,7 +16,7 @@ def get_db():
 
 @redirection.teardown_request
 def teardown_db(_):
-    db = g.pop('db', None)
+    db = g.pop("db", None)
 
     if db is not None:
         db.close()
