@@ -91,23 +91,23 @@
 
                 <!-- Status Badges -->
                 <div class="stats-inline">
-                    {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
-                        <span class="badge {% if score['play_speed_rate'] is not none and score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
-                    {% endif %}
                     {% if score['play_timing_rate'] is not none and score['play_timing_rate'] != 0 %}
                         <span class="badge mod_tag">T{{ score['play_timing_rate'] }}</span>
                     {% endif %}
-                    {% if score['fln_option'] is not none and score['fln_option'] == 1 %}
+                    {% if score['fln_option'] is not none and score['fln_option'] != 0 %}
                         <span class="badge mod_tag">FLN {{ score['fln_option'] }}</span>
                     {% endif %}
-                    {% if score['sln_option'] is not none and score['sln_option'] == 1 %}
+                    {% if score['sln_option'] is not none and score['sln_option'] != 0 %}
                         <span class="badge mod_tag">SLN {{ score['sln_option'] }}</span>
                     {% endif %}
-                    {% if score['is_nln'] is not none and score['is_nln'] == 1 %}
+                    {% if score['is_nln'] is not none and score['is_nln'] != 0 %}
                         <span class="badge mod_tag">NLN</span>
                     {% endif %}
                     {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
                         <span class="badge pattern_order_tag">{{ score['pattern_order'] }}</span>
+                    {% endif %}
+                    {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
+                        <span class="badge {% if score['play_speed_rate'] is not none and score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
                     {% endif %}
                 </div>
 
