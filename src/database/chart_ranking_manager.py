@@ -80,6 +80,8 @@ class ChartRankingManager:
         return records
 
     def get_play_count_ranking(self, top=200, day_start=None, day_end=None):
+        difficulty_column_name = ["level_easy", "level_normal", "level_hard"]
+
         def validate_date(date_str):
             if date_str is None:
                 return None
@@ -116,8 +118,7 @@ class ChartRankingManager:
         query = f"""
         WITH RankedPlaycounts AS (
             SELECT
-                chart_id,
-                chart_difficulty,
+                chart_id_tmp,
                 playcount,
                 timestamp,
                 ROW_NUMBER() OVER (PARTITION BY chart_id, chart_difficulty ORDER BY timestamp ASC) AS rn_asc,
@@ -127,24 +128,21 @@ class ChartRankingManager:
         ),
         PlaycountDifference AS (
             SELECT
-                chart_id,
-                chart_difficulty,
+                chart_id_tmp,
                 MAX(CASE WHEN rn_desc = 1 THEN playcount END) -
                 MAX(CASE WHEN rn_asc = 1 THEN playcount END) AS playcount_diff
             FROM RankedPlaycounts
-            GROUP BY chart_id, chart_difficulty
+            GROUP BY chart_id_tmp, chart_difficulty
         )
         SELECT {'TOP {}'.format(top) if top else ''}
-            p.chart_id,
+            p.chart_id_tmp,
             p.playcount_diff AS total_playcount,
-            mm.NoteLevel,
-            m.Title,
-            ROW_NUMBER() OVER (ORDER BY p.playcount_diff DESC, mm.NoteLevel DESC) AS Rank
+            mi.level_hard,
+            mi.title,
+            ROW_NUMBER() OVER (ORDER BY p.playcount_diff DESC, mi.level_hard DESC) AS Rank
         FROM PlaycountDifference AS p
-        JOIN dbo.o2jam_music_metadata AS m ON p.chart_id = m.MusicCode
-        JOIN dbo.o2jam_music_data AS mm ON p.chart_id = mm.MusicCode AND p.chart_difficulty = mm.Difficulty
-        WHERE p.playcount_diff > 0 AND mm.Difficulty = 2
-        ORDER BY total_playcount DESC, mm.NoteLevel DESC
+        JOIN dbo.music_info AS mi ON mi.id = p.chart_id_tmp
+        WHERE p.playcount_diff > 0
         """
 
         cursor = self._connection.cursor()

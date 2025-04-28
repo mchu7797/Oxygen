@@ -111,9 +111,9 @@ class InfoManager:
             INNER JOIN
                 dbo.O2JamHighscore AS h ON b.chart_id = h.MusicCode
             INNER JOIN
-                dbo.o2jam_music_data AS m ON h.MusicCode = m.MusicCode AND h.Difficulty = m.Difficulty
+                dbo.music_info AS mi ON mi.id = h.MusicID
             WHERE
-                h.isClear = 1 AND h.Difficulty = 2 AND h.PlayerCode = ?
+                h.isClear = 1 AND h.Difficulty = 2 AND h.PlayerCode = ? 
             ORDER BY
                 b.badge_priority
         """,
@@ -216,22 +216,26 @@ class InfoManager:
         cursor.execute(
             """
             SELECT
-                d.MusicCode,
-                m.Title,
-                d.NoteLevel,
-                d.NoteCount,
-                d.PlayCount,
-                m.Artist,
-                m.NoteCharter,
-                m.BPM
+                music_id,
+                title,
+                artist,
+                note_charter,
+                bpm,
+                level_easy,
+                level_normal,
+                level_hard,
+                note_count_easy,
+                note_count_normal,
+                note_count_hard,
+                play_count_easy,
+                play_count_normal,
+                play_count_hard
             FROM
-                dbo.o2jam_music_data d
-                LEFT OUTER JOIN dbo.o2jam_music_metadata m ON m.MusicCode = d.MusicCode
+                dbo.music_info
             WHERE
-                d.MusicCode = ?
-                AND d.Difficulty = ?
+                music_id = ?
         """,
-            (music_id, gauge_difficulty),
+            (music_id, ),
         )
 
         raw_result = cursor.fetchone()
@@ -242,13 +246,13 @@ class InfoManager:
         return {
             "music_code": raw_result[0],
             "title": raw_result[1],
+            "artist": raw_result[2],
+            "note_charter": raw_result[3],
+            "bpm": round(float(raw_result[4])),
             "difficulty": int(gauge_difficulty),
-            "level": raw_result[2],
-            "note_count": raw_result[3],
-            "play_count": raw_result[4],
-            "artist": raw_result[5],
-            "note_charter": raw_result[6],
-            "bpm": round(float(raw_result[7])),
+            "level": raw_result[5 + int(gauge_difficulty)],
+            "note_count": raw_result[8 + int(gauge_difficulty)],
+            "play_count": raw_result[11 + int(gauge_difficulty)],
         }
 
     def get_score_status(self, player_id, chart_id, gauge_difficulty):
