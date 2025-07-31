@@ -91,7 +91,7 @@ class InfoManager:
             WHERE
                 player_id = ?
             """,
-            player_id,
+            player_id
         )
 
         raw_nickname_history = cursor.fetchall()
@@ -117,8 +117,7 @@ class InfoManager:
             ORDER BY
                 b.badge_priority
         """,
-            player_id,
-        )
+            player_id)
 
         raw_badge_info = cursor.fetchone()
 
@@ -126,7 +125,7 @@ class InfoManager:
             badge_info = {
                 "badge_name": raw_badge_info[0],
                 "badge_css_tag": raw_badge_info[1],
-                "badge_chart_id": raw_badge_info[2],
+                "badge_chart_id": raw_badge_info[2]
             }
         else:
             badge_info = None
@@ -142,12 +141,14 @@ class InfoManager:
                 AND player_id = ?
             ORDER BY
                 date
-            """,
-            player_id,
+            """, player_id
         )
 
         raw_clear_history = cursor.fetchall()
-        clear_history = {"date": [], "level": []}
+        clear_history = {
+            "date": [],
+            "level": []
+        }
 
         for clear in raw_clear_history:
             clear_history["date"].append(clear[0])
@@ -166,7 +167,7 @@ class InfoManager:
             "last_access_time": raw_player_info[5],
             "nickname_history": nickname_history,
             "badge_info": badge_info,
-            "clear_history": clear_history,
+            "clear_history": clear_history
         }
 
     def get_tier_info(self, player_id):

@@ -19,10 +19,10 @@ class DatabaseUtils:
     def search_chart(self, search_data):
         def escape_like(s):
             def escape_brackets(match):
-                return "[" + "".join(f"[{c}]" for c in match.group(1)) + "]"
+                return '[' + ''.join(f'[{c}]' for c in match.group(1)) + ']'
 
-            s = re.sub(r"\[([^\]]+)\]", escape_brackets, s)
-            return s.replace("%", "[%]").replace("_", "[_]")
+            s = re.sub(r'\[([^\]]+)\]', escape_brackets, s)
+            return s.replace('%', '[%]').replace('_', '[_]')
 
         query = """
         SELECT
@@ -44,27 +44,20 @@ class DatabaseUtils:
         """
 
         params = [
-            search_data["options"]["level"][0],
-            search_data["options"]["level"][1],
+            search_data['options']['level'][0],
+            search_data['options']['level'][1]
         ]
 
-        search_fields = ["Title", "Artist", "NoteCharter"]
-        search_conditions = [
-            f"{field} LIKE ?"
-            for field, enabled in zip(
-                search_fields,
-                [
-                    search_data["options"]["title"],
-                    search_data["options"]["artist"],
-                    search_data["options"]["mapper"],
-                ],
-            )
-            if enabled
-        ]
+        search_fields = ['Title', 'Artist', 'NoteCharter']
+        search_conditions = [f"{field} LIKE ?" for field, enabled in
+                             zip(search_fields, [search_data["options"]["title"],
+                                                 search_data["options"]["artist"],
+                                                 search_data["options"]["mapper"]])
+                             if enabled]
 
         if search_conditions:
             query += " AND (" + " OR ".join(search_conditions) + ")"
-            escaped_keyword = escape_like(search_data["keywords"])
+            escaped_keyword = escape_like(search_data['keywords'])
             params.extend([f"%{escaped_keyword}%"] * len(search_conditions))
 
         query += " ORDER BY data.NoteLevel DESC"
@@ -301,7 +294,7 @@ class DatabaseUtils:
                 member_id = ? AND
                 (DATEADD(DAY, banishment_period, occur_date) > GETDATE() OR banishment_period IS NULL)
             """,
-            username,
+            username
         )
 
         banishment_flag = cursor.fetchval()
@@ -375,9 +368,7 @@ class DatabaseUtils:
         if member_id is None:
             return False
 
-        cursor.execute(
-            "SELECT password_reset_blocked FROM dbo.member WHERE id = ?", member_id
-        )
+        cursor.execute("SELECT password_reset_blocked FROM dbo.member WHERE id = ?", member_id)
 
         password_reset_blocked = cursor.fetchval()
 
@@ -387,9 +378,7 @@ class DatabaseUtils:
         cursor.execute(
             "UPDATE dbo.member SET passwd=? WHERE id=?", (password, member_id)
         )
-        cursor.execute(
-            "DELETE FROM dbo.password_reset_token WHERE password_reset_token = ?", token
-        )
+        cursor.execute("DELETE FROM dbo.password_reset_token WHERE password_reset_token = ?", token)
 
         cursor.commit()
 
@@ -422,15 +411,12 @@ class DatabaseUtils:
 
         cursor = self._connection.cursor()
 
-        cursor.execute(
-            """
+        cursor.execute("""
         SELECT
             m.userid
         FROM dbo.member AS m
         RIGHT OUTER JOIN dbo.password_reset_token AS t ON m.id = t.member_id
-        WHERE t.password_reset_token = ?""",
-            token,
-        )
+        WHERE t.password_reset_token = ?""", token)
 
         username = cursor.fetchval()
 
@@ -441,21 +427,17 @@ class DatabaseUtils:
         email = cursor.fetchval()
 
         if email is not None:
-            email = email[: email.index("@")]
+            email = email[:email.index('@')]
             if email in password:
                 return False
 
-        cursor.execute(
-            "SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_ID=?", username
-        )
+        cursor.execute("SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_ID=?", username)
         nickname = cursor.fetchval()
 
         if nickname is not None and nickname in password:
             return False
 
-        cursor.execute(
-            "SELECT COUNT(1) FROM dbo.bad_password WHERE password=?", password
-        )
+        cursor.execute("SELECT COUNT(1) FROM dbo.bad_password WHERE password=?", password)
 
         is_bad_password = cursor.fetchval()
 

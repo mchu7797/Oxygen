@@ -101,13 +101,13 @@ class AccountManager:
         nickname_exchange_money = cursor.fetchval()
 
         return (
-            player_gem is not None
-            and nickname_exchange_money is not None
-            and player_gem >= nickname_exchange_money
+                player_gem is not None
+                and nickname_exchange_money is not None
+                and player_gem >= nickname_exchange_money
         )
 
     def change_nickname(self, token, nickname):
-        if len(nickname.encode("utf-8")) < 3:
+        if len(nickname.encode('utf-8')) < 3:
             return False, "Nickname must be at least 3 characters long."
 
         if any(char in nickname for char in "~`!@#$%^&*()-+=[]{}<>/?'\""):
@@ -127,7 +127,7 @@ class AccountManager:
 
         cursor.execute(
             "SELECT COUNT(nickname) FROM dbo.nickname_history WHERE nickname = ? AND player_id <> ?",
-            (nickname, player_index_id),
+            (nickname, player_index_id)
         )
 
         nickname_history_count = cursor.fetchval()
@@ -136,15 +136,13 @@ class AccountManager:
             return False, "Your new nickname already existed before!"
 
         cursor.execute(
-            "SELECT COUNT(USER_NICKNAME) FROM dbo.T_o2jam_charinfo WHERE USER_NICKNAME = ?",
-            nickname,
+            "SELECT COUNT(USER_NICKNAME) FROM dbo.T_o2jam_charinfo WHERE USER_NICKNAME = ?", nickname
         )
 
         nickname_count = cursor.fetchval()
 
         cursor.execute(
-            "SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_INDEX_ID = ?",
-            player_index_id,
+            "SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_INDEX_ID = ?", player_index_id
         )
 
         current_nickname = cursor.fetchval()
@@ -202,13 +200,11 @@ class AccountManager:
 
         cursor.execute(
             "DELETE FROM dbo.nickname_exchange_token WHERE player_id = ?",
-            player_index_id,
-        )
+            player_index_id)
 
         self._connection.commit()
 
         return True, "Nickname changed successfully!"
-
     def get_player_id(self, username):
         cursor = self._connection.cursor()
 
