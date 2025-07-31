@@ -29,7 +29,7 @@ class PlayerRankingManager:
         cursor = self._connection.cursor()
 
         if show_f_rank:
-            view_option_query = "h.Score >= 50000"
+            view_option_query = "h.Score >= 70000"
         else:
             view_option_query = "h.isClear = 1"
 
