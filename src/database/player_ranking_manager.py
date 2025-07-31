@@ -356,7 +356,7 @@ class PlayerRankingManager:
             f"""
                 SELECT TOP 150
                     p.MusicCode,
-                    mi.title,
+                    mi.Title,
                     FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
                     Score,
                     Progress,
@@ -372,12 +372,11 @@ class PlayerRankingManager:
                     FLNOption,
                     SLNOption,
                     isNLN,
-                    mi.level_hard,
-                    mi.level_normal,
-                    mi.level_easy,
+                    md.NoteLevel,
                     ROW_NUMBER() OVER (ORDER BY PlayedTime DESC) RowNum
                 FROM dbo.O2JamPlaylog AS p
-                RIGHT OUTER JOIN dbo.music_info AS mi ON p.MusicCode = mi.music_id
+                RIGHT OUTER JOIN dbo.o2jam_music_data AS md ON p.MusicCode = md.MusicCode AND p.Difficulty = md.Difficulty
+                RIGHT OUTER JOIN dbo.o2jam_music_metadata AS mi ON mi.MusicCode = p.MusicCode
                 WHERE
                     PlayerCode = ?
                     AND p.Difficulty = ?
@@ -415,8 +414,8 @@ class PlayerRankingManager:
                     "fln_option": rank_info[14],
                     "sln_option": rank_info[15],
                     "is_nln": rank_info[16],
-                    "music_level": rank_info[17 + int(difficulty)],
-                    "row_number": rank_info[20],
+                    "music_level": rank_info[17],
+                    "row_number": rank_info[18],
                 }
             )
 
@@ -436,16 +435,17 @@ class PlayerRankingManager:
             option_string = ""
 
         cursor.execute(f'''
-            SELECT TOP {record_count} mi.Title,
-                         mi.level_hard,
-                         m.MusicCode,
+            SELECT TOP {record_count} mm.Title,
+                         m.NoteLevel,
+                         m.MusicCode
               FROM dbo.O2JamHighscore AS h
-         LEFT JOIN dbo.music_info AS m ON h.MusicCode = m.music_id
+         LEFT JOIN dbo.o2jam_music_data AS m ON m.MusicCode = h.MusicCode AND m.Difficulty = 2
+         LEFT JOIN dbo.o2jam_music_metadata AS mm ON mm.MusicCode = h.MusicCode
              WHERE h.PlayerCode = ?
                AND h.Progress <= ?
                AND h.Difficulty = 2
                {option_string}
-             ORDER BY mi.level_hard DESC
+             ORDER BY m.NoteLevel DESC
         ''', (player_id, sort_option.value + 1))
 
         query_results = cursor.fetchall()

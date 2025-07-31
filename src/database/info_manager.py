@@ -111,7 +111,7 @@ class InfoManager:
             INNER JOIN
                 dbo.O2JamHighscore AS h ON b.chart_id = h.MusicCode
             INNER JOIN
-                dbo.music_info AS mi ON mi.id = h.MusicID
+                dbo.o2jam_music_data AS md ON md.MusicCode = h.MusicCode AND md.Difficulty = h.Difficulty
             WHERE
                 h.isClear = 1 AND h.Difficulty = 2 AND h.PlayerCode = ? 
             ORDER BY
@@ -216,26 +216,22 @@ class InfoManager:
         cursor.execute(
             """
             SELECT
-                music_id,
+                m.MusicCode,
                 title,
                 artist,
-                note_charter,
+                NoteCharter,
                 bpm,
-                level_easy,
-                level_normal,
-                level_hard,
-                note_count_easy,
-                note_count_normal,
-                note_count_hard,
-                play_count_easy,
-                play_count_normal,
-                play_count_hard
+                NoteLevel,
+                NoteCount,
+                PlayCount
             FROM
-                dbo.music_info
+                dbo.o2jam_music_metadata AS m
+            LEFT OUTER JOIN
+                dbo.o2jam_music_data AS mm ON mm.MusicCode = m.MusicCode AND mm.Difficulty = ?
             WHERE
-                music_id = ?
+                m.MusicCode = ?
         """,
-            (music_id, ),
+            (gauge_difficulty, music_id, ),
         )
 
         raw_result = cursor.fetchone()
@@ -250,9 +246,9 @@ class InfoManager:
             "note_charter": raw_result[3],
             "bpm": round(float(raw_result[4])),
             "difficulty": int(gauge_difficulty),
-            "level": raw_result[5 + int(gauge_difficulty)],
-            "note_count": raw_result[8 + int(gauge_difficulty)],
-            "play_count": raw_result[11 + int(gauge_difficulty)],
+            "level": raw_result[5],
+            "note_count": raw_result[6],
+            "play_count": raw_result[7],
         }
 
     def get_score_status(self, player_id, chart_id, gauge_difficulty):
