@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
-
 body {
-    font-family: sans-serif, 'Noto Sans KR';
+    font-family: 'Pretendard JP', sans-serif;
+    background: #212529;
+    padding: 4px;
 }
 
 a {
@@ -9,72 +9,324 @@ a {
     color: white;
 }
 
-th,
-td {
+th, td {
     white-space: nowrap;
 }
 
+/* 카드 레이아웃 스타일 */
+.track-item {
+    background: #2E343A;
+    border-radius: 4px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding: 4px 6px;
+    width: 800px;
+}
+
+.track-item.failed {
+    opacity: 20%;
+}
+
+.track-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    width: 800px;
+}
+
+.track-item-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.track-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 20px;
+}
+
+.title-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.track-title {
+    color: #fff;
+    font-size: 1em;
+    line-height: 1;
+    margin: 0;
+    padding-right: 2px;
+}
+
+.score-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+    min-width: fit-content;
+}
+
+.score {
+    width: 3.5em;
+    display: inline-block;
+    text-align: right;
+    font-size: 0.9em;
+    color: #ffd700;
+    font-weight: 700;
+}
+
+.track-item-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    width: 1000px;
+}
+
+.track-info-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.stats-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+}
+
+
+.difficulty, .rank {
+    width: 4.6em;
+    display: inline-block;
+    text-align: center;
+    background-color: #5AA9E6;
+    color: black;
+}
+
+.row_number {
+    width: 3.4em;
+    display: inline-block;
+    text-align: center;
+    background-color: #5AA9E6;
+    color: black;
+}
+
+/* 하단 레이아웃 */
+.bottom-row {
+    display: flex;
+    align-items: center;
+    margin-top: 2px;
+    gap: 8px;
+}
+
+.stats-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+}
+
+.stats-pattern-group {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.stats-container {
+    display: flex;
+    gap: 2px;
+    font-size: .8em;
+    color: #aaa;
+    min-width: fit-content;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.stat-value {
+    color: #fff;
+    font-weight: 700;
+    width: 45px;
+    text-align: left;
+    font-variant-numeric: tabular-nums;
+    margin-right: 2px;
+}
+
+.stat-label {
+    color: #aaa;
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.tag_fixed_width {
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* 기존 등급 태그 스타일 */
 .p_grade_tag {
     background-color: #FBBD08;
     color: #000000;
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .ss_grade_tag {
     background-color: #F2711C;
     color: #000000;
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .s_grade_tag {
     background-color: #21BA45;
     color: #000000;
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .a_grade_tag {
     background-color: #B5CC18;
     color: #000000;
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .b_grade_tag {
     background-color: #6435C9;
     color: #000000;
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .c_grade_tag {
     background-color: #A333C8;
     color: #000000;
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .d_grade_tag {
     background-color: #DB2828;
     color: #000000;
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .f_grade_tag {
     background-color: #767676;
     color: #000000;
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
+/* 클리어 상태 태그 */
 .fail_tag {
     background-color: #DC3545;
     color: #000000;
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
-.clear_tag {
-    background-color: #198754;
+.chart_rank_tag {
+    background-color: #778DA9;
     color: #000000;
+    width: 3.5em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
+/* 속도 태그 */
 .rate_tag_upper {
     background-color: #DC3545;
     color: #000000;
+    width: 4.5em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .rate_tag_lower {
     background-color: #198754;
     color: #000000;
+    width: 4.5em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
 }
 
+.first_tag {
+    background-color: gold;
+}
+
+.second_tag {
+    background-color: silver;
+}
+
+.third_tag {
+    background-color: saddlebrown;
+}
+
+/* 모드 태그 */
 .mod_tag {
     background-color: #0D6EFD;
     color: #000000;
+    width: 4.8em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.pattern_order_tag {
+    background-color: #1C1F23;
+    color: #FFFFFF;
+    width: 5.5em;
+    display: inline-block;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.timestamp {
+    color: #888;
+    font-size: .75em;
+    margin-left: auto;
 }

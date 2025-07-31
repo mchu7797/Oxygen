@@ -3,7 +3,11 @@ from flask import Blueprint, render_template, request, g, redirect, url_for
 from src.config import DATABASE_CONFIG
 from src.database import DatabaseConnection
 from src.tools.encrypt import check_turnstile_auth, mask_email
-from src.tools.mail import send_password_reset_mail, send_account_id_notice_mail, send_nickname_change_notice_mail
+from src.tools.mail import (
+    send_password_reset_mail,
+    send_account_id_notice_mail,
+    send_nickname_change_notice_mail,
+)
 
 troubleshoot = Blueprint("troubleshoot", __name__, url_prefix="/troubleshoot")
 
@@ -45,7 +49,7 @@ def cash_to_gem():
     password = request.form.get("o2jam-pw")
     exchange_rate = request.form.get("gem-amount")
 
-    if exchange_rate == '':
+    if exchange_rate == "":
         exchange_rate = 0
     else:
         exchange_rate = int(exchange_rate)
@@ -118,7 +122,9 @@ def reset_password():
 
         send_password_reset_mail(email, token_id)
 
-        return redirect(url_for("troubleshoot.reset_password_phase_2", email=mask_email(email)))
+        return redirect(
+            url_for("troubleshoot.reset_password_phase_2", email=mask_email(email))
+        )
 
 
 @troubleshoot.route("/reset-password-phase-2", methods=["GET", "POST"])
@@ -227,15 +233,19 @@ def change_nickname_phase_1():
 
         database = get_db()
 
-        token_id = database.account_manager.get_change_nickname_token(account_id, password)
+        token_id = database.account_manager.get_change_nickname_token(
+            account_id, password
+        )
         email = database.utils.get_player_email(account_id)
-        nickname_changeable = database.account_manager.get_nickname_changeable(account_id, password)
+        nickname_changeable = database.account_manager.get_nickname_changeable(
+            account_id, password
+        )
 
         if token_id is None or email is None:
             return render_template(
                 "change-nickname.html",
                 phase=0,
-                error_message="Your account is invalid or password is wrong!"
+                error_message="Your account is invalid or password is wrong!",
             )
 
         if not nickname_changeable:
@@ -247,30 +257,35 @@ def change_nickname_phase_1():
 
         send_nickname_change_notice_mail(email, token_id)
 
-        return redirect(url_for("troubleshoot.change_nickname_phase_2", email=mask_email(email)))
+        return redirect(
+            url_for("troubleshoot.change_nickname_phase_2", email=mask_email(email))
+        )
 
 
 @troubleshoot.route("/change-nickname-phase-2", methods=["GET", "POST"])
 def change_nickname_phase_2():
     if request.method == "GET":
         email = request.args.get("email")
-        return render_template("change-nickname.html", phase=1,
-                               info_message=f"Email sent to {email}!" if email is not None else "")
+        return render_template(
+            "change-nickname.html",
+            phase=1,
+            info_message=f"Email sent to {email}!" if email is not None else "",
+        )
     else:
         token_id = request.values.get("token-id")
         new_nickname = request.values.get("new-nickname")
 
         database = get_db()
 
-        result, message = database.account_manager.change_nickname(token_id, new_nickname)
+        result, message = database.account_manager.change_nickname(
+            token_id, new_nickname
+        )
 
         if result is not True:
             return render_template(
-                "change-nickname.html",
-                phase=1,
-                error_message=message)
+                "change-nickname.html", phase=1, error_message=message
+            )
         else:
             return render_template(
-                "change-nickname.html",
-                phase=1,
-                info_message=message)
+                "change-nickname.html", phase=1, info_message=message
+            )

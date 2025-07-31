@@ -1,5 +1,5 @@
-from dateutil.parser import parse as date_parse
 import datetime
+
 
 class ChartRankingManager:
     def __init__(self, connection):
@@ -9,7 +9,7 @@ class ChartRankingManager:
         cursor = self._connection.cursor()
 
         cursor.execute(
-            f"""
+            """
             SELECT 
                 h.PlayerCode, 
                 c.USER_NICKNAME, 
@@ -80,15 +80,15 @@ class ChartRankingManager:
         return records
 
     def get_play_count_ranking(self, top=200, day_start=None, day_end=None):
-        difficulty_column_name = ["level_easy", "level_normal", "level_hard"]
-
         def validate_date(date_str):
             if date_str is None:
                 return None
             try:
-                return datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
+                return datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
             except ValueError:
-                raise ValueError(f"Invalid date format: {date_str}. Use YYYY-MM-DD format.")
+                raise ValueError(
+                    f"Invalid date format: {date_str}. Use YYYY-MM-DD format."
+                )
 
         try:
             top = int(top)
@@ -118,7 +118,8 @@ class ChartRankingManager:
         query = f"""
         WITH RankedPlaycounts AS (
             SELECT
-                chart_id_tmp,
+                chart_id,
+                chart_difficulty,
                 playcount,
                 timestamp,
                 ROW_NUMBER() OVER (PARTITION BY chart_id, chart_difficulty ORDER BY timestamp ASC) AS rn_asc,
@@ -128,21 +129,24 @@ class ChartRankingManager:
         ),
         PlaycountDifference AS (
             SELECT
-                chart_id_tmp,
+                chart_id,
+                chart_difficulty,
                 MAX(CASE WHEN rn_desc = 1 THEN playcount END) -
                 MAX(CASE WHEN rn_asc = 1 THEN playcount END) AS playcount_diff
             FROM RankedPlaycounts
-            GROUP BY chart_id_tmp, chart_difficulty
+            GROUP BY chart_id, chart_difficulty
         )
-        SELECT {'TOP {}'.format(top) if top else ''}
-            p.chart_id_tmp,
+        SELECT {"TOP {}".format(top) if top else ""}
+            p.chart_id,
             p.playcount_diff AS total_playcount,
-            mi.level_hard,
-            mi.title,
-            ROW_NUMBER() OVER (ORDER BY p.playcount_diff DESC, mi.level_hard DESC) AS Rank
+            mm.NoteLevel,
+            m.Title,
+            ROW_NUMBER() OVER (ORDER BY p.playcount_diff DESC, mm.NoteLevel DESC) AS Rank
         FROM PlaycountDifference AS p
-        JOIN dbo.music_info AS mi ON mi.id = p.chart_id_tmp
-        WHERE p.playcount_diff > 0
+        JOIN dbo.o2jam_music_metadata AS m ON p.chart_id = m.MusicCode
+        JOIN dbo.o2jam_music_data AS mm ON p.chart_id = mm.MusicCode AND p.chart_difficulty = mm.Difficulty
+        WHERE p.playcount_diff > 0 AND mm.Difficulty = 2
+        ORDER BY total_playcount DESC, mm.NoteLevel DESC
         """
 
         cursor = self._connection.cursor()
@@ -157,12 +161,14 @@ class ChartRankingManager:
         response = []
 
         for rank_info in query_results:
-            response.append({
-                "chart_id": rank_info[0],
-                "playcount": rank_info[1],
-                "level": rank_info[2],
-                "chart_title": rank_info[3],
-                "rank_index": rank_info[4],
-            })
+            response.append(
+                {
+                    "chart_id": rank_info[0],
+                    "playcount": rank_info[1],
+                    "level": rank_info[2],
+                    "chart_title": rank_info[3],
+                    "rank_index": rank_info[4],
+                }
+            )
 
         return response

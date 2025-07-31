@@ -10,7 +10,7 @@ class PlayerRankingOption(Enum):
     ORDER_C = 5
     ORDER_D = 6
     ORDER_CLEAR = 7
-    ORDER_PLAYCOUNT = 8
+    ORDER_PLAY_COUNT = 8
 
 
 class PeriodOption(Enum):
@@ -43,6 +43,11 @@ class PlayerRankingManager:
                             h.Difficulty,
                             d.NoteLevel,
                             h.Score,
+                            h.Cool,
+                            h.Good,
+                            h.Bad,
+                            h.Miss,
+                            h.MaxCombo,
                             p.progress_name,
                             h.isClear,
                             h.PlayedTime,
@@ -88,6 +93,11 @@ class PlayerRankingManager:
                         Difficulty,
                         NoteLevel,
                         Score,
+                        Cool,
+                        Good,
+                        Bad,
+                        Miss,
+                        MaxCombo,
                         progress_name,
                         isClear,
                         FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
@@ -103,7 +113,9 @@ class PlayerRankingManager:
                     {"WHERE RowNumber BETWEEN ? * 100 + 1 AND (? + 1) * 100" if page is not None else ""}
                     ORDER BY RowNumber;
                 """,
-            (player_id, gauge_difficulty, page, page) if page is not None else (player_id, gauge_difficulty),
+            (player_id, gauge_difficulty, page, page)
+            if page is not None
+            else (player_id, gauge_difficulty),
         )
 
         raw_records = cursor.fetchall()
@@ -118,17 +130,24 @@ class PlayerRankingManager:
                     "music_difficulty": record[3],
                     "music_level": record[4],
                     "score": record[5],
-                    "progress": record[6],
-                    "is_cleared_record": record[7],
-                    "cleared_time": record[8],
-                    "record_rank": record[9],
-                    "pattern_order": record[10],
-                    "play_speed_rate": float(record[11]) if record[11] is not None else None,
-                    "play_timing_rate": record[12],
-                    "fln_option": record[13],
-                    "sln_option": record[14],
-                    "is_nln": record[15],
-                    "row_number": record[16]
+                    "score_cool": record[6],
+                    "score_good": record[7],
+                    "score_bad": record[8],
+                    "score_miss": record[9],
+                    "score_max_combo": record[10],
+                    "progress": record[11],
+                    "is_cleared_record": record[12],
+                    "cleared_time": record[13],
+                    "record_rank": record[14],
+                    "pattern_order": record[15],
+                    "play_speed_rate": float(record[16])
+                    if record[16] is not None
+                    else None,
+                    "play_timing_rate": record[17],
+                    "fln_option": record[18],
+                    "sln_option": record[19],
+                    "is_nln": record[20],
+                    "row_number": record[21],
                 }
             )
 
@@ -163,7 +182,7 @@ class PlayerRankingManager:
 
         sort_option = PlayerRankingOption(sort_option)
 
-        if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:
+        if sort_option == PlayerRankingOption.ORDER_PLAY_COUNT:
             cursor.execute(
                 """
                 SELECT 
@@ -225,10 +244,10 @@ class PlayerRankingManager:
             )
 
         raw_records = cursor.fetchall()
-        player_informations = []
+        player_information_list = []
 
         for player_information in raw_records:
-            player_informations.append(
+            player_information_list.append(
                 {
                     "player_code": player_information[0],
                     "player_nickname": player_information[1],
@@ -239,7 +258,7 @@ class PlayerRankingManager:
             )
 
         return {
-            "player_infos": player_informations,
+            "player_infos": player_information_list,
             "current_option_name": self._ranking_option_to_string(sort_option),
         }
 
@@ -262,7 +281,7 @@ class PlayerRankingManager:
                 return "D"
             case PlayerRankingOption.ORDER_CLEAR:
                 return "Clear"
-            case PlayerRankingOption.ORDER_PLAYCOUNT:
+            case PlayerRankingOption.ORDER_PLAY_COUNT:
                 return "PlayCount"
             case _:
                 return "Unknown"
@@ -273,7 +292,7 @@ class PlayerRankingManager:
         if order_by_date:
             order_query = "ORDER BY PlayedTime DESC"
         else:
-            order_query = "ORDER BY Score DESC"
+            order_query = "ORDER BY IIF(isClear = 1, Score, Cool + Good + Bad + Miss) DESC, Score DESC"
 
         cursor.execute(
             f"""
@@ -297,17 +316,11 @@ class PlayerRankingManager:
                 FROM (
                     SELECT *,
                            ROW_NUMBER() OVER (
-                               PARTITION BY isClear
-                               ORDER BY 
-                                   CASE 
-                                       WHEN isClear = 1 THEN Score
-                                       ELSE Cool + Good + Bad + Miss
-                                   END DESC
+                                 {order_query}
                            ) AS RowNum
                     FROM dbo.O2JamPlaylog
                     WHERE PlayerCode = ? AND MusicCode = ? AND Difficulty = ?
                 ) RankedScores
-                ORDER BY isClear DESC, RowNum
             """,
             (player_id, chart_id, difficulty),
         )
@@ -333,7 +346,9 @@ class PlayerRankingManager:
                     "score_miss": rank_info[7],
                     "score_max_combo": rank_info[8],
                     "pattern_order": rank_info[9],
-                    "play_speed_rate": float(rank_info[10]) if rank_info[10] is not None else None,
+                    "play_speed_rate": float(rank_info[10])
+                    if rank_info[10] is not None
+                    else None,
                     "play_timing_rate": rank_info[11],
                     "fln_option": rank_info[12],
                     "sln_option": rank_info[13],
@@ -356,7 +371,8 @@ class PlayerRankingManager:
             f"""
                 SELECT TOP 150
                     p.MusicCode,
-                    mi.title,
+                    mt.Title,
+                    m.NoteLevel,
                     FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
                     Score,
                     Progress,
@@ -372,17 +388,16 @@ class PlayerRankingManager:
                     FLNOption,
                     SLNOption,
                     isNLN,
-                    mi.level_hard,
-                    mi.level_normal,
-                    mi.level_easy,
                     ROW_NUMBER() OVER (ORDER BY PlayedTime DESC) RowNum
                 FROM dbo.O2JamPlaylog AS p
-                RIGHT OUTER JOIN dbo.music_info AS mi ON p.MusicCode = mi.music_id
+                RIGHT OUTER JOIN
+                    dbo.o2jam_music_metadata AS mt ON p.MusicCode = mt.MusicCode
+                RIGHT OUTER JOIN
+                    dbo.o2jam_music_data AS m ON p.MusicCode = m.MusicCode AND p.Difficulty = m.Difficulty
                 WHERE
                     PlayerCode = ?
                     AND p.Difficulty = ?
                     AND PlayedTime > DATEADD(day, -15, GETDATE())
-                    AND isClear=1
                     {view_option_query}
             """,
             (player_id, difficulty),
@@ -400,30 +415,32 @@ class PlayerRankingManager:
                 {
                     "music_code": rank_info[0],
                     "music_title": rank_info[1],
-                    "cleared_time": rank_info[2],
-                    "score": rank_info[3],
-                    "progress": rank_info[4],
-                    "is_cleared_record": rank_info[5],
-                    "score_cool": rank_info[6],
-                    "score_good": rank_info[7],
-                    "score_bad": rank_info[8],
-                    "score_miss": rank_info[9],
-                    "score_max_combo": rank_info[10],
-                    "pattern_order": rank_info[11],
-                    "play_speed_rate": float(rank_info[12]) if rank_info[12] is not None else None,
-                    "play_timing_rate": rank_info[13],
-                    "fln_option": rank_info[14],
-                    "sln_option": rank_info[15],
-                    "is_nln": rank_info[16],
-                    "music_level": rank_info[17 + int(difficulty)],
-                    "row_number": rank_info[20],
+                    "music_level": rank_info[2],
+                    "cleared_time": rank_info[3],
+                    "score": rank_info[4],
+                    "progress": rank_info[5],
+                    "is_cleared_record": rank_info[6],
+                    "score_cool": rank_info[7],
+                    "score_good": rank_info[8],
+                    "score_bad": rank_info[9],
+                    "score_miss": rank_info[10],
+                    "score_max_combo": rank_info[11],
+                    "pattern_order": rank_info[12],
+                    "play_speed_rate": float(rank_info[13])
+                    if rank_info[13] is not None
+                    else None,
+                    "play_timing_rate": rank_info[14],
+                    "fln_option": rank_info[15],
+                    "sln_option": rank_info[16],
+                    "is_nln": rank_info[17],
+                    "row_number": rank_info[18],
                 }
             )
 
         return response
 
     def get_best_play(self, player_id, sort_option=PlayerRankingOption.ORDER_CLEAR):
-        if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:
+        if sort_option == PlayerRankingOption.ORDER_PLAY_COUNT:
             return None
 
         cursor = self._connection.cursor()
@@ -435,18 +452,22 @@ class PlayerRankingManager:
             record_count = 10
             option_string = ""
 
-        cursor.execute(f'''
-            SELECT TOP {record_count} mi.Title,
-                         mi.level_hard,
-                         m.MusicCode,
-              FROM dbo.O2JamHighscore AS h
-         LEFT JOIN dbo.music_info AS m ON h.MusicCode = m.music_id
-             WHERE h.PlayerCode = ?
-               AND h.Progress <= ?
-               AND h.Difficulty = 2
-               {option_string}
-             ORDER BY mi.level_hard DESC
-        ''', (player_id, sort_option.value + 1))
+        cursor.execute(
+            f"""
+            SELECT TOP {record_count} mm.Title,
+                         m.NoteLevel,
+                         m.MusicCode
+            FROM dbo.O2JamHighscore AS h
+                     LEFT JOIN dbo.o2jam_music_data AS m ON h.MusicCode = m.MusicCode AND h.Difficulty = m.Difficulty
+                     LEFT JOIN dbo.o2jam_music_metadata AS mm ON h.MusicCode = mm.MusicCode
+            WHERE h.PlayerCode = ?
+              AND h.Progress <= ?
+              AND h.Difficulty = 2
+              {option_string}
+            ORDER BY m.NoteLevel DESC
+        """,
+            (player_id, sort_option.value + 1),
+        )
 
         query_results = cursor.fetchall()
 
