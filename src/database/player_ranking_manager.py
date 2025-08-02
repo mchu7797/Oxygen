@@ -156,7 +156,7 @@ class PlayerRankingManager:
         cursor = self._connection.cursor()
 
         if show_f_rank:
-            view_option_query = "Score >= 50000"
+            view_option_query = "Score >= 70000"
         else:
             view_option_query = "isClear = 1"
 
@@ -396,7 +396,6 @@ class PlayerRankingManager:
                     PlayerCode = ?
                     AND p.Difficulty = ?
                     AND PlayedTime > DATEADD(day, -15, GETDATE())
-                    AND isClear=1
                     {view_option_query}
             """,
             (player_id, difficulty),
