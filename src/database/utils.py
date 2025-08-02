@@ -25,23 +25,18 @@ class DatabaseUtils:
             return s.replace('%', '[%]').replace('_', '[_]')
 
         query = """
-        SELECT
-            meta.MusicCode,
-            Title,
-            Artist,
-            NoteCharter,
-            BPM,
-            data.NoteLevel
-        FROM
-            dbo.o2jam_music_metadata meta
-        RIGHT OUTER JOIN (
-            SELECT MusicCode, NoteLevel
-            FROM dbo.o2jam_music_data 
-            WHERE Difficulty = 2
-        ) data ON data.MusicCode = meta.MusicCode
-        WHERE
-            data.NoteLevel BETWEEN ? AND ?
-        """
+                SELECT meta.MusicCode,
+                       Title,
+                       Artist,
+                       NoteCharter,
+                       BPM,
+                       data.NoteLevel
+                FROM dbo.o2jam_music_metadata meta
+                         RIGHT OUTER JOIN (SELECT MusicCode, NoteLevel
+                                           FROM dbo.o2jam_music_data
+                                           WHERE Difficulty = 2) data ON data.MusicCode = meta.MusicCode
+                WHERE data.NoteLevel BETWEEN ? AND ? \
+                """
 
         params = [
             search_data['options']['level'][0],
@@ -81,16 +76,13 @@ class DatabaseUtils:
 
         cursor.execute(
             """
-            SELECT
-              charinfo.USER_NICKNAME,
-              charInfo.Level,
-              login.SUB_CH
-            FROM
-                dbo.T_o2jam_login login
-              LEFT OUTER JOIN dbo.T_o2jam_charinfo charInfo on charinfo.USER_INDEX_ID = login.USER_INDEX_ID
-            ORDER BY
-              charInfo.Level desc
-        """
+            SELECT charinfo.USER_NICKNAME,
+                   charInfo.Level,
+                   login.SUB_CH
+            FROM dbo.T_o2jam_login login
+                     LEFT OUTER JOIN dbo.T_o2jam_charinfo charInfo on charinfo.USER_INDEX_ID = login.USER_INDEX_ID
+            ORDER BY charInfo.Level desc
+            """
         )
 
         raw_result = cursor.fetchall()
@@ -125,20 +117,18 @@ class DatabaseUtils:
 
         cursor.execute(
             """
-            DELETE FROM
-                dbo.T_o2jam_login
-            FROM
-                dbo.T_o2jam_login login
-            LEFT OUTER JOIN
-                dbo.member member
-            ON 
-                member.userid = login.USER_ID
-            COLLATE
-                Korean_Wansung_CI_AS
-            WHERE
-                member.userid = ?
-                AND member.passwd = ?
-        """,
+            DELETE
+            FROM dbo.T_o2jam_login
+            FROM dbo.T_o2jam_login login
+                     LEFT OUTER JOIN
+                 dbo.member member
+                 ON
+                     member.userid = login.USER_ID
+                         COLLATE
+                             Korean_Wansung_CI_AS
+            WHERE member.userid = ?
+              AND member.passwd = ?
+            """,
             (player_id, password),
         )
 
@@ -200,12 +190,10 @@ class DatabaseUtils:
             """
             UPDATE
                 dbo.T_o2jam_charCash
-            SET
-                GEM = ?,
+            SET GEM   = ?,
                 MCASH = ?
-            WHERE
-                USER_INDEX_ID = ?
-        """,
+            WHERE USER_INDEX_ID = ?
+            """,
             (player_wallet["gem"], player_wallet["mcash"], player_origin_id),
         )
 
@@ -224,19 +212,16 @@ class DatabaseUtils:
         cursor = self._connection.cursor()
         cursor.execute(
             """
-            SELECT
-                info.USER_INDEX_ID,
-                cash.GEM,
-                cash.MCASH
-            FROM
-                dbo.T_o2jam_charinfo info
-            LEFT OUTER JOIN
-                dbo.T_o2jam_charCash cash
-            ON
-                info.USER_INDEX_ID = cash.USER_INDEX_ID
-            WHERE
-                info.USER_ID = ?
-        """,
+            SELECT info.USER_INDEX_ID,
+                   cash.GEM,
+                   cash.MCASH
+            FROM dbo.T_o2jam_charinfo info
+                     LEFT OUTER JOIN
+                 dbo.T_o2jam_charCash cash
+                 ON
+                     info.USER_INDEX_ID = cash.USER_INDEX_ID
+            WHERE info.USER_ID = ?
+            """,
             player_id,
         )
 
@@ -256,13 +241,10 @@ class DatabaseUtils:
 
         cursor.execute(
             """
-            SELECT
-                USER_INDEX_ID
-            FROM
-                dbo.T_o2jam_charinfo
-            WHERE
-                USER_NICKNAME=?
-        """,
+            SELECT USER_INDEX_ID
+            FROM dbo.T_o2jam_charinfo
+            WHERE USER_NICKNAME = ?
+            """,
             nickname,
         )
 
@@ -286,13 +268,10 @@ class DatabaseUtils:
 
         cursor.execute(
             """
-            SELECT
-                COUNT(member_index_id)
-            FROM
-                dbo.banishment
-            WHERE 
-                member_id = ? AND
-                (DATEADD(DAY, banishment_period, occur_date) > GETDATE() OR banishment_period IS NULL)
+            SELECT COUNT(member_index_id)
+            FROM dbo.banishment
+            WHERE member_id = ?
+              AND (DATEADD(DAY, banishment_period, occur_date) > GETDATE() OR banishment_period IS NULL)
             """,
             username
         )
@@ -354,12 +333,10 @@ class DatabaseUtils:
 
         cursor.execute(
             """
-            SELECT 
-                member_id
-            FROM
-                dbo.password_reset_token
-            WHERE
-                password_reset_token = ? AND GETDATE() < token_expiration_period""",
+            SELECT member_id
+            FROM dbo.password_reset_token
+            WHERE password_reset_token = ?
+              AND GETDATE() < token_expiration_period""",
             token,
         )
 
@@ -412,11 +389,10 @@ class DatabaseUtils:
         cursor = self._connection.cursor()
 
         cursor.execute("""
-        SELECT
-            m.userid
-        FROM dbo.member AS m
-        RIGHT OUTER JOIN dbo.password_reset_token AS t ON m.id = t.member_id
-        WHERE t.password_reset_token = ?""", token)
+                       SELECT m.userid
+                       FROM dbo.member AS m
+                                RIGHT OUTER JOIN dbo.password_reset_token AS t ON m.id = t.member_id
+                       WHERE t.password_reset_token = ?""", token)
 
         username = cursor.fetchval()
 
@@ -457,3 +433,16 @@ class DatabaseUtils:
             return None
 
         return account_id
+
+    def convert_member_id_to_player_id(self, member_id):
+        query = f"""
+            SELECT c.USER_INDEX_ID
+                FROM T_o2jam_charinfo AS c
+                         RIGHT OUTER JOIN dbo.member AS m ON m.userid = c.USER_ID
+                WHERE m.id = ?
+        """
+
+        cursor = self._connection.cursor()
+        cursor.execute(query, (member_id,))
+
+        return cursor.fetchval()

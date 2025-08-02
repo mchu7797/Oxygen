@@ -149,14 +149,21 @@ def chart_ranking():
 @scoreboard.route("/history", methods=["GET"])
 def history():
     player_id = request.args.get("player_id", type=int)
+    member_id = request.args.get("member_id", type=int)
     chart_id = request.args.get("chart_id", type=int)
     gauge_difficulty = request.args.get("gauge_difficulty", type=int)
     order_by_date = request.args.get(
         "order_by_date", False, type=lambda value: value == "true"
     )
 
-    if player_id is None or chart_id is None:
+    if chart_id is None:
         abort(404)
+
+    if player_id is None:
+        if member_id is None:
+            abort(404)
+
+        player_id = get_db().utils.convert_member_id_to_player_id(member_id)
 
     if gauge_difficulty is None:
         gauge_difficulty = 2
