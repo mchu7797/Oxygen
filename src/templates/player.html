@@ -195,9 +195,15 @@
                                     <span class="badge difficulty">Lv.{{ score['music_level'] }}</span>
                                     <div class="track-title">
                                         {{ score['music_title'] }}
+                                        {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
+                                            <span class="badge {% if score['play_speed_rate'] is not none and score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 <div class="score-section">
+                                    {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
+                                        <span class="badge pattern_order_tag">{{ score['pattern_order'] }}</span>
+                                    {% endif %}
                                     <div class="score">{{ score['score'] }}</div>
                                     {% if score['progress'] == 'P' or score['progress'] == 1 %}
                                         <span class="badge p_grade_tag">P</span>
@@ -245,11 +251,11 @@
                                         </span>
                                             <span class="stat">
                                             <span class="stat-label">BAD</span>
-                                            <span class="stat-value point">{{ score['score_bad'] }}</span>
+                                            <span class="stat-value">{{ score['score_bad'] }}</span>
                                         </span>
                                             <span class="stat">
                                             <span class="stat-label">MISS</span>
-                                            <span class="stat-value point">{{ score['score_miss'] }}</span>
+                                            <span class="stat-value">{{ score['score_miss'] }}</span>
                                         </span>
                                             <span class="stat">
                                             <span class="stat-label">COMBO</span>
@@ -270,12 +276,6 @@
                                             {% endif %}
                                             {% if score['is_nln'] is not none and score['is_nln'] != 0 %}
                                                 <span class="badge mod_tag">NLN</span>
-                                            {% endif %}
-                                            {% if score['pattern_order'] is not none and score['pattern_order'] != "1234567" %}
-                                                <span class="badge pattern_order_tag">{{ score['pattern_order'] }}</span>
-                                            {% endif %}
-                                            {% if score['play_speed_rate'] is not none and score['play_speed_rate'] != 1.0 %}
-                                                <span class="badge {% if score['play_speed_rate'] is not none and score['play_speed_rate'] > 1.0 %}rate_tag_upper{% else %}rate_tag_lower{% endif %}">x{{ score['play_speed_rate'] }}</span>
                                             {% endif %}
                                         </div>
                                         <span class="timestamp">{{ score['cleared_time'] }}</span>

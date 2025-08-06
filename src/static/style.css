@@ -168,10 +168,6 @@ th, td {
     margin-right: 2px;
 }
 
-.stat-value.point {
-    color: #DC3545;
-}
-
 .stat-label {
     color: #aaa;
 }
@@ -289,7 +285,7 @@ th, td {
 .rate_tag_upper {
     background-color: #DC3545;
     color: #000000;
-    width: 4.5em;
+    width: 4em;
     display: inline-block;
     text-align: center;
     white-space: nowrap;
@@ -298,7 +294,7 @@ th, td {
 .rate_tag_lower {
     background-color: #198754;
     color: #000000;
-    width: 4.5em;
+    width: 4em;
     display: inline-block;
     text-align: center;
     white-space: nowrap;
@@ -320,7 +316,7 @@ th, td {
 .mod_tag {
     background-color: #0D6EFD;
     color: #000000;
-    width: 4.8em;
+    width: 4em;
     display: inline-block;
     text-align: center;
     white-space: nowrap;
