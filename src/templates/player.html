@@ -21,6 +21,7 @@
                         data-bs-title="Nickname History"
                         data-bs-content="
 
+
                                 {% for nickname in metadata['nickname_history'][:-1] %}{{ nickname }}, {% endfor %}{{ metadata['nickname_history'][-1] }}">
                     <i class="bi bi-people-fill"></i>
                 </button>
@@ -232,24 +233,25 @@
                                 <div class="stats-section">
                                     <div class="stats-pattern-group">
                                         <div class="stats-container">
+                                        <!-- Placeholder for design -->
+                                        <span style="width: 4.6em"></span>
                                         <span class="stat">
                                             <span class="stat-label">COOL</span>
                                             <span class="stat-value">{{ score['score_cool'] }}</span>
                                         </span>
-                                        <span class="stat">
+                                            <span class="stat">
                                             <span class="stat-label">GOOD</span>
                                             <span class="stat-value">{{ score['score_good'] }}</span>
                                         </span>
-                                        <span class="stat">
+                                            <span class="stat">
                                             <span class="stat-label">BAD</span>
-                                            <span class="stat-value">{{ score['score_bad'] }}</span>
+                                            <span class="stat-value point">{{ score['score_bad'] }}</span>
                                         </span>
-                                        <span class="stat">
+                                            <span class="stat">
                                             <span class="stat-label">MISS</span>
-                                            <span class="stat-value">{{ score['score_miss'] }}</span>
+                                            <span class="stat-value point">{{ score['score_miss'] }}</span>
                                         </span>
-                                        <span class="mx-3"></span>
-                                        <span class="stat">
+                                            <span class="stat">
                                             <span class="stat-label">COMBO</span>
                                             <span class="stat-value">{{ score['score_max_combo'] }}</span>
                                         </span>

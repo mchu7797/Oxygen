@@ -160,12 +160,16 @@ th, td {
 }
 
 .stat-value {
-    color: #ffd700;
+    color: #fff;
     font-weight: 700;
     width: 45px;
     text-align: left;
     font-variant-numeric: tabular-nums;
     margin-right: 2px;
+}
+
+.stat-value.point {
+    color: #DC3545;
 }
 
 .stat-label {
