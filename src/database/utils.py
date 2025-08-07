@@ -153,15 +153,16 @@ class DatabaseUtils:
             COLLATE
                 Korean_Wansung_CI_AS
             WHERE
-                member.userid = '{player_id}'
-                AND member.passwd = '{password}'
+                member.userid = ?
+                AND member.passwd = ?
 
             SELECT
                 @PlayerId = ISNULL(@PlayerId, 0)
 
             SELECT
                 @PlayerId AS PlayerId
-        """
+        """,
+            (player_id, password, )
         )
 
         player_origin_id = cursor.fetchone()[0]
