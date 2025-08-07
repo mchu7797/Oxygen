@@ -363,72 +363,72 @@ class PlayerRankingManager:
 
         with self._connection.cursor() as cursor:
             cursor.execute(
-            f"""
-                SELECT TOP 150
-                    p.MusicCode,
-                    mi.Title,
-                    FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
-                    Score,
-                    Progress,
-                    isClear,
-                    Cool,
-                    Good,
-                    Bad,
-                    Miss,
-                    MaxCombo,
-                    PatternOrder,
-                    ROUND(PlaySpeedRate, 3) AS PlaySpeedRate,
-                    PlayTimingRate,
-                    FLNOption,
-                    SLNOption,
-                    isNLN,
-                    md.NoteLevel,
-                    ROW_NUMBER() OVER (ORDER BY PlayedTime DESC) RowNum
-                FROM dbo.O2JamPlaylog AS p
-                RIGHT OUTER JOIN dbo.o2jam_music_data AS md ON p.MusicCode = md.MusicCode AND p.Difficulty = md.Difficulty
-                RIGHT OUTER JOIN dbo.o2jam_music_metadata AS mi ON mi.MusicCode = p.MusicCode
-                WHERE
-                    PlayerCode = ?
-                    AND p.Difficulty = ?
-                    AND PlayedTime > DATEADD(day, -15, GETDATE())
-                    {view_option_query}
-            """,
-            (player_id, difficulty),
-        )
-
-        query_results = cursor.fetchall()
-
-        if query_results is None:
-            return []
-
-        response = []
-
-        for rank_info in query_results:
-            response.append(
-                {
-                    "music_code": rank_info[0],
-                    "music_title": rank_info[1],
-                    "cleared_time": rank_info[2],
-                    "score": rank_info[3],
-                    "progress": rank_info[4],
-                    "is_cleared_record": rank_info[5],
-                    "score_cool": rank_info[6],
-                    "score_good": rank_info[7],
-                    "score_bad": rank_info[8],
-                    "score_miss": rank_info[9],
-                    "score_max_combo": rank_info[10],
-                    "pattern_order": rank_info[11],
-                    "play_speed_rate": float(rank_info[12]) if rank_info[12] is not None else None,
-                    "play_timing_rate": rank_info[13],
-                    "fln_option": rank_info[14],
-                    "sln_option": rank_info[15],
-                    "is_nln": rank_info[16],
-                    "music_level": rank_info[17],
-                    "row_number": rank_info[18],
-                }
+                f"""
+                    SELECT TOP 150
+                        p.MusicCode,
+                        mi.Title,
+                        FORMAT(PlayedTime, 'yyyy-MM-dd hh:mm tt', 'en-US') AS PlayedTime,
+                        Score,
+                        Progress,
+                        isClear,
+                        Cool,
+                        Good,
+                        Bad,
+                        Miss,
+                        MaxCombo,
+                        PatternOrder,
+                        ROUND(PlaySpeedRate, 3) AS PlaySpeedRate,
+                        PlayTimingRate,
+                        FLNOption,
+                        SLNOption,
+                        isNLN,
+                        md.NoteLevel,
+                        ROW_NUMBER() OVER (ORDER BY PlayedTime DESC) RowNum
+                    FROM dbo.O2JamPlaylog AS p
+                    RIGHT OUTER JOIN dbo.o2jam_music_data AS md ON p.MusicCode = md.MusicCode AND p.Difficulty = md.Difficulty
+                    RIGHT OUTER JOIN dbo.o2jam_music_metadata AS mi ON mi.MusicCode = p.MusicCode
+                    WHERE
+                        PlayerCode = ?
+                        AND p.Difficulty = ?
+                        AND PlayedTime > DATEADD(day, -15, GETDATE())
+                        {view_option_query}
+                """,
+                (player_id, difficulty),
             )
 
-        return response
+            query_results = cursor.fetchall()
+
+            if query_results is None:
+                return []
+
+            response = []
+
+            for rank_info in query_results:
+                response.append(
+                    {
+                        "music_code": rank_info[0],
+                        "music_title": rank_info[1],
+                        "cleared_time": rank_info[2],
+                        "score": rank_info[3],
+                        "progress": rank_info[4],
+                        "is_cleared_record": rank_info[5],
+                        "score_cool": rank_info[6],
+                        "score_good": rank_info[7],
+                        "score_bad": rank_info[8],
+                        "score_miss": rank_info[9],
+                        "score_max_combo": rank_info[10],
+                        "pattern_order": rank_info[11],
+                        "play_speed_rate": float(rank_info[12]) if rank_info[12] is not None else None,
+                        "play_timing_rate": rank_info[13],
+                        "fln_option": rank_info[14],
+                        "sln_option": rank_info[15],
+                        "is_nln": rank_info[16],
+                        "music_level": rank_info[17],
+                        "row_number": rank_info[18],
+                    }
+                )
+
+            return response
 
     def get_best_play(self, player_id, sort_option=PlayerRankingOption.ORDER_CLEAR):
         if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:

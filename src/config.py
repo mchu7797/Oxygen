@@ -40,3 +40,14 @@ EMAIL_CONFIG = {
 # Turnstile Configuration
 TURNSTILE_PRIVATE_KEY = get_env_var('TURNSTILE_PRIVATE_KEY')
 TURNSTILE_ENDPOINT = get_env_var('TURNSTILE_ENDPOINT', 'https://challenges.cloudflare.com/turnstile/v0/siteverify')
+
+# CORS Configuration
+def get_cors_origins():
+    """Parse CORS origins from environment variable."""
+    cors_origins = get_env_var('CORS_ORIGINS', '*')
+    if cors_origins == '*':
+        return ["*"]
+    # Split by comma and strip whitespace
+    return [origin.strip() for origin in cors_origins.split(',') if origin.strip()]
+
+CORS_ORIGINS = get_cors_origins()

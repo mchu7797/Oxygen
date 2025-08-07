@@ -137,7 +137,7 @@ class DatabaseUtils:
         with self._connection.cursor() as cursor:
             with self._trade_connection.cursor() as trade_cursor:
                 cursor.execute(
-                    f"""
+                    """
                     DECLARE @PlayerId int
 
                     SELECT
