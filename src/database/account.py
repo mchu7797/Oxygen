@@ -21,7 +21,8 @@ class AccountManager:
                 return None
 
             cursor.execute(
-                "SELECT USER_INDEX_ID FROM dbo.T_o2jam_charinfo WHERE USER_ID=?", username
+                "SELECT USER_INDEX_ID FROM dbo.T_o2jam_charinfo WHERE USER_ID=?",
+                username,
             )
             player_id = cursor.fetchval()
 
@@ -100,9 +101,9 @@ class AccountManager:
             nickname_exchange_money = cursor.fetchval()
 
             return (
-                    player_gem is not None
-                    and nickname_exchange_money is not None
-                    and player_gem >= nickname_exchange_money
+                player_gem is not None
+                and nickname_exchange_money is not None
+                and player_gem >= nickname_exchange_money
             )
 
     def change_nickname(self, token, nickname):
@@ -124,7 +125,7 @@ class AccountManager:
 
             cursor.execute(
                 "SELECT COUNT(nickname) FROM dbo.nickname_history WHERE nickname = ? AND player_id <> ?",
-                (nickname, player_index_id)
+                (nickname, player_index_id),
             )
 
             nickname_history_count = cursor.fetchval()
@@ -133,13 +134,15 @@ class AccountManager:
                 return False, "Your new nickname already existed before!"
 
             cursor.execute(
-                "SELECT COUNT(USER_NICKNAME) FROM dbo.T_o2jam_charinfo WHERE USER_NICKNAME = ?", nickname
+                "SELECT COUNT(USER_NICKNAME) FROM dbo.T_o2jam_charinfo WHERE USER_NICKNAME = ?",
+                nickname,
             )
 
             nickname_count = cursor.fetchval()
 
             cursor.execute(
-                "SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_INDEX_ID = ?", player_index_id
+                "SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_INDEX_ID = ?",
+                player_index_id,
             )
 
             current_nickname = cursor.fetchval()
@@ -197,11 +200,13 @@ class AccountManager:
 
             cursor.execute(
                 "DELETE FROM dbo.nickname_exchange_token WHERE player_id = ?",
-                player_index_id)
+                player_index_id,
+            )
 
             self._connection.commit()
 
             return True, "Nickname changed successfully!"
+
     def get_player_id(self, username):
         with self._connection.cursor() as cursor:
             cursor.execute(
@@ -210,4 +215,3 @@ class AccountManager:
             )
 
             return cursor.fetchval()
-    

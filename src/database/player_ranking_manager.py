@@ -33,7 +33,7 @@ class PlayerRankingManager:
 
         with self._connection.cursor() as cursor:
             cursor.execute(
-            f"""
+                f"""
                     WITH RankedResults AS (
                         SELECT
                             h.PlayerCode,
@@ -112,7 +112,9 @@ class PlayerRankingManager:
                     {"WHERE RowNumber BETWEEN ? * 100 + 1 AND (? + 1) * 100" if page is not None else ""}
                     ORDER BY RowNumber;
                 """,
-                (player_id, gauge_difficulty, page, page) if page is not None else (player_id, gauge_difficulty),
+                (player_id, gauge_difficulty, page, page)
+                if page is not None
+                else (player_id, gauge_difficulty),
             )
 
             raw_records = cursor.fetchall()
@@ -137,12 +139,14 @@ class PlayerRankingManager:
                         "cleared_time": record[13],
                         "record_rank": record[14],
                         "pattern_order": record[15],
-                        "play_speed_rate": float(record[16]) if record[16] is not None else None,
+                        "play_speed_rate": float(record[16])
+                        if record[16] is not None
+                        else None,
                         "play_timing_rate": record[17],
                         "fln_option": record[18],
                         "sln_option": record[19],
                         "is_nln": record[20],
-                        "row_number": record[21]
+                        "row_number": record[21],
                     }
                 )
 
@@ -177,7 +181,7 @@ class PlayerRankingManager:
         with self._connection.cursor() as cursor:
             if sort_option == PlayerRankingOption.ORDER_PLAYCOUNT:
                 cursor.execute(
-                """
+                    """
                 SELECT 
                     c.USER_INDEX_ID, 
                     c.USER_NICKNAME, 
@@ -189,10 +193,10 @@ class PlayerRankingManager:
                     LEFT OUTER JOIN dbo.O2JamStatus s on s.PlayerCode = c.USER_INDEX_ID 
                     LEFT OUTER JOIN dbo.TierInfo t on s.Tier = t.tier_index
             """
-            )
+                )
             elif sort_option == PlayerRankingOption.ORDER_CLEAR:
                 cursor.execute(
-                f"""
+                    f"""
                             SELECT
                                 s.PlayerCode, 
                                 c.USER_NICKNAME, 
@@ -215,10 +219,10 @@ class PlayerRankingManager:
                                 LEFT OUTER JOIN dbo.T_o2jam_charinfo c on s.PlayerCode = c.USER_INDEX_ID 
                                 LEFT OUTER JOIN dbo.TierInfo t on s.Tier = t.tier_index
                         """
-            )
+                )
             else:
                 cursor.execute(
-                f"""
+                    f"""
                 SELECT
                     s.PlayerCode, 
                     c.USER_NICKNAME, 
@@ -234,7 +238,7 @@ class PlayerRankingManager:
                     LEFT OUTER JOIN dbo.T_o2jam_charinfo c on s.PlayerCode = c.USER_INDEX_ID 
                     LEFT OUTER JOIN dbo.TierInfo t on s.Tier = t.tier_index
             """
-            )
+                )
 
             raw_records = cursor.fetchall()
             player_informations = []
@@ -344,7 +348,9 @@ class PlayerRankingManager:
                     "score_miss": rank_info[7],
                     "score_max_combo": rank_info[8],
                     "pattern_order": rank_info[9],
-                    "play_speed_rate": float(rank_info[10]) if rank_info[10] is not None else None,
+                    "play_speed_rate": float(rank_info[10])
+                    if rank_info[10] is not None
+                    else None,
                     "play_timing_rate": rank_info[11],
                     "fln_option": rank_info[12],
                     "sln_option": rank_info[13],
@@ -418,7 +424,9 @@ class PlayerRankingManager:
                         "score_miss": rank_info[9],
                         "score_max_combo": rank_info[10],
                         "pattern_order": rank_info[11],
-                        "play_speed_rate": float(rank_info[12]) if rank_info[12] is not None else None,
+                        "play_speed_rate": float(rank_info[12])
+                        if rank_info[12] is not None
+                        else None,
                         "play_timing_rate": rank_info[13],
                         "fln_option": rank_info[14],
                         "sln_option": rank_info[15],
@@ -442,7 +450,8 @@ class PlayerRankingManager:
             option_string = ""
 
         with self._connection.cursor() as cursor:
-            cursor.execute(f'''
+            cursor.execute(
+                f"""
                 SELECT TOP {record_count} mm.Title,
                              m.NoteLevel,
                              m.MusicCode
@@ -454,7 +463,9 @@ class PlayerRankingManager:
                    AND h.Difficulty = 2
                    {option_string}
                  ORDER BY m.NoteLevel DESC
-            ''', (player_id, sort_option.value + 1))
+            """,
+                (player_id, sort_option.value + 1),
+            )
 
             query_results = cursor.fetchall()
 

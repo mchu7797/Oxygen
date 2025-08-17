@@ -20,10 +20,10 @@ class DatabaseUtils:
     def search_chart(self, search_data):
         def escape_like(s):
             def escape_brackets(match):
-                return '[' + ''.join(f'[{c}]' for c in match.group(1)) + ']'
+                return "[" + "".join(f"[{c}]" for c in match.group(1)) + "]"
 
-            s = re.sub(r'\[([^\]]+)\]', escape_brackets, s)
-            return s.replace('%', '[%]').replace('_', '[_]')
+            s = re.sub(r"\[([^\]]+)\]", escape_brackets, s)
+            return s.replace("%", "[%]").replace("_", "[_]")
 
         query = """
                 SELECT meta.MusicCode,
@@ -40,20 +40,27 @@ class DatabaseUtils:
                 """
 
         params = [
-            search_data['options']['level'][0],
-            search_data['options']['level'][1]
+            search_data["options"]["level"][0],
+            search_data["options"]["level"][1],
         ]
 
-        search_fields = ['Title', 'Artist', 'NoteCharter']
-        search_conditions = [f"{field} LIKE ?" for field, enabled in
-                             zip(search_fields, [search_data["options"]["title"],
-                                                 search_data["options"]["artist"],
-                                                 search_data["options"]["mapper"]])
-                             if enabled]
+        search_fields = ["Title", "Artist", "NoteCharter"]
+        search_conditions = [
+            f"{field} LIKE ?"
+            for field, enabled in zip(
+                search_fields,
+                [
+                    search_data["options"]["title"],
+                    search_data["options"]["artist"],
+                    search_data["options"]["mapper"],
+                ],
+            )
+            if enabled
+        ]
 
         if search_conditions:
             query += " AND (" + " OR ".join(search_conditions) + ")"
-            escaped_keyword = escape_like(search_data['keywords'])
+            escaped_keyword = escape_like(search_data["keywords"])
             params.extend([f"%{escaped_keyword}%"] * len(search_conditions))
 
         query += " ORDER BY data.NoteLevel DESC"
@@ -116,17 +123,12 @@ class DatabaseUtils:
         with self._connection.cursor() as cursor:
             cursor.execute(
                 """
-                DELETE
-                FROM dbo.T_o2jam_login
-                FROM dbo.T_o2jam_login login
-                         LEFT OUTER JOIN
-                     dbo.member member
-                     ON
-                         member.userid = login.USER_ID
-                             COLLATE
-                                 Korean_Wansung_CI_AS
-                WHERE member.userid = ?
-                  AND member.passwd = ?
+                DELETE l
+                FROM dbo.T_o2jam_login AS l
+                INNER JOIN dbo.member AS m
+                ON m.userid = l.USER_ID COLLATE Korean_Wansung_CI_AS
+                WHERE m.userid = ?
+                  AND m.passwd = ?
                 """,
                 (player_id, password),
             )
@@ -160,7 +162,10 @@ class DatabaseUtils:
                     SELECT
                         @PlayerId AS PlayerId
                 """,
-                    (player_id, password, )
+                    (
+                        player_id,
+                        password,
+                    ),
                 )
 
                 player_origin_id = cursor.fetchone()[0]
@@ -198,8 +203,7 @@ class DatabaseUtils:
 
                 trade_cursor.execute(
                     "UPDATE dbo.UserMcash SET MCASH=? WHERE id = ?",
-                    player_wallet["mcash"],
-                    player_origin_id,
+                    (player_wallet["mcash"], player_origin_id),
                 )
 
                 trade_cursor.commit()
@@ -270,7 +274,7 @@ class DatabaseUtils:
                 WHERE member_id = ?
                   AND (DATEADD(DAY, banishment_period, occur_date) > GETDATE() OR banishment_period IS NULL)
                 """,
-                username
+                username,
             )
 
             banishment_flag = cursor.fetchval()
@@ -339,7 +343,9 @@ class DatabaseUtils:
             if member_id is None:
                 return False
 
-            cursor.execute("SELECT password_reset_blocked FROM dbo.member WHERE id = ?", member_id)
+            cursor.execute(
+                "SELECT password_reset_blocked FROM dbo.member WHERE id = ?", member_id
+            )
 
             password_reset_blocked = cursor.fetchval()
 
@@ -349,7 +355,10 @@ class DatabaseUtils:
             cursor.execute(
                 "UPDATE dbo.member SET passwd=? WHERE id=?", (password, member_id)
             )
-            cursor.execute("DELETE FROM dbo.password_reset_token WHERE password_reset_token = ?", token)
+            cursor.execute(
+                "DELETE FROM dbo.password_reset_token WHERE password_reset_token = ?",
+                token,
+            )
 
             cursor.commit()
 
@@ -362,11 +371,14 @@ class DatabaseUtils:
             return False
 
         with self._connection.cursor() as cursor:
-            cursor.execute("""
-                           SELECT m.userid
-                           FROM dbo.member AS m
-                                    RIGHT OUTER JOIN dbo.password_reset_token AS t ON m.id = t.member_id
-                           WHERE t.password_reset_token = ?""", token)
+            cursor.execute(
+                """
+                SELECT m.userid
+                FROM dbo.member AS m
+                         RIGHT OUTER JOIN dbo.password_reset_token AS t ON m.id = t.member_id
+                WHERE t.password_reset_token = ?""",
+                token,
+            )
 
             username = cursor.fetchval()
 
@@ -377,17 +389,22 @@ class DatabaseUtils:
             email = cursor.fetchval()
 
             if email is not None:
-                email = email[:email.index('@')]
+                email = email[: email.index("@")]
                 if email in password:
                     return False
 
-            cursor.execute("SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_ID=?", username)
+            cursor.execute(
+                "SELECT USER_NICKNAME FROM dbo.T_o2jam_charinfo WHERE USER_ID=?",
+                username,
+            )
             nickname = cursor.fetchval()
 
             if nickname is not None and nickname in password:
                 return False
 
-            cursor.execute("SELECT COUNT(1) FROM dbo.bad_password WHERE password=?", password)
+            cursor.execute(
+                "SELECT COUNT(1) FROM dbo.bad_password WHERE password=?", password
+            )
 
             is_bad_password = cursor.fetchval()
 
@@ -408,12 +425,12 @@ class DatabaseUtils:
             return account_id
 
     def convert_member_id_to_player_id(self, member_id):
-        query = f"""
-            SELECT c.USER_INDEX_ID
+        query = """
+                SELECT c.USER_INDEX_ID
                 FROM T_o2jam_charinfo AS c
                          RIGHT OUTER JOIN dbo.member AS m ON m.userid = c.USER_ID
-                WHERE m.id = ?
-        """
+                WHERE m.id = ? \
+                """
 
         with self._connection.cursor() as cursor:
             cursor.execute(query, (member_id,))

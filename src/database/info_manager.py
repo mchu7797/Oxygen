@@ -250,7 +250,3 @@ class InfoManager:
                 "note_count": raw_result[6],
                 "play_count": raw_result[7],
             }
-
-    def get_score_status(self, player_id, chart_id, gauge_difficulty):
-        # TODO: 데이터 가져오는 부분 구현
-        pass
