@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, abort, redirect, g
+from flask import Blueprint, request, render_template, abort, redirect, g, jsonify
 
 from src.config import DATABASE_CONFIG
 from src.database import DatabaseConnection
@@ -198,3 +198,17 @@ def best_play_ranking(player_id):
     )
 
     return render_template("best-play.html", scoreboard=ranking_data)
+
+
+@scoreboard.route("/api/player-scoreboard-ranges/<player_code>/<difficulty>")
+def player_scoreboard_ranges_api(player_code, difficulty):
+    show_f_rank = True if request.args.get("show-f-rank", type=int) == 1 else False
+    page_size = request.args.get("page-size", type=int, default=100)
+    
+    try:
+        ranges = get_db().player_ranking.get_player_scoreboard_ranges(
+            player_code, difficulty, page_size, show_f_rank
+        )
+        return jsonify(ranges)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

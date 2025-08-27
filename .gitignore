@@ -6,6 +6,15 @@ instance/*
 !instance/.gitignore
 .webassets-cache
 .env
+.env.local
+.env.production
+.env.staging
+.env.test
+
+# Configuration backups
+config.py.bak
+*.key
+secrets.txt
 
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files

@@ -165,22 +165,30 @@
                 <span class="badge text-bg-secondary">{{ tier['tier'] }}</span>
             </div>
             <div class="col-auto">
-                <a id="show-f-rank"
-                   class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %} me-1"
-                   {% if
-                show_f_rank==True %}aria-pressed="true" {% endif %} data-bs-toggle="button">Show F</a>
                 {% if show_recent == 0 %}
-                    <div class="btn-group" role="group" aria-label="Pagination Options">
+                    <div class="d-flex gap-2 align-items-center">
+                        <a id="show-f-rank"
+                           class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %}"
+                           {% if show_f_rank==True %}aria-pressed="true" {% endif %} data-bs-toggle="button">Show F</a>
                         <button class="btn btn-sm btn-outline-light" id="prev-page">Prev</button>
-                        <a class="btn btn-sm btn-outline-light enabled" aria-disabled="true">
-                            {% if scoreboard != None %}
-                                {{ scoreboard[0]['music_level'] }} - {{ scoreboard[-1]['music_level'] }}
-                            {% else %}
-                                Invalid
-                            {% endif %}
-                        </a>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="levelRangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if scoreboard != None %}
+                                    {{ scoreboard[0]['music_level'] }} - {{ scoreboard[-1]['music_level'] }}
+                                {% else %}
+                                    Invalid
+                                {% endif %}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="levelRangeDropdown" id="pageJumpMenu">
+                                <!-- 동적으로 생성될 페이지 옵션들 -->
+                            </ul>
+                        </div>
                         <button class="btn btn-sm btn-outline-light" id="next-page">Next</button>
                     </div>
+                {% else %}
+                    <a id="show-f-rank"
+                       class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %}"
+                       {% if show_f_rank==True %}aria-pressed="true" {% endif %} data-bs-toggle="button">Show F</a>
                 {% endif %}
             </div>
         </div>
@@ -293,6 +301,30 @@
                 </div>
             </div>
         {% endif %}
+        
+        {% if scoreboard != None and show_recent == 0 %}
+            <div class="d-flex justify-content-center mt-4 mb-3">
+                <div class="d-flex gap-2 align-items-center">
+                    <a id="show-f-rank-bottom"
+                       class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %}"
+                       {% if show_f_rank==True %}aria-pressed="true" {% endif %} data-bs-toggle="button">Show F</a>
+                    <button class="btn btn-sm btn-outline-light" id="prev-page-bottom">Prev</button>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="levelRangeDropdown-bottom" data-bs-toggle="dropdown" aria-expanded="false">
+                            {% if scoreboard != None %}
+                                {{ scoreboard[0]['music_level'] }} - {{ scoreboard[-1]['music_level'] }}
+                            {% else %}
+                                Invalid
+                            {% endif %}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="levelRangeDropdown-bottom" id="pageJumpMenu-bottom">
+                            <!-- 동적으로 생성될 페이지 옵션들 -->
+                        </ul>
+                    </div>
+                    <button class="btn btn-sm btn-outline-light" id="next-page-bottom">Next</button>
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 {% block scripts %}
@@ -309,9 +341,12 @@
         const parameters = url.searchParams;
 
         let showFRankButton = document.getElementById("show-f-rank");
+        let showFRankButtonBottom = document.getElementById("show-f-rank-bottom");
         let showRecentButton = document.getElementById("show-recent");
         let nextPageButton = document.getElementById("next-page");
+        let nextPageButtonBottom = document.getElementById("next-page-bottom");
         let prevPageButton = document.getElementById("prev-page");
+        let prevPageButtonBottom = document.getElementById("prev-page-bottom");
 
         let showFRank = parameters.get('show-f-rank') == 1 ? 1 : 0;
         let showRecent = parameters.get('show-recent') == 1 ? 1 : 0;
@@ -348,6 +383,13 @@
             setOption()
         });
 
+        if (showFRankButtonBottom) {
+            showFRankButtonBottom.addEventListener('click', () => {
+                showFRank = !showFRank;
+                setOption()
+            });
+        }
+
         showRecentButton.addEventListener('click', () => {
             showRecent = !showRecent;
             setOption()
@@ -360,11 +402,93 @@
             }
         });
 
+        if (prevPageButtonBottom) {
+            prevPageButtonBottom.addEventListener('click', () => {
+                if (page > 0) {
+                    page = page - 1;
+                    setOption()
+                }
+            });
+        }
+
         nextPageButton.addEventListener('click', () => {
             if (page < {{ max_page }}) {
                 page = page + 1;
                 setOption()
             }
+        });
+
+        if (nextPageButtonBottom) {
+            nextPageButtonBottom.addEventListener('click', () => {
+                if (page < {{ max_page }}) {
+                    page = page + 1;
+                    setOption()
+                }
+            });
+        }
+
+        // 페이지 바로가기 기능
+        function loadPageRanges() {
+            const playerId = {{ metadata['player_code'] }};
+            const difficulty = {{ metadata['current_view_difficulty'] }};
+            const pageSize = 100;
+            
+            fetch(`/api/player-scoreboard-ranges/${playerId}/${difficulty}?show-f-rank=${showFRank}&page-size=${pageSize}`)
+                .then(response => response.json())
+                .then(data => {
+                    const dropdowns = [
+                        { menu: document.getElementById('pageJumpMenu'), button: document.getElementById('levelRangeDropdown') },
+                        { menu: document.getElementById('pageJumpMenu-bottom'), button: document.getElementById('levelRangeDropdown-bottom') }
+                    ];
+                    
+                    dropdowns.forEach(dropdown => {
+                        if (dropdown.menu && dropdown.button) {
+                            dropdown.menu.innerHTML = '';
+                            
+                            data.forEach((range, index) => {
+                                const li = document.createElement('li');
+                                const a = document.createElement('a');
+                                a.className = 'dropdown-item';
+                                a.href = '#';
+                                
+                                // 현재 페이지인지 확인
+                                const isCurrentPage = (range.page - 1) === page;
+                                if (isCurrentPage) {
+                                    a.classList.add('active');
+                                    // 드롭다운 버튼 텍스트 업데이트
+                                    dropdown.button.textContent = `${range.min_level} - ${range.max_level}`;
+                                }
+                                
+                                a.textContent = `Page ${range.page}: Lv.${range.min_level} - ${range.max_level}`;
+                                a.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    page = range.page - 1; // 0-based indexing
+                                    setOption();
+                                });
+                                li.appendChild(a);
+                                dropdown.menu.appendChild(li);
+                            });
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Failed to load page ranges:', error);
+                });
+        }
+
+        // 페이지 로드시 범위 정보 로드
+        if (showRecent == 0) {
+            loadPageRanges();
+        }
+
+        // F랭크 옵션이 변경될 때마다 범위 재로드
+        const originalShowFRankClick = showFRankButton.onclick;
+        showFRankButton.addEventListener('click', () => {
+            setTimeout(() => {
+                if (showRecent == 0) {
+                    loadPageRanges();
+                }
+            }, 100);
         });
 
         const dynamicLimits = {
