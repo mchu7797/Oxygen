@@ -174,6 +174,30 @@ class PlayerRankingManager:
             )
 
             return cursor.fetchval()
+        
+    def get_player_scoreboard_ranges(self, player_id, gauge_difficulty, paging_range, show_f_rank):
+        view_option_query = "h.Score >= 70000" if show_f_rank else "h.isClear = 1"
+
+        with self._connection.cursor() as cursor:
+            cursor.execute(
+                f"""
+                    WITH RankedResults AS (
+                        SELECT
+                            d.NoteLevel,
+                            CEILING(CAST(ROW_NUMBER() OVER (ORDER BY d.NoteLevel DESC, h.Score DESC) AS FLOAT) / ?) AS page_num
+                        FROM dbo.O2JamHighscore h
+                        INNER JOIN dbo.o2jam_music_data d ON d.MusicCode = h.MusicCode AND d.Difficulty = h.Difficulty
+                        WHERE h.PlayerCode = ? AND h.Difficulty = ? AND {view_option_query}
+                    )
+                    SELECT page_num, MIN(NoteLevel) as min_level, MAX(NoteLevel) as max_level
+                    FROM RankedResults
+                    GROUP BY page_num
+                    ORDER BY page_num
+                """,
+                (paging_range, player_id, gauge_difficulty)
+            )
+            
+            return [{"page": r[0], "min_level": r[1], "max_level": r[2]} for r in cursor.fetchall()]
 
     def get_player_ranking(self, sort_option: int):
         sort_option = PlayerRankingOption(sort_option)

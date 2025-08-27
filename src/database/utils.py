@@ -174,6 +174,9 @@ class DatabaseUtils:
                     return 1
 
                 player_wallet = self.get_wallet_info(player_id)
+                
+                if player_wallet is None:
+                    return 1
 
                 if exchange_direction == "gem":
                     if exchange_rate % 100 != 0:

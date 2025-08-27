@@ -56,6 +56,9 @@ def cash_to_gem():
 
     result = database.utils.exchange_cash(player_id, password, exchange_rate, "gem")
     wallet = database.utils.get_wallet_info(player_id)
+    
+    if wallet is None and result == 0:
+        wallet = {"gem": 0, "mcash": 0}
 
     return render_template("cash-to-gem.html", gtc_result=result, wallet=wallet)
 
@@ -73,6 +76,9 @@ def gem_to_cash():
 
     result = database.utils.exchange_cash(player_id, password, exchange_rate, "mcash")
     wallet = database.utils.get_wallet_info(player_id)
+    
+    if wallet is None and result == 0:
+        wallet = {"gem": 0, "mcash": 0}
 
     return render_template("gem-to-cash.html", gtc_result=result, wallet=wallet)
 
