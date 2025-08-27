@@ -171,7 +171,7 @@
                            class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %}"
                            {% if show_f_rank==True %}aria-pressed="true" {% endif %} data-bs-toggle="button">Show F</a>
                         <button class="btn btn-sm btn-outline-light" id="prev-page">Prev</button>
-                        <div class="dropdown">
+                        <div class="dropdown-center">
                             <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="levelRangeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 {% if scoreboard != None %}
                                     {{ scoreboard[0]['music_level'] }} - {{ scoreboard[-1]['music_level'] }}
@@ -179,7 +179,7 @@
                                     Invalid
                                 {% endif %}
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="levelRangeDropdown" id="pageJumpMenu">
+                            <ul class="scoreboard-pagination dropdown-menu dropdown-menu-dark" aria-labelledby="levelRangeDropdown" id="pageJumpMenu">
                                 <!-- 동적으로 생성될 페이지 옵션들 -->
                             </ul>
                         </div>
@@ -309,7 +309,7 @@
                        class="btn btn-outline-light btn-sm {% if show_f_rank == True %}active{% endif %}"
                        {% if show_f_rank==True %}aria-pressed="true" {% endif %} data-bs-toggle="button">Show F</a>
                     <button class="btn btn-sm btn-outline-light" id="prev-page-bottom">Prev</button>
-                    <div class="dropdown">
+                    <div class="dropdown-center">
                         <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="levelRangeDropdown-bottom" data-bs-toggle="dropdown" aria-expanded="false">
                             {% if scoreboard != None %}
                                 {{ scoreboard[0]['music_level'] }} - {{ scoreboard[-1]['music_level'] }}
@@ -317,7 +317,7 @@
                                 Invalid
                             {% endif %}
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="levelRangeDropdown-bottom" id="pageJumpMenu-bottom">
+                        <ul class="scoreboard-pagination dropdown-menu dropdown-menu-dark" aria-labelledby="levelRangeDropdown-bottom" id="pageJumpMenu-bottom">
                             <!-- 동적으로 생성될 페이지 옵션들 -->
                         </ul>
                     </div>
@@ -459,7 +459,7 @@
                                     dropdown.button.textContent = `${range.min_level} - ${range.max_level}`;
                                 }
                                 
-                                a.textContent = `Page ${range.page}: Lv.${range.min_level} - ${range.max_level}`;
+                                a.textContent = `${range.min_level} - ${range.max_level}`;
                                 a.addEventListener('click', (e) => {
                                     e.preventDefault();
                                     page = range.page - 1; // 0-based indexing

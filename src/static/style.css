@@ -346,3 +346,8 @@ th, td {
     font-size: .75em;
     margin-left: auto;
 }
+
+.scoreboard-pagination {
+    max-height: 250px;
+    overflow-y: auto;
+}
