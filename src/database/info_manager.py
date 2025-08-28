@@ -1,9 +1,9 @@
 class InfoManager:
     def __init__(self, connection):
-        self.__connection = connection
+        self._connection = connection
 
     def get_player_info(self, player_id, gauge_difficulty):
-        with self.__connection.cursor() as cursor:
+        with self._connection.cursor() as cursor:
             cursor.execute(
                 """
                 SELECT
@@ -169,7 +169,7 @@ class InfoManager:
             }
 
     def get_tier_info(self, player_id):
-        with self.__connection.cursor() as cursor:
+        with self._connection.cursor() as cursor:
             cursor.execute(
                 """
                 SELECT
@@ -209,7 +209,7 @@ class InfoManager:
             }
 
     def get_music_info(self, music_id, gauge_difficulty):
-        with self.__connection.cursor() as cursor:
+        with self._connection.cursor() as cursor:
             cursor.execute(
                 """
                 SELECT
