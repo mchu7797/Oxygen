@@ -125,7 +125,7 @@ class ChartRankingManager:
                 ROW_NUMBER() OVER (PARTITION BY chart_id, chart_difficulty ORDER BY timestamp) AS rn_asc,
                 ROW_NUMBER() OVER (PARTITION BY chart_id, chart_difficulty ORDER BY timestamp DESC) AS rn_desc
             FROM dbo.O2JamPlaycounts
-            WHERE timestamp BETWEEN ? AND ?
+            WHERE timestamp BETWEEN '{start_date}' AND '{end_date}'
         ),
         PlaycountDifference AS (
             SELECT
@@ -149,7 +149,7 @@ class ChartRankingManager:
         """
 
         with self._connection.cursor() as cursor:
-            cursor.execute(query, (start_date, end_date))
+            cursor.execute(query)
             query_results = cursor.fetchall()
 
             if query_results is None:
