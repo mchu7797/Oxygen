@@ -129,7 +129,7 @@ def chart_ranking():
     top = request.args.get("top")
     date_start = request.args.get("date_start")
     date_end = request.args.get("date_end")
-
+    
     if top is None:
         top = 200
 
